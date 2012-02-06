@@ -464,6 +464,53 @@ def getListItems(request):
         return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
 
 
+# GET DIRECTORY OF ID/3RD PARTY IDs
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def getDirectory(request):
+
+    if (request.POST):
+
+        # collect list item parameters
+        userID = request.POST.get('user_id').strip()
+        secretKey = request.POST.get('secret_key').strip()
+
+        # get user by userid
+        try:
+            existingUser = Users.objects.get(pk = userID)
+        except Users.DoesNotExist:
+            existingUser = None
+
+        # validate secretKey against user
+        if existingUser and existingUser.user_secret_key == secretKey:
+
+            # get tag items
+            try:
+                itemTagUsers = ItemTagUser.objects.filter(user = existingUser)
+            except ItemTagUser.DoesNotExist:
+                itemTagUsers = None
+
+            # list items found
+            if itemTagUsers:
+
+                directoryItems = {}
+                # construct python dictionary
+                for items in itemTagUsers:
+
+                    if items.item.pk not in directoryItems:
+                        directoryItems[items.item.pk] = {'itemAsin': items.item.item_asin, 'itemGBombID': items.item.item_gbombID}
+
+                # serialize and return lists
+                return HttpResponse(simplejson.dumps({'directory': directoryItems}), mimetype='application/json')
+
+            else:
+                return HttpResponse('FALSE', mimetype='text/html')
+        else:
+            return HttpResponse('FALSE', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+
+
 # GET TAGS FOR ITEM
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @csrf_exempt

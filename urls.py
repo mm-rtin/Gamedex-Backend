@@ -39,6 +39,7 @@ urlpatterns = patterns('',
 
     # items
     (r'^item/$', 'tmz.views.getListItems'),
+    (r'^item/directory$', 'tmz.views.getDirectory'),
     (r'^item/tags$', 'tmz.views.getItemTags'),
     (r'^item/add$', 'tmz.views.createListItem'),
     (r'^item/delete$', 'tmz.views.deleteListItem'),
