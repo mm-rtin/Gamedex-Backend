@@ -45,8 +45,8 @@ def itemSearchAmazon(request, keywords, searchIndex = 'VideoGames', browseNode =
     return HttpResponse(response, mimetype='application/xml')
 
 
-# item lookup by ASIN
-def itemLookupASIN(request, asin, responseGroup = 'Small'):
+# item detail by asin
+def itemDetailAmazon(request, asin, responseGroup = 'Small'):
 
     amazon = bottlenose.Amazon(accessKey, secretKey, associate_tag)
     response = amazon.ItemLookup(ItemId=asin, IdType='ASIN', ResponseGroup=responseGroup)
@@ -61,7 +61,22 @@ def itemLookupASIN(request, asin, responseGroup = 'Small'):
 def itemSearchGiantBomb(request, keywords, page = '1'):
 
     queryParameters = {'query': keywords, 'resources': 'game', 'resource_type': 'game'}
+
+    # field list
+    if 'field_list' in request.GET:
+        queryParameters['field_list'] = request.GET.get('field_list')
+
     response = giantBombAPICall('search', queryParameters)
+
+    return HttpResponse(simplejson.dumps(response), mimetype='application/json')
+
+
+# item detail by gbombID
+def itemDetailGiantBomb(request, gbombID):
+
+    queryParameters = {'field_list': 'platforms'}
+    response = giantBombAPICall('game/' + gbombID, queryParameters)
+
     return HttpResponse(simplejson.dumps(response), mimetype='application/json')
 
 
@@ -128,7 +143,7 @@ def login(request):
                 return HttpResponse('false', mimetype='text/html')
 
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse('false', mimetype='text/html')
 
     else:
         return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
@@ -497,8 +512,13 @@ def getDirectory(request):
                 # construct python dictionary
                 for items in itemTagUsers:
 
+                    # create item object
                     if items.item.pk not in directoryItems:
-                        directoryItems[items.item.pk] = {'itemAsin': items.item.item_asin, 'itemGBombID': items.item.item_gbombID}
+                        directoryItems[items.item.pk] = {'itemAsin': items.item.item_asin, 'itemGBombID': items.item.item_gbombID, 'tags': {}, 'tagCount': 0}
+
+                    # append tag
+                    directoryItems[items.item.pk]['tags'][items.tag.pk] = items.pk
+                    directoryItems[items.item.pk]['tagCount'] = directoryItems[items.item.pk]['tagCount'] + 1
 
                 # serialize and return lists
                 return HttpResponse(simplejson.dumps({'directory': directoryItems}), mimetype='application/json')
@@ -637,8 +657,9 @@ def deleteListItem(request):
 
             # found record > delete
             if itemTagUser:
+                tagID = itemTagUser.tag.pk
                 itemTagUser.delete()
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                return HttpResponse(simplejson.dumps({'tagID': tagID}), mimetype='application/json')
 
             return HttpResponse(simplejson.dumps({'status': 'record not found'}), mimetype='application/json')
 
