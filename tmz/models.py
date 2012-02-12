@@ -35,6 +35,7 @@ class ItemTagUser(models.Model):
 # LIST ITEMS
 class Items(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
+    user = models.ForeignKey('Users')
     item_asin = models.CharField(max_length=16, blank=True)
     item_gbombID = models.CharField(max_length=16, blank=True)
     item_name = models.CharField(max_length=128)

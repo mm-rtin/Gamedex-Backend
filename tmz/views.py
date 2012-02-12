@@ -397,9 +397,9 @@ def createListItem(request):
         try:
             existingItem = None
             if asin != '0':
-                existingItem = Items.objects.get(item_asin = asin)
+                existingItem = Items.objects.get(item_asin = asin, user = existingUser)
             elif gbombID != '0':
-                existingItem = Items.objects.get(item_gbombID = gbombID)
+                existingItem = Items.objects.get(item_gbombID = gbombID, user = existingUser)
 
         except Items.DoesNotExist:
             existingItem = None
@@ -425,7 +425,7 @@ def createListItem(request):
             # create new item
             if (existingItem is None):
                 guid = str(uuid.uuid4())
-                item = Items(id = guid, item_asin = asin, item_gbombID = gbombID, item_name = itemName, item_releasedate = releaseDate, item_platform = platform, item_smallImage = smallImage, item_thumbnailImage = thumbnailImage, item_largeImage = largeImage)
+                item = Items(id = guid, user = existingUser, item_asin = asin, item_gbombID = gbombID, item_name = itemName, item_releasedate = releaseDate, item_platform = platform, item_smallImage = smallImage, item_thumbnailImage = thumbnailImage, item_largeImage = largeImage)
                 item.save()
 
             # item already exists, use instead

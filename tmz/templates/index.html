@@ -226,7 +226,7 @@
 	    	<tbody>
 	   		<% _.each(sortedSearchResults, function(item) { %>
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
-		   			<td><%= item.name %></td>
+		   			<td class="title"><%= item.name %></td>
 		   		</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -238,7 +238,7 @@
 	   		<% _.each(sortedSearchResults, function(item) { %>
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
 		   			<td><img src="<%= item.smallImage %>" alt=""></td>
-		   			<td><%= item.name %></td>
+		   			<td class="title"><%= item.name %></td>
 		   		</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -250,7 +250,7 @@
 	   		<% _.each(sortedSearchResults, function(item) { %>
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
 		   			<td><img src="<%= item.thumbnailImage %>" alt=""></td>
-		   			<td><%= item.name %></td>
+		   			<td class="title"><%= item.name %></td>
 		   		</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -262,7 +262,7 @@
 	   		<% _.each(sortedItems, function(item, index) { %>
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
 					<td><%= item.name %></td>
-					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i> </a></td>
+					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -275,7 +275,7 @@
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
 					<td><img src="<%= item.smallImage %>" alt=""></td>
 					<td><%= item.name %></td>
-					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></i> </a></td>
+					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -311,6 +311,9 @@
 			<div id="itemDetailReleaseDate">
 				<h4><%= itemData.releaseDate %></h4>
 			</div>
+			<div id="itemDetailPlatform">
+				<a href="#" class="btn btn-success"><i class="icon-tag icon-white"></i> <%= itemData.platform %></a>
+			</div>
 			<div id="itemDetailThumbnail"><img src="<%= itemData.largeImage %>" alt=""></div>
 	   	</script>
 
@@ -341,6 +344,7 @@
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-alert.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-tooltip.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-popover.js"></script>
+		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-dropdown.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-tab.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-transition.js"></script>
 
