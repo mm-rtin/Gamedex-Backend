@@ -33,9 +33,24 @@ def index(request):
 # AMAZON PRODUCT API REST PROXY
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # item search
-def itemSearchAmazon(request, keywords, searchIndex = 'VideoGames', browseNode = '0', responseGroup = 'Small', page = '1'):
+def itemSearchAmazon(request):
 
     amazon = bottlenose.Amazon(accessKey, secretKey, associate_tag)
+
+    if 'keywords' in request.GET:
+        keywords = request.GET.get('keywords')
+
+    if 'browse_node' in request.GET:
+        browseNode = request.GET.get('browse_node')
+
+    if 'response_group' in request.GET:
+        responseGroup = request.GET.get('response_group')
+
+    if 'search_index' in request.GET:
+        searchIndex = request.GET.get('search_index')
+
+    if 'page' in request.GET:
+        page = request.GET.get('page')
 
     if browseNode == '0':
         response = amazon.ItemSearch(SearchIndex=searchIndex, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, Sort='salesrank', MinimumPrice='800', MaximumPrice='13500')
@@ -46,7 +61,13 @@ def itemSearchAmazon(request, keywords, searchIndex = 'VideoGames', browseNode =
 
 
 # item detail by asin
-def itemDetailAmazon(request, asin, responseGroup = 'Small'):
+def itemDetailAmazon(request):
+
+    if 'asin' in request.GET:
+        asin = request.GET.get('asin')
+
+    if 'response_group' in request.GET:
+        responseGroup = request.GET.get('response_group')
 
     amazon = bottlenose.Amazon(accessKey, secretKey, associate_tag)
     response = amazon.ItemLookup(ItemId=asin, IdType='ASIN', ResponseGroup=responseGroup)
@@ -58,13 +79,19 @@ def itemDetailAmazon(request, asin, responseGroup = 'Small'):
 # GIANT BOMB API REST PROXY
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # item search
-def itemSearchGiantBomb(request, keywords, page = '1'):
+def itemSearchGiantBomb(request):
 
-    queryParameters = {'query': keywords, 'resources': 'game', 'resource_type': 'game'}
+    queryParameters = {'resources': 'game', 'resource_type': 'game'}
 
     # field list
     if 'field_list' in request.GET:
         queryParameters['field_list'] = request.GET.get('field_list')
+
+    if 'keywords' in request.GET:
+        queryParameters['query'] = request.GET.get('keywords')
+
+    if 'page' in request.GET:
+        queryParameters['page'] = request.GET.get('page')
 
     response = giantBombAPICall('search', queryParameters)
 
@@ -72,10 +99,14 @@ def itemSearchGiantBomb(request, keywords, page = '1'):
 
 
 # item detail by gbombID
-def itemDetailGiantBomb(request, gbombID):
+def itemDetailGiantBomb(request):
 
     queryParameters = {'field_list': 'platforms'}
-    response = giantBombAPICall('game/' + gbombID, queryParameters)
+
+    if 'id' in request.GET:
+        id = request.GET.get('id')
+
+    response = giantBombAPICall('game/' + id, queryParameters)
 
     return HttpResponse(simplejson.dumps(response), mimetype='application/json')
 

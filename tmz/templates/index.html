@@ -11,7 +11,7 @@
 		<![endif]-->
 
 		<!-- styles -->
-		<!--<link rel="stylesheet/less" type="text/css" href="http://static.t-minuszero.com/less/bootstrap/bootstrap.less">-->
+		<link rel="stylesheet" href="http://static.t-minuszero.com/css/bootstrap.css">
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/tmz.css">
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/chosen.css">
 		<!-- Le fav and touch icons -->
@@ -45,159 +45,179 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<a id="newAccount_btn" href="#" class="btn primary">Create Account</a>
+				<a id="newAccount_btn" href="#" class="btn btn-primary">Create Account</a>
 				<a id="newAccount_cancel_btn" href="#" class="btn">Cancel</a>
 			</div>
 		</div>
 
-		<!-- PRODUCT DESCRIPTION MODAL CONTAINER -->
-		<div id="description-modal" class="modal hide"></div>
+		<!-- PRODUCT DESCRIPTION MODAL CONTAINERS -->
+		<div id="giantBombDescription-modal" class="modal hide"></div>
+		<div id="amazonDescription-modal" class="modal hide"></div>
 
 
 		<!-- HEADER -->
-		<div id="header">
-			<div class="navbar navbar-top">
-				<div class="navbar-inner">
-					<div class="fluid-container">
-						<a class="brand" href="#">T-Minus Zero</a>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="#">T-MinusZero</a>
+
+					<div class="nav-collapse">
 						<ul class="nav">
 							<li class="active"><a href="#">Home</a></li>
 							<li><a href="#about">About</a></li>
 							<li><a href="#contact">Contact</a></li>
 						</ul>
-
-						<!-- RIGHT HEADER -->
-						<form action="" class="form-search navbar-form pull-right">
-							<button id="login_btn" class="btn primary">Login</button>
-							<input id="userLogin_field" type="text" placeholder="User Name" />
-							<input id="password_field" type="password" placeholder="Password" />
-
-							<button id="createUser_btn" class="btn danger" data-controls-modal="createuser-modal" data-backdrop="true" data-keyboard="true">Create User</button>
-						</form>
 					</div>
+
+					<!-- RIGHT HEADER -->
+					<form action="" class="form-search navbar-form pull-right">
+						<button id="login_btn" class="btn btn-primary">Login</button>
+						<input id="userLogin_field" type="text" placeholder="User Name" />
+						<input id="password_field" type="password" placeholder="Password" />
+
+						<button id="createUser_btn" class="btn btn-danger" data-controls-modal="createuser-modal" data-backdrop="true" data-keyboard="true">Create User</button>
+					</form>
+
 				</div>
 			</div>
 		</div>
 
 		<!-- SITE CONTAINER -->
-	 	<div id="wrapper" class="fluid-container">
-
+	    <div id="wrapper">
 
 			<!-- CONTENT -->
-		 	<div class="fluid-content">
-				<div id="content" class="content">
+			<div id="content" class="content">
+
+				<!-- SEARCH PANEL PLACEHOLDER -->
+				<div id="panel1">
+					<div class="panel">
+
+						<!-- SEARCH CONTAINER -->
+						<div id="searchContainer">
+
+							<!-- SEARCH SELECT -->
+							<div id="searchProviderContainer">
+								<select id="searchProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:200px;" tabindex="2">
+									<option value="0">Amazon.com</option>
+									<option value="1">GiantBomb.com</option>
+								</select>
+							</div>
+
+							<!-- SEARCH COMPONENT -->
+							<div id="search">
+								<input id="search_field" type="text" name="search" value="mario">
+								<a href="#" class="btn btn-success"><i class="icon white search"></i> Search</a>
+							</div>
+
+							<!--- DISPLAY SELECT -->
+							<div id="searchResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
+								<button class="btn btn-primary" data-content="0">List</button>
+								<button class="btn btn-primary active" data-content="1">Icons</button>
+								<button class="btn btn-primary" data-content="2">Cover</button>
+							</div>
+
+							<!-- SEARCH RESULTS -->
+							<div id="searchResultsContainer">
+								<table id="searchResults" class="table table-striped">
+								</table>
+							</div>
+
+						</div>
+					</div>
+				</div>
 
 
-					<!-- SEARCH PANEL PLACEHOLDER -->
-					<div id="panel1">
-						<div class="panel">
+				<!-- ITEM DETAIL PANEL -->
+				<div id="panel2">
+					<div class="panel">
 
-							<!-- SEARCH CONTAINER -->
-							<div id="searchContainer">
+						<div id="itemDetailsContainer">
 
-								<!-- SEARCH SELECT -->
-								<div id="searchProviderContainer">
-									<select id="searchProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:200px;" tabindex="2">
-										<option value="0">Amazon.com</option>
-										<option value="1">GiantBomb.com</option>
-									</select>
-								</div>
+							<div id="itemDetails">
 
-								<!-- SEARCH COMPONENT -->
-								<div id="search">
-									<input id="search_field" type="text" name="search" value="mario">
-									<a href="#" class="btn success"><i class="icon white search"></i> Search</a>
-								</div>
+								<ul id="detailTab" class="nav nav-tabs">
+									<li class="active">
+										<a id="amazonTabLink" href="#amazonTab" data-toggle="tab">Amazon</a>
+									</li>
+									<li>
+										<a id="giantBombTabLink" href="#giantBombTab" data-toggle="tab">GiantBomb</a>
+									</li>
+								</ul>
 
-								<!--- DISPLAY SELECT -->
-								<div id="searchResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
-									<button class="btn primary" data-content="0">List</button>
-									<button class="btn primary active" data-content="1">Icons</button>
-									<button class="btn primary" data-content="2">Cover</button>
-								</div>
-
-								<!-- SEARCH RESULTS -->
-								<div id="searchResultsContainer">
-									<table id="searchResults" class="table table-striped">
-									</table>
+								<div id="detailTabContent" class="tab-content">
+									<div id="amazonTab" class="tab-pane active"></div>
+									<div id="giantBombTab" class="tab-pane"></div>
 								</div>
 
 							</div>
-						</div>
-					</div>
 
-
-					<!-- ITEM DETAIL PANEL -->
-					<div id="panel2">
-						<div class="panel">
-
-							<div id="itemDetailsContainer">
-
-								<div id="itemDetails"></div>
-
-								<div id="itemDetailDescription">
-									<a href="#" id="viewDescription_btn" class="btn primary"><i class="icon white info-sign"></i> View Description</a>
-								</div>
-
-								<div id="itemDetailListContainer">
-									<div id="addTolistContainer">
-										<select id="addList" data-placeholder="Add to list:" class="chzn-select list" multiple style="width:200px;" tabindex="2">
-											<option></option>
-										</select>
-									</div>
-								</div>
-
-								<div id="saveItemContainer">
-									<a href="#" id="saveItem_btn" class="btn primary"><i class="icon white ok"></i> Save</a>
-								</div>
-
-								<div id="addItemContainer">
-									<a href="#" id="addItem_btn" class="btn success"><i class="icon white plus"></i> Add to List</a>
-								</div>
-
+							<div id="itemDetailDescription">
+								<a href="#" id="viewDescription_btn" class="btn btn-primary"><i class="icon-info-sign icon-white"></i> View Description</a>
 							</div>
-						</div>
-					</div>
 
-					<!-- LIST PANEL -->
-					<div id="panel3">
-						<div class="panel">
-
-							<div id="viewItemsContainer">
-								<div id="viewListContainer">
-									<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:200px;" tabindex="2">
+							<div id="itemDetailListContainer">
+								<div id="addTolistContainer">
+									<select id="addList" data-placeholder="Add to list:" class="chzn-select list" multiple style="width:200px;" tabindex="2">
 										<option></option>
 									</select>
-									<a href="#" id="delete-list-btn" class="btn danger"><i class="icon white trash"></i> Delete List</a>
 								</div>
+							</div>
 
-								<!--- DISPLAY SELECT -->
-								<div id="itemResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
-									<button class="btn primary" data-content="0">List</button>
-									<button class="btn primary active" data-content="1">Icons</button>
-									<button class="btn primary" data-content="2">Cover</button>
-								</div>
+							<div id="saveItemContainer">
+								<a href="#" id="saveItem_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</a>
+							</div>
 
-								<!-- ITEM RESULTS -->
-								<div id="itemResultsContainer">
-									<table id="itemResults" class="table table-striped">
-									</table>
-								</div>
+							<div id="addItemContainer">
+								<a href="#" id="addItem_btn" class="btn btn-success"><i class="icon-plus icon-white"></i> Add to List</a>
 							</div>
 
 						</div>
 					</div>
+				</div>
 
-					<!-- RIGHT PANEL -->
-					<div id="panel4">
-						<div class="panel">
-							something
+				<!-- LIST PANEL -->
+				<div id="panel3">
+					<div class="panel">
+
+						<div id="viewItemsContainer">
+							<div id="viewListContainer">
+								<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:200px;" tabindex="2">
+									<option></option>
+								</select>
+								<a href="#" id="delete-list-btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
+							</div>
+
+							<!--- DISPLAY SELECT -->
+							<div id="itemResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
+								<button class="btn btn-primary" data-content="0">List</button>
+								<button class="btn btn-primary active" data-content="1">Icons</button>
+								<button class="btn btn-primary" data-content="2">Cover</button>
+							</div>
+
+							<!-- ITEM RESULTS -->
+							<div id="itemResultsContainer">
+								<table id="itemResults" class="table table-striped">
+								</table>
+							</div>
 						</div>
+
+					</div>
+				</div>
+
+				<!-- RIGHT PANEL -->
+				<div id="panel4">
+					<div class="panel">
+						something
 					</div>
 				</div>
 			</div>
 		</div>
-
 
 	    <!-- Templates -->
 
@@ -242,7 +262,7 @@
 	   		<% _.each(sortedItems, function(item, index) { %>
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
 					<td><%= item.name %></td>
-					<td><a href="#" class="btn delete-item-btn danger" data-content="<%= item.id %>"><i class="icon white trash"></i> </a></td>
+					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i> </a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -255,7 +275,7 @@
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
 					<td><img src="<%= item.smallImage %>" alt=""></td>
 					<td><%= item.name %></td>
-					<td><a href="#" class="btn delete-item-btn danger" data-content="<%= item.id %>"><i class="icon white trash"></i> </a></td>
+					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></i> </a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -268,7 +288,7 @@
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
 					<td><img src="<%= item.thumbnailImage %>" alt=""></td>
 					<td><%= item.name %></td>
-					<td><a href="#" class="btn delete-item-btn danger" data-content="<%= item.id %>"><i class="icon white trash"></i> </a></td>
+					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i> </a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -286,22 +306,22 @@
 	   	<!-- item details -->
 	   	<script type="text/template" id="item-details-template">
 			<div id="itemDetailTitle">
-				<h3><%= itemInformation.name %><h3>
+				<h3><%= itemData.name %><h3>
 			</div>
 			<div id="itemDetailReleaseDate">
-				<h4><%= itemInformation.releaseDate %></h4>
+				<h4><%= itemData.releaseDate %></h4>
 			</div>
-			<div id="itemDetailThumbnail"><img src="<%= itemInformation.largeImage %>" alt=""></div>
+			<div id="itemDetailThumbnail"><img src="<%= itemData.largeImage %>" alt=""></div>
 	   	</script>
 
 	   	<!-- description modal -->
 	   	<script type="text/template" id="description-modal-template">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal">×</a>
-				<h3><%= itemInformation.name %></h3>
+				<h3><%= itemData.name %></h3>
 			</div>
 			<div class="modal-body">
-				<%=itemInformation.description %>
+				<%=itemData.description %>
 			</div>
 			<div class="modal-footer">
 				<a id="description_close_btn" href="#" class="btn">Close</a>
@@ -323,9 +343,6 @@
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-popover.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-tab.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-transition.js"></script>
-
-		<!-- LESS CSS -->
-		<script src="http://static.t-minuszero.com/lib/less-1.2.1.min.js"></script>
 
 		<!-- APPLICATION -->
 		<script src="http://static.t-minuszero.com/js/tmz.js"></script>

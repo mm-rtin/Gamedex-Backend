@@ -19,12 +19,12 @@ urlpatterns = patterns('',
     (r'^$', 'tmz.views.index'),
 
     # amazon product api rest proxy
-    (r'^itemsearch/amazon/(?P<searchIndex>\w*)/(?P<browseNode>\d*)/(?P<keywords>[\w\+!@#$%^&*-?.,\s]+)/(?P<responseGroup>[\w,]*)/(?P<page>\d*)$', 'tmz.views.itemSearchAmazon'),
-    (r'^itemdetail/amazon/(?P<asin>\w+)/(?P<responseGroup>[\w,]*)$', 'tmz.views.itemDetailAmazon'),
+    (r'^itemsearch/amazon/$', 'tmz.views.itemSearchAmazon'),
+    (r'^itemdetail/amazon/$', 'tmz.views.itemDetailAmazon'),
 
     # giantbomt api proxy
-    (r'^itemsearch/giantbomb/(?P<keywords>[\w\+!@#$%^&*-?.,\s]+)/(?P<page>\d*)$', 'tmz.views.itemSearchGiantBomb'),
-    (r'^itemdetail/giantbomb/(?P<gbombID>[\w\+!@#$%^&*-?.,\s]+)$', 'tmz.views.itemDetailGiantBomb'),
+    (r'^itemsearch/giantbomb/$', 'tmz.views.itemSearchGiantBomb'),
+    (r'^itemdetail/giantbomb/$', 'tmz.views.itemDetailGiantBomb'),
 
 
     # t_minuszero rest api
