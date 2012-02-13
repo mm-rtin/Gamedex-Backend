@@ -52,10 +52,11 @@ def itemSearchAmazon(request):
     if 'page' in request.GET:
         page = request.GET.get('page')
 
+    # Availability='Available', Condition='All', MerchantId='Amazon', MinimumPrice='800', MaximumPrice='13500'
     if browseNode == '0':
-        response = amazon.ItemSearch(SearchIndex=searchIndex, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, Sort='salesrank', MinimumPrice='800', MaximumPrice='13500')
+        response = amazon.ItemSearch(SearchIndex=searchIndex, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, Sort='salesrank')
     else:
-        response = amazon.ItemSearch(SearchIndex=searchIndex, BrowseNode=browseNode, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, MinimumPrice='800', MaximumPrice='13500', Availability='Available', Condition='All', MerchantId='Amazon')
+        response = amazon.ItemSearch(SearchIndex=searchIndex, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, Sort='salesrank', MinimumPrice='800', MaximumPrice='13500', BrowseNode=browseNode)
 
     return HttpResponse(response, mimetype='application/xml')
 
@@ -101,7 +102,11 @@ def itemSearchGiantBomb(request):
 # item detail by gbombID
 def itemDetailGiantBomb(request):
 
-    queryParameters = {'field_list': 'platforms'}
+    queryParameters = {}
+
+    # field list
+    if 'field_list' in request.GET:
+        queryParameters['field_list'] = request.GET.get('field_list')
 
     if 'id' in request.GET:
         id = request.GET.get('id')

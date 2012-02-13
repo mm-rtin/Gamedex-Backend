@@ -56,7 +56,7 @@
 
 
 		<!-- HEADER -->
-		<div class="navbar navbar-fixed-top">
+		<div id="header" class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container-fluid">
 
@@ -77,11 +77,10 @@
 
 					<!-- RIGHT HEADER -->
 					<form action="" class="form-search navbar-form pull-right">
-						<button id="login_btn" class="btn btn-primary">Login</button>
-						<input id="userLogin_field" type="text" placeholder="User Name" />
-						<input id="password_field" type="password" placeholder="Password" />
-
-						<button id="createUser_btn" class="btn btn-danger" data-controls-modal="createuser-modal" data-backdrop="true" data-keyboard="true">Create User</button>
+						<input id="userLogin_field" type="text" placeholder="User Name" class="input-medium"/>
+						<input id="password_field" type="password" placeholder="Password" class="input-medium"/>
+						<button id="login_btn" class="btn">Login</button>
+						<button id="createUser_btn" class="btn" data-controls-modal="createuser-modal" data-backdrop="true" data-keyboard="true">Create User</button>
 					</form>
 
 				</div>
@@ -103,23 +102,23 @@
 
 							<!-- SEARCH SELECT -->
 							<div id="searchProviderContainer">
-								<select id="searchProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:200px;" tabindex="2">
+								<select id="searchProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:170px;" tabindex="2">
 									<option value="0">Amazon.com</option>
 									<option value="1">GiantBomb.com</option>
 								</select>
 							</div>
 
 							<!-- SEARCH COMPONENT -->
-							<div id="search">
-								<input id="search_field" type="text" name="search" value="mario">
-								<a href="#" class="btn btn-success"><i class="icon white search"></i> Search</a>
+							<div id="search" class="form-horizontal">
+								<input id="search_field" type="text" class="input-medium" value="skyrim">
+								<button id="search_btn" class="btn btn-success" type="submit"><i class="icon-search icon-white"></i> Search</button>
 							</div>
 
 							<!--- DISPLAY SELECT -->
 							<div id="searchResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
-								<button class="btn btn-primary" data-content="0">List</button>
-								<button class="btn btn-primary active" data-content="1">Icons</button>
-								<button class="btn btn-primary" data-content="2">Cover</button>
+								<button class="btn" data-content="0" data-toggle="button">List</button>
+								<button class="btn active" data-content="1" data-toggle="button">Icons</button>
+								<button class="btn" data-content="2" data-toggle="button">Cover</button>
 							</div>
 
 							<!-- SEARCH RESULTS -->
@@ -133,89 +132,115 @@
 				</div>
 
 
-				<!-- ITEM DETAIL PANEL -->
-				<div id="panel2">
-					<div class="panel">
+				<div id="stickyPanels">
 
-						<div id="itemDetailsContainer">
+					<!-- ITEM DETAIL PANEL -->
+					<div id="panel2">
+						<div class="panel">
 
-							<div id="itemDetails">
+							<div id="itemDetailsContainer">
 
-								<ul id="detailTab" class="nav nav-tabs">
-									<li class="active">
-										<a id="amazonTabLink" href="#amazonTab" data-toggle="tab">Amazon</a>
-									</li>
-									<li>
-										<a id="giantBombTabLink" href="#giantBombTab" data-toggle="tab">GiantBomb</a>
-									</li>
-								</ul>
+								<div id="itemDetails">
 
-								<div id="detailTabContent" class="tab-content">
-									<div id="amazonTab" class="tab-pane active"></div>
-									<div id="giantBombTab" class="tab-pane"></div>
+									<ul id="detailTab" class="nav nav-tabs">
+										<li class="active">
+											<a id="amazonTabLink" href="#amazonTab" data-toggle="tab">Amazon</a>
+										</li>
+										<li>
+											<a id="giantBombTabLink" href="#giantBombTab" data-toggle="tab">GiantBomb</a>
+										</li>
+									</ul>
+
+									<div id="detailTabContent" class="tab-content">
+										<div id="amazonTab" class="tab-pane active"></div>
+										<div id="giantBombTab" class="tab-pane"></div>
+									</div>
+
+								</div>
+
+								<div id="itemDetailDescription">
+									<a href="#" id="viewDescription_btn" class="btn btn-primary"><i class="icon-list-alt icon-white"></i> View Description</a>
+								</div>
+
+								<div id="itemDetailListContainer">
+									<div id="addTolistContainer">
+										<select id="addList" data-placeholder="Add to list:" class="chzn-select list" multiple style="width:170px;" tabindex="2">
+											<option></option>
+										</select>
+									</div>
+								</div>
+
+								<div id="saveItemContainer">
+									<a href="#" id="saveItem_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</a>
+								</div>
+
+								<div id="addItemContainer">
+									<a href="#" id="addItem_btn" class="btn btn-success"><i class="icon-plus icon-white"></i> Add to List</a>
 								</div>
 
 							</div>
+						</div>
+					</div>
 
-							<div id="itemDetailDescription">
-								<a href="#" id="viewDescription_btn" class="btn btn-primary"><i class="icon-info-sign icon-white"></i> View Description</a>
+					<!-- LIST PANEL -->
+					<div id="panel3">
+						<div class="panel">
+
+							<div id="viewItemsContainer">
+								<div id="viewListContainer">
+									<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
+										<option></option>
+									</select>
+									<a href="#" id="deleteList_btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
+								</div>
+
+								<!--- DISPLAY SELECT -->
+								<div id="itemResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
+									<button class="btn" data-content="0" data-toggle="button">List</button>
+									<button class="btn active" data-content="1" data-toggle="button">Icons</button>
+									<button class="btn" data-content="2" data-toggle="button">Cover</button>
+								</div>
+
+								<!-- ITEM RESULTS -->
+								<div id="itemResultsContainer">
+									<table id="itemResults" class="table table-striped">
+									</table>
+								</div>
 							</div>
 
-							<div id="itemDetailListContainer">
-								<div id="addTolistContainer">
-									<select id="addList" data-placeholder="Add to list:" class="chzn-select list" multiple style="width:200px;" tabindex="2">
+						</div>
+					</div>
+
+					<!-- RIGHT PANEL -->
+					<div id="panel4">
+						<div class="panel">
+
+							<div id="NOT_SURE">
+								<div id="NOT_SURE">
+									<select id="NOT_SURE" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
 										<option></option>
 									</select>
 								</div>
-							</div>
 
-							<div id="saveItemContainer">
-								<a href="#" id="saveItem_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</a>
-							</div>
+								<!--- DISPLAY SELECT -->
+								<div id="NOT_SURE" data-toggle="buttons-radio" class="btn-group">
+									<button class="btn" data-content="0" data-toggle="button">List</button>
+									<button class="btn active" data-content="1" data-toggle="button">Icons</button>
+									<button class="btn" data-content="2" data-toggle="button">Cover</button>
+								</div>
 
-							<div id="addItemContainer">
-								<a href="#" id="addItem_btn" class="btn btn-success"><i class="icon-plus icon-white"></i> Add to List</a>
+								<!-- ITEM RESULTS -->
+								<div id="NOT_SURE">
+									<table id="NOT_SURE" class="table table-striped">
+									</table>
+								</div>
 							</div>
 
 						</div>
 					</div>
+
 				</div>
 
-				<!-- LIST PANEL -->
-				<div id="panel3">
-					<div class="panel">
-
-						<div id="viewItemsContainer">
-							<div id="viewListContainer">
-								<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:200px;" tabindex="2">
-									<option></option>
-								</select>
-								<a href="#" id="delete-list-btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
-							</div>
-
-							<!--- DISPLAY SELECT -->
-							<div id="itemResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
-								<button class="btn btn-primary" data-content="0">List</button>
-								<button class="btn btn-primary active" data-content="1">Icons</button>
-								<button class="btn btn-primary" data-content="2">Cover</button>
-							</div>
-
-							<!-- ITEM RESULTS -->
-							<div id="itemResultsContainer">
-								<table id="itemResults" class="table table-striped">
-								</table>
-							</div>
-						</div>
-
-					</div>
-				</div>
-
-				<!-- RIGHT PANEL -->
-				<div id="panel4">
-					<div class="panel">
-						something
-					</div>
-				</div>
 			</div>
 		</div>
 
@@ -227,6 +252,21 @@
 	   		<% _.each(sortedSearchResults, function(item) { %>
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
 		   			<td class="title"><%= item.name %></td>
+		   			<td>
+			   			<div class="platformDropdown">
+							<% if (item.platformList) { %>
+							<ul class="nav nav-pills">
+								<li class="dropdown">
+								<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= item.platformList[0] %><b class="caret"></b></a>
+								<ul class="dropdown-menu">
+								<% _.each(item.platformList, function(platform, index) { %>
+								<li data-content="<%= item.id %>"><a href="#"><%= platform %></a></li>
+								<% }); %>
+								</ul>
+							</ul>
+							<% } %>
+			   			</div>
+		   			</td>
 		   		</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -238,7 +278,21 @@
 	   		<% _.each(sortedSearchResults, function(item) { %>
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
 		   			<td><img src="<%= item.smallImage %>" alt=""></td>
-		   			<td class="title"><%= item.name %></td>
+		   			<td class="title"><%= item.name %>
+			   			<div class="platformDropdown">
+			   				<% if (item.platformList) { %>
+							<ul class="nav nav-pills">
+								<li class="dropdown">
+								<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= item.platformList[0] %><b class="caret"></b></a>
+								<ul class="dropdown-menu">
+								<% _.each(item.platformList, function(platform, index) { %>
+								<li data-content="<%= item.id %>"><a href="#"><%= platform %></a></li>
+								<% }); %>
+								</ul>
+							</ul>
+							<% } %>
+			   			</div>
+			   		</td>
 		   		</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -250,10 +304,37 @@
 	   		<% _.each(sortedSearchResults, function(item) { %>
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
 		   			<td><img src="<%= item.thumbnailImage %>" alt=""></td>
-		   			<td class="title"><%= item.name %></td>
+		   			<td class="title"><%= item.name %>
+			   			<div class="platformDropdown">
+			   				<% if (item.platformList) { %>
+							<ul class="nav nav-pills">
+								<li class="dropdown">
+								<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= item.platformList[0] %><b class="caret"></b></a>
+								<ul class="dropdown-menu">
+								<% _.each(item.platformList, function(platform, index) { %>
+								<li data-content="<%= item.id %>"><a href="#"><%= platform %></a></li>
+								<% }); %>
+								</ul>
+							</ul>
+							<% } %>
+			   			</div>
+		   			</td>
 		   		</tr>
 	      	<% }); %>
 	      	</tbody>
+	    </script>
+
+	    <!-- search results (platform dropdown) -->
+	    <script type="text/template" id="search-results-platform-dropdown-template">
+			<ul class="nav nav-pills">
+				<li class="dropdown">
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= platformList[0] %><b class="caret"></b></a>
+				<ul class="dropdown-menu">
+				<% _.each(platformList, function(item, index) { %>
+					<li data-content="<%= gbombID %>"><a href="#"><%= item %></a></li>
+				<% }); %>
+				</ul>
+			</ul>
 	    </script>
 
 	   	<!-- item results (list)-->
@@ -262,7 +343,7 @@
 	   		<% _.each(sortedItems, function(item, index) { %>
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
 					<td><%= item.name %></td>
-					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
+					<td><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -275,7 +356,7 @@
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
 					<td><img src="<%= item.smallImage %>" alt=""></td>
 					<td><%= item.name %></td>
-					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
+					<td><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -288,7 +369,7 @@
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
 					<td><img src="<%= item.thumbnailImage %>" alt=""></td>
 					<td><%= item.name %></td>
-					<td><a href="#" class="btn delete-item-btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i> </a></td>
+					<td><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i> </a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -327,10 +408,9 @@
 				<%=itemData.description %>
 			</div>
 			<div class="modal-footer">
-				<a id="description_close_btn" href="#" class="btn">Close</a>
+				<a id="description_close_btn" href="#" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i> Close</a>
 			</div>
 	   	</script>
-
 
 		<!-- JAVASCRIPT LIBRARIES (SPECIFIC ORDER) -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
