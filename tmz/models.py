@@ -36,14 +36,15 @@ class ItemTagUser(models.Model):
 class Items(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
     user = models.ForeignKey('Users')
+    item_initialProvider = models.CharField(max_length=32)
     item_asin = models.CharField(max_length=16, blank=True)
     item_gbombID = models.CharField(max_length=16, blank=True)
     item_name = models.CharField(max_length=128)
-    item_releasedate = models.DateField()
-    item_platform = models.CharField(max_length=32)
-    item_smallImage = models.CharField(max_length=512)
-    item_thumbnailImage = models.CharField(max_length=512)
-    item_largeImage = models.CharField(max_length=512)
+    item_releasedate = models.DateField(blank=True)
+    item_platform = models.CharField(max_length=32, blank=True)
+    item_smallImage = models.CharField(max_length=512, blank=True)
+    item_thumbnailImage = models.CharField(max_length=512, blank=True)
+    item_largeImage = models.CharField(max_length=512, blank=True)
 
     class Meta:
         verbose_name_plural = 'ListItems'

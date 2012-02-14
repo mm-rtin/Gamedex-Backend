@@ -375,6 +375,7 @@ def createListItem(request):
     if (request.POST):
 
         # collect list item parameters
+        initialProvider = request.POST.get('item_initialProvider').strip()
         asin = request.POST.get('item_asin').strip()
         gbombID = request.POST.get('item_gbombID').strip()
 
@@ -430,7 +431,7 @@ def createListItem(request):
             # create new item
             if (existingItem is None):
                 guid = str(uuid.uuid4())
-                item = Items(id = guid, user = existingUser, item_asin = asin, item_gbombID = gbombID, item_name = itemName, item_releasedate = releaseDate, item_platform = platform, item_smallImage = smallImage, item_thumbnailImage = thumbnailImage, item_largeImage = largeImage)
+                item = Items(id = guid, user = existingUser, item_initialProvider = initialProvider, item_asin = asin, item_gbombID = gbombID, item_name = itemName, item_releasedate = releaseDate, item_platform = platform, item_smallImage = smallImage, item_thumbnailImage = thumbnailImage, item_largeImage = largeImage)
                 item.save()
 
             # item already exists, use instead
@@ -500,7 +501,7 @@ def getListItems(request):
                 usersListItems = []
                 # construct python dictionary
                 for items in itemTagUsers:
-                    usersListItems.append({'id': items.pk, 'itemID': items.item.pk, 'itemAsin': items.item.item_asin, 'itemGBombID': items.item.item_gbombID, 'itemName': items.item.item_name, 'itemReleaseDate': str(items.item.item_releasedate), 'itemPlatform': items.item.item_platform, 'itemSmallImage': items.item.item_smallImage, 'itemThumbnailImage': items.item.item_thumbnailImage, 'itemLargeImage': items.item.item_largeImage})
+                    usersListItems.append({'id': items.pk, 'item_initialProvider': items.item.item_initialProvider, 'itemID': items.item.pk, 'itemAsin': items.item.item_asin, 'itemGBombID': items.item.item_gbombID, 'itemName': items.item.item_name, 'itemReleaseDate': str(items.item.item_releasedate), 'itemPlatform': items.item.item_platform, 'itemSmallImage': items.item.item_smallImage, 'itemThumbnailImage': items.item.item_thumbnailImage, 'itemLargeImage': items.item.item_largeImage})
 
                 itemDictionary = {'items': usersListItems}
 
