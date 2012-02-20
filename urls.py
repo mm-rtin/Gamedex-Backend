@@ -26,6 +26,9 @@ urlpatterns = patterns('',
     (r'^itemsearch/giantbomb/$', 'tmz.views.itemSearchGiantBomb'),
     (r'^itemdetail/giantbomb/$', 'tmz.views.itemDetailGiantBomb'),
 
+    # metacritic scrapper
+    (r'^itemsearch/metacritic/$', 'tmz.views.itemSearchMetacritic'),
+
 
     # t_minuszero rest api
 

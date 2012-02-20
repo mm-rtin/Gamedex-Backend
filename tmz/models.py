@@ -39,6 +39,8 @@ class Items(models.Model):
     item_initialProvider = models.CharField(max_length=32)
     item_asin = models.CharField(max_length=16, blank=True)
     item_gbombID = models.CharField(max_length=16, blank=True)
+    item_metacriticPage = models.CharField(max_length=512, blank=True)
+    item_metascore = models.SmallIntegerField(max_length=3, blank=True)
     item_name = models.CharField(max_length=128)
     item_releasedate = models.DateField(blank=True)
     item_platform = models.CharField(max_length=32, blank=True)

@@ -29,16 +29,16 @@
 			<div class="modal-body">
     			<div class="span6">
 					<form action="">
-						<div class="clearfix">
+						<div class="clear">
 							<input id="userNameCreate_field" class="span6" id="" name="" type="text" placeholder="User Name" />
 						</div>
-						<div class="clearfix">
+						<div class="clear">
 							<input id="emailCreate_field" class="span6" id="" name="" type="text" placeholder="E-mail" />
 						</div>
-						<div class="clearfix">
+						<div class="clear">
 							<input id="passwordCreate_field" class="span6" id="" name="" type="password" placeholder="Password" />
 						</div>
-						<div class="clearfix">
+						<div class="clear">
 							<input id="password2Create_field" class="span6" id="" name="" type="password" placeholder="Password again" />
 						</div>
 					</form>
@@ -91,18 +91,20 @@
 	    <div id="wrapper">
 
 			<!-- CONTENT -->
-			<div id="content" class="content">
+			<div id="content">
 
 				<!-- SEARCH PANEL PLACEHOLDER -->
 				<div id="panel1">
+					<div class="header"></div>
 					<div class="panel">
+
 
 						<!-- SEARCH CONTAINER -->
 						<div id="searchContainer">
 
 							<!-- SEARCH SELECT -->
 							<div id="searchProviderContainer">
-								<select id="searchProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:170px;" tabindex="2">
+								<select id="searchProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:145px;" tabindex="2">
 									<option value="0">Amazon.com</option>
 									<option value="1">GiantBomb.com</option>
 								</select>
@@ -110,29 +112,29 @@
 
 							<!-- PLATFORM SELECT -->
 							<div id="platformContainer">
-								<select id="platformList" data-placeholder="Select Platform:" class="chzn-select" style="width:170px;" tabindex="2">
+								<select id="platformList" data-placeholder="Select Platform:" class="chzn-select" style="width:145px;" tabindex="2">
 									<option value="0">All Platforms</option>
 									<optgroup label="Computer">
 										<option value="1">PC</option>
 										<option value="2">Mac</option>
 									</optgroup>
 									<optgroup label="Microsoft">
-										<option value="3">Xbox</option>
 										<option value="4">Xbox 360</option>
+									</optgroup>
+									<optgroup label="Sony">
+										<option value="10">PS3</option>
+										<option value="11">Vita</option>
+										<option value="12">PSP</option>
 									</optgroup>
 									<optgroup label="Nintendo">
 										<option value="5">DS</option>
 										<option value="6">3DS</option>
 										<option value="7">Wii</option>
 									</optgroup>
-									<optgroup label="Sony">
+									<optgroup label="Legacy">
 										<option value="8">Playstation</option>
 										<option value="9">PlayStation 2</option>
-										<option value="10">PlayStation 3</option>
-										<option value="11">Vita</option>
-										<option value="12">PSP</option>
-									</optgroup>
-									<optgroup label="Legacy">
+										<option value="3">Xbox</option>
 										<option value="13">Gamecube</option>
 										<option value="14">N64</option>
 										<option value="15">SNES</option>
@@ -149,9 +151,10 @@
 								</select>
 							</div>
 
+
 							<!-- SEARCH COMPONENT -->
 							<div id="search" class="form-horizontal">
-								<input id="search_field" type="text" class="input-medium" value="skyrim">
+								<input id="search_field" type="text" class="span2" value="skyrim">
 								<button id="search_btn" class="btn btn-success" type="submit"><i class="icon-search icon-white"></i> Search</button>
 							</div>
 
@@ -165,6 +168,7 @@
 							<!-- SEARCH RESULTS -->
 							<div id="searchResultsContainer">
 								<table id="searchResults" class="table table-striped">
+
 								</table>
 							</div>
 
@@ -177,7 +181,9 @@
 
 					<!-- ITEM DETAIL PANEL -->
 					<div id="panel2">
+						<div class="header"></div>
 						<div class="panel">
+
 
 							<div id="itemDetailsContainer">
 
@@ -225,7 +231,9 @@
 
 					<!-- LIST PANEL -->
 					<div id="panel3">
+						<div class="header"></div>
 						<div class="panel">
+
 
 							<div id="viewItemsContainer">
 								<div id="viewListContainer">
@@ -235,44 +243,31 @@
 									<a href="#" id="deleteList_btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
 								</div>
 
-								<!--- DISPLAY SELECT -->
-								<div id="itemResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
-									<button class="btn" data-content="0" data-toggle="button">List</button>
-									<button class="btn active" data-content="1" data-toggle="button">Icons</button>
-									<button class="btn" data-content="2" data-toggle="button">Cover</button>
+								<!-- DISPLAY SELECT -->
+								<div class="optionsGroup">
+									<div data-toggle="buttons-radio" class="displayOptions btn-group">
+										<button class="btn" data-content="0" data-toggle="button">List</button>
+										<button class="btn active" data-content="1" data-toggle="button">Icons</button>
+										<button class="btn" data-content="2" data-toggle="button">Cover</button>
+									</div>
+
+									<!-- SORT OPTIONS -->
+									<div class="sortOptions btn-group">
+										<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
+										<ul class="dropdown-menu">
+											<li><a href="#" data-content="0">Alphabetical</a></li>
+											<li><a href="#" data-content="1">Review Score</a></li>
+											<li><a href="#" data-content="2">Price</a></li>
+										</ul>
+									</div>
+
+									<div class="clear"></div>
 								</div>
 
 								<!-- ITEM RESULTS -->
 								<div id="itemResultsContainer">
 									<table id="itemResults" class="table table-striped">
-									</table>
-								</div>
-							</div>
 
-						</div>
-					</div>
-
-					<!-- RIGHT PANEL -->
-					<div id="panel4">
-						<div class="panel">
-
-							<div id="NOT_SURE">
-								<div id="NOT_SURE">
-									<select id="NOT_SURE" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
-										<option></option>
-									</select>
-								</div>
-
-								<!--- DISPLAY SELECT -->
-								<div id="NOT_SURE" data-toggle="buttons-radio" class="btn-group">
-									<button class="btn" data-content="0" data-toggle="button">List</button>
-									<button class="btn active" data-content="1" data-toggle="button">Icons</button>
-									<button class="btn" data-content="2" data-toggle="button">Cover</button>
-								</div>
-
-								<!-- ITEM RESULTS -->
-								<div id="NOT_SURE">
-									<table id="NOT_SURE" class="table table-striped">
 									</table>
 								</div>
 							</div>
@@ -315,10 +310,10 @@
 
 	    <!-- search results (icons) -->
 	    <script type="text/template" id="search-results-icon-template">
-	    	<tbody>
+	    	<tbody class="iconView">
 	   		<% _.each(sortedSearchResults, function(item) { %>
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
-		   			<td><img src="<%= item.smallImage %>" alt=""></td>
+		   			<td class="image"><img src="<%= item.smallImage %>" alt=""></td>
 		   			<td class="title"><%= item.name %>
 			   			<div class="platformDropdown">
 			   				<% if (item.platformList) { %>
@@ -341,10 +336,10 @@
 
 	    <!-- search results (cover) -->
 	    <script type="text/template" id="search-results-cover-template">
-	    	<tbody>
+	    	<tbody class="coverView">
 	   		<% _.each(sortedSearchResults, function(item) { %>
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
-		   			<td><img src="<%= item.thumbnailImage %>" alt=""></td>
+		   			<td class="image"><img src="<%= item.thumbnailImage %>" alt=""></td>
 		   			<td class="title"><%= item.name %>
 			   			<div class="platformDropdown">
 			   				<% if (item.platformList) { %>
@@ -378,39 +373,16 @@
 			</ul>
 	    </script>
 
-	   	<!-- item results (list)-->
-	   	<script type="text/template" id="item-results-list-template">
-	  	 	<tbody>
+	   	<!-- item results -->
+	   	<script type="text/template" id="item-results-template">
+	   		<tbody class="list display-<%= displayType %>">
 	   		<% _.each(sortedItems, function(item, index) { %>
 				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
-					<td><%= item.name %></td>
-					<td><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
-				</tr>
-	      	<% }); %>
-	      	</tbody>
-	   	</script>
-
-	   	<!-- item results (icons) -->
-	   	<script type="text/template" id="item-results-icon-template">
-	  	 	<tbody>
-	   		<% _.each(sortedItems, function(item, index) { %>
-				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
-					<td><img src="<%= item.smallImage %>" alt=""></td>
-					<td><%= item.name %></td>
-					<td><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
-				</tr>
-	      	<% }); %>
-	      	</tbody>
-	   	</script>
-
-	   	<!-- item results (cover) -->
-	   	<script type="text/template" id="item-results-cover-template">
-	  	 	<tbody>
-	   		<% _.each(sortedItems, function(item, index) { %>
-				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
-					<td><img src="<%= item.thumbnailImage %>" alt=""></td>
-					<td><%= item.name %></td>
-					<td><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i> </a></td>
+					<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
+					<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
+					<td class="title item-name"><%= item.name %></td>
+					<td class="details item-details"></td>
+					<td class="options"><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -424,19 +396,45 @@
 	      	<% }); %>
 	   	</script>
 
+	   	<!-- price menu -->
+	   	<script type="text/template" id="price-menu-template">
+			<div class="btn-group priceMenu">
+			<a class="btn" href="#">Amazon: <%= buyNowPrice %></a>
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="#" data-content="0">Lowest New: <%= lowestNewPrice %></a></li>
+				<li><a href="#" data-content="1">Lowest Used: <%= lowestUsedPrice %></a></li>
+			</ul>
+			</div>
+	   	</script>
+
 
 	   	<!-- item details -->
 	   	<script type="text/template" id="item-details-template">
-			<div id="itemDetailTitle">
-				<h3><%= itemData.name %><h3>
-			</div>
-			<div id="itemDetailReleaseDate">
-				<h4><%= itemData.releaseDate %></h4>
-			</div>
-			<div id="itemDetailPlatform">
-				<a href="#" class="btn btn-success"><i class="icon-tag icon-white"></i> <%= itemData.platform %></a>
-			</div>
-			<div id="itemDetailThumbnail"><img src="<%= itemData.largeImage %>" alt=""></div>
+	   		<table>
+	   			<tbody>
+	   				<tr>
+						<td class="itemDetailTitle">
+							<h3><%= itemData.name %></h3>
+						</td>
+						<td class="itemDetailMetascore">
+							<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
+						</td>
+					<tr>
+						<td class="itemDetailReleaseDate">
+							<h4><%= itemData.releaseDate %></h4>
+						</td>
+					</tr>
+					<tr>
+						<td class="itemDetailPlatform">
+							<a href="#" class="btn btn-success"><i class="icon-tag icon-white"></i> <%= itemData.platform %></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="itemDetailThumbnail"><img src="<%= itemData.largeImage %>" alt=""></div>
 	   	</script>
 
 	   	<!-- description modal -->
@@ -457,6 +455,7 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 		<script src="http://static.t-minuszero.com/lib/underscore-min.js"></script>
 		<script src="http://static.t-minuszero.com/lib/backbone.js"></script>
+		<script src="http://static.t-minuszero.com/lib/list.min.js"></script>
 
 		<script src="http://static.t-minuszero.com/lib/chosen.jquery.js"></script>
 

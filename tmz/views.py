@@ -30,6 +30,22 @@ def index(request):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# METACRITIC
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def itemSearchMetacritic(request):
+
+    if 'keywords' in request.GET:
+        keywords = request.GET.get('keywords')
+
+    # http://www.metacritic.com/search/game/something/results
+    url = 'http://www.metacritic.com/search/game/' + keywords + '/results'
+    req = urllib2.Request(url)
+    f = urllib2.urlopen(req)
+
+    return HttpResponse(f.read(), mimetype='text/html')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # AMAZON PRODUCT API REST PROXY
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # item search
@@ -386,6 +402,9 @@ def createListItem(request):
         thumbnailImage = request.POST.get('item_thumbnailImage').strip()
         largeImage = request.POST.get('item_largeImage').strip()
 
+        metacriticPage = request.POST.get('item_metacriticPage').strip()
+        metascore = request.POST.get('item_metascore').strip()
+
         # get listIDs as array
         listIDs = request.POST.getlist('list_ids[]')
 
@@ -431,7 +450,7 @@ def createListItem(request):
             # create new item
             if (existingItem is None):
                 guid = str(uuid.uuid4())
-                item = Items(id = guid, user = existingUser, item_initialProvider = initialProvider, item_asin = asin, item_gbombID = gbombID, item_name = itemName, item_releasedate = releaseDate, item_platform = platform, item_smallImage = smallImage, item_thumbnailImage = thumbnailImage, item_largeImage = largeImage)
+                item = Items(id = guid, user = existingUser, item_initialProvider = initialProvider, item_asin = asin, item_gbombID = gbombID, item_name = itemName, item_releasedate = releaseDate, item_platform = platform, item_smallImage = smallImage, item_thumbnailImage = thumbnailImage, item_largeImage = largeImage, item_metacriticPage = metacriticPage, item_metascore = metascore)
                 item.save()
 
             # item already exists, use instead
