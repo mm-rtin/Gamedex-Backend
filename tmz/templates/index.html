@@ -12,8 +12,9 @@
 
 		<!-- styles -->
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/bootstrap.css">
-		<link rel="stylesheet" href="http://static.t-minuszero.com/css/tmz.css">
+		<link rel="stylesheet" media="screen" href="http://static.t-minuszero.com/css/tmz.css">
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/chosen.css">
+		<link rel="stylesheet" href="http://static.t-minuszero.com/css/nanoscroller.css">
 		<!-- Le fav and touch icons -->
 		<link rel="shortcut icon" href="http://static.t-minuszero.com/images/favicon.ico">
 
@@ -151,6 +152,8 @@
 								</select>
 							</div>
 
+							<div class="clear"></div>
+
 
 							<!-- SEARCH COMPONENT -->
 							<div id="search" class="form-horizontal">
@@ -166,10 +169,10 @@
 							</div>
 
 							<!-- SEARCH RESULTS -->
-							<div id="searchResultsContainer">
-								<table id="searchResults" class="table table-striped">
-
-								</table>
+							<div id="searchResultsContainer" class="nano">
+								<div class="content">
+									<table id="searchResults" class="table table-striped"></table>
+								</div>
 							</div>
 
 						</div>
@@ -177,143 +180,111 @@
 				</div>
 
 
-				<div id="stickyPanels">
-
-					<!-- ITEM DETAIL PANEL -->
-					<div id="panel2">
-						<div class="header"></div>
-						<div class="panel">
+				<!-- ITEM DETAIL PANEL -->
+				<div id="panel2">
+					<div class="header"></div>
+					<div class="panel">
 
 
-							<div id="itemDetailsContainer">
+						<div id="itemDetailsContainer">
 
-								<div id="itemDetails">
+							<!-- PROVIDER TABS -->
+							<div id="itemDetails">
 
-									<ul id="detailTab" class="nav nav-tabs">
-										<li class="active">
-											<a id="amazonTabLink" href="#amazonTab" data-toggle="tab">Amazon</a>
-										</li>
-										<li>
-											<a id="giantBombTabLink" href="#giantBombTab" data-toggle="tab">GiantBomb</a>
-										</li>
-									</ul>
-
-									<div id="detailTabContent" class="tab-content">
-										<div id="amazonTab" class="tab-pane active"></div>
-										<div id="giantBombTab" class="tab-pane"></div>
-									</div>
-
-								</div>
-
-								<div id="itemDetailDescription">
-									<a href="#" id="viewDescription_btn" class="btn btn-primary"><i class="icon-list-alt icon-white"></i> View Description</a>
-								</div>
-
-								<div id="itemDetailListContainer">
-									<div id="addTolistContainer">
-										<select id="addList" data-placeholder="Add to list:" class="chzn-select list" multiple style="width:170px;" tabindex="2">
-											<option></option>
-										</select>
-									</div>
-								</div>
-
-								<div id="saveItemContainer">
-									<a href="#" id="saveItem_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</a>
-								</div>
-
-								<div id="addItemContainer">
-									<a href="#" id="addItem_btn" class="btn btn-success"><i class="icon-plus icon-white"></i> Add to List</a>
-								</div>
-
-							</div>
-						</div>
-					</div>
-
-					<!-- LIST PANEL -->
-					<div id="panel3">
-						<div class="header"></div>
-						<div class="panel">
-
-
-							<div id="viewItemsContainer">
-								<div id="viewListContainer">
-									<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
+								<!-- TAG LIST -->
+								<div id="addListContainer">
+									<select id="addList" data-placeholder="Add to list:" class="chzn-select list" multiple tabindex="2">
 										<option></option>
 									</select>
-									<a href="#" id="deleteList_btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
+								</div>
+								<div id="addListButtons">
+									<a href="#" id="saveItem_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</a>
+									<a href="#" id="addItem_btn" class="btn btn-success"><i class="icon-plus icon-white"></i> Add</a>
 								</div>
 
-								<!-- DISPLAY SELECT -->
-								<div class="optionsGroup">
-									<div data-toggle="buttons-radio" class="displayOptions btn-group">
-										<button class="btn" data-content="0" data-toggle="button">List</button>
-										<button class="btn active" data-content="1" data-toggle="button">Icons</button>
-										<button class="btn" data-content="2" data-toggle="button">Cover</button>
-									</div>
+								<div class="clear"></div>
 
-									<!-- SORT OPTIONS -->
-									<div class="sortOptions btn-group">
-										<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
-										<ul class="dropdown-menu">
-											<li><a href="#" data-content="0">Alphabetical</a></li>
-											<li><a href="#" data-content="1">Review Score</a></li>
-											<li><a href="#" data-content="2">Price</a></li>
-										</ul>
-									</div>
+								<!-- PROVIDER TABS -->
+								<ul id="detailTab" class="nav nav-tabs">
+									<li class="active">
+										<a id="amazonTabLink" href="#amazonTab" data-toggle="tab">Amazon</a>
+									</li>
+									<li>
+										<a id="giantBombTabLink" href="#giantBombTab" data-toggle="tab">GiantBomb</a>
+									</li>
+								</ul>
 
-									<div class="clear"></div>
+								<div id="detailTabContent" class="tab-content">
+									<div id="amazonTab" class="tab-pane active"></div>
+									<div id="giantBombTab" class="tab-pane"></div>
 								</div>
 
-								<!-- ITEM RESULTS -->
-								<div id="itemResultsContainer">
-									<table id="itemResults" class="table table-striped">
-
-									</table>
-								</div>
 							</div>
 
 						</div>
 					</div>
-
 				</div>
+
+				<!-- LIST PANEL -->
+				<div id="panel3">
+					<div class="header"></div>
+					<div class="panel">
+
+						<div id="viewItemsContainer">
+							<div id="viewListContainer">
+								<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
+									<option></option>
+								</select>
+								<a href="#" id="deleteList_btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
+							</div>
+
+							<!-- DISPLAY SELECT -->
+							<div class="optionsGroup">
+								<div data-toggle="buttons-radio" class="displayOptions btn-group">
+									<button class="btn" data-content="0" data-toggle="button">List</button>
+									<button class="btn active" data-content="1" data-toggle="button">Icons</button>
+									<button class="btn" data-content="2" data-toggle="button">Cover</button>
+								</div>
+
+								<!-- SORT OPTIONS -->
+								<div class="sortOptions btn-group">
+									<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a href="#" data-content="0">Alphabetical</a></li>
+										<li><a href="#" data-content="1">Review Score</a></li>
+										<li><a href="#" data-content="2">Price</a></li>
+									</ul>
+								</div>
+
+								<div class="clear"></div>
+							</div>
+
+							<!-- ITEM RESULTS -->
+							<div id="itemResultsContainer" class="nano">
+								<div class="content">
+									<table id="itemResults" class="table table-striped"></table>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="clear"></div>
+
 
 			</div>
 		</div>
 
 	    <!-- Templates -->
 
-	    <!-- search results (list) -->
-	    <script type="text/template" id="search-results-list-template">
-	    	<tbody>
+	    <!-- search results -->
+	    <script type="text/template" id="search-results-template">
+	    	<tbody class="list display-<%= displayType %>">
 	   		<% _.each(sortedSearchResults, function(item) { %>
-		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
-		   			<td class="title"><%= item.name %></td>
-		   			<td>
-			   			<div class="platformDropdown">
-							<% if (item.platformList) { %>
-							<ul class="nav nav-pills">
-								<li class="dropdown">
-								<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= item.platformList[0] %><b class="caret"></b></a>
-								<ul class="dropdown-menu">
-								<% _.each(item.platformList, function(platform, index) { %>
-								<li data-content="<%= item.id %>"><a href="#"><%= platform %></a></li>
-								<% }); %>
-								</ul>
-							</ul>
-							<% } %>
-			   			</div>
-		   			</td>
-		   		</tr>
-	      	<% }); %>
-	      	</tbody>
-	    </script>
-
-	    <!-- search results (icons) -->
-	    <script type="text/template" id="search-results-icon-template">
-	    	<tbody class="iconView">
-	   		<% _.each(sortedSearchResults, function(item) { %>
-		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
-		   			<td class="image"><img src="<%= item.smallImage %>" alt=""></td>
+		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-temp="<%= item.releaseDate %>">
+		   			<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
+		   			<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
 		   			<td class="title"><%= item.name %>
 			   			<div class="platformDropdown">
 			   				<% if (item.platformList) { %>
@@ -329,32 +300,6 @@
 							<% } %>
 			   			</div>
 			   		</td>
-		   		</tr>
-	      	<% }); %>
-	      	</tbody>
-	    </script>
-
-	    <!-- search results (cover) -->
-	    <script type="text/template" id="search-results-cover-template">
-	    	<tbody class="coverView">
-	   		<% _.each(sortedSearchResults, function(item) { %>
-		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-content="<%= item.releaseDate %>">
-		   			<td class="image"><img src="<%= item.thumbnailImage %>" alt=""></td>
-		   			<td class="title"><%= item.name %>
-			   			<div class="platformDropdown">
-			   				<% if (item.platformList) { %>
-							<ul class="nav nav-pills">
-								<li class="dropdown">
-								<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= item.platformList[0] %><b class="caret"></b></a>
-								<ul class="dropdown-menu">
-								<% _.each(item.platformList, function(platform, index) { %>
-								<li data-content="<%= item.id %>"><a href="#"><%= platform %></a></li>
-								<% }); %>
-								</ul>
-							</ul>
-							<% } %>
-			   			</div>
-		   			</td>
 		   		</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -381,7 +326,8 @@
 					<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
 					<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
 					<td class="title item-name"><%= item.name %></td>
-					<td class="details item-details"></td>
+					<td class="priceDetails"></td>
+					<td class="scoreDetails "><a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a></td>
 					<td class="options"><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
 				</tr>
 	      	<% }); %>
@@ -410,7 +356,6 @@
 			</div>
 	   	</script>
 
-
 	   	<!-- item details -->
 	   	<script type="text/template" id="item-details-template">
 	   		<table>
@@ -423,13 +368,10 @@
 							<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
 						</td>
 					<tr>
-						<td class="itemDetailReleaseDate">
-							<h4><%= itemData.releaseDate %></h4>
-						</td>
-					</tr>
-					<tr>
-						<td class="itemDetailPlatform">
+						<td class="itemDetailInfo">
+							<a href="#" class="btn btn-success"><i class="icon-time icon-white"></i> <%= itemData.releaseDate %></a>
 							<a href="#" class="btn btn-success"><i class="icon-tag icon-white"></i> <%= itemData.platform %></a>
+							<a href="#" class="viewDescription_btn btn btn-primary"><i class="icon-list-alt icon-white"></i> Description</a>
 						</td>
 					</tr>
 				</tbody>
@@ -458,6 +400,8 @@
 		<script src="http://static.t-minuszero.com/lib/list.min.js"></script>
 
 		<script src="http://static.t-minuszero.com/lib/chosen.jquery.js"></script>
+		<script src="http://static.t-minuszero.com/lib/jquery.nanoscroller.min.js"></script>
+		<script src="http://static.t-minuszero.com/lib/jquery.ba-resize.js"></script>
 
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-modal.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-button.js"></script>
@@ -484,6 +428,11 @@
 		<script src="http://static.t-minuszero.com/js/tmz_itemData.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_listData.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_searchData.js"></script>
+
+		<script src="http://static.t-minuszero.com/js/tmz_metacritic.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_amazonprice.js"></script>
+
+		<script src="http://static.t-minuszero.com/js/tmz_itemLinker.js"></script>
 
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
