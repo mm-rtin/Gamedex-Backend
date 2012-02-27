@@ -506,11 +506,17 @@ def getListItems(request):
             existingTag = None
 
         # validate secretKey against user
-        if existingUser and existingTag and existingUser.user_secret_key == secretKey:
+        if existingUser and (existingTag or tagID == '0') and existingUser.user_secret_key == secretKey:
 
             # get tag items
             try:
-                itemTagUsers = ItemTagUser.objects.filter(user = existingUser, tag = existingTag)
+                # items for all tags
+                if tagID == '0':
+                    itemTagUsers = ItemTagUser.objects.filter(user = existingUser)
+                # items filtered by tag
+                else:
+                    itemTagUsers = ItemTagUser.objects.filter(user = existingUser, tag = existingTag)
+
             except ItemTagUser.DoesNotExist:
                 itemTagUsers = None
 

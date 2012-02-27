@@ -55,6 +55,111 @@
 		<div id="giantBombDescription-modal" class="modal hide"></div>
 		<div id="amazonDescription-modal" class="modal hide"></div>
 
+		<!-- FILTERS MODAL -->
+		<div id="filters-modal" class="modal hide">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>List Filters</h3>
+			</div>
+			<div class="modal-body">
+
+				<form class="form-horizontal">
+				    <fieldset>
+
+				    	<!-- platform filter -->
+						<div class="control-group">
+							<label for="platform_filter" class="control-label">Platform Filter</label>
+							<div class="controls">
+								<div id="platform_filter">
+									<select id="platformFilterList" data-placeholder="Select Platform:" class="chzn-select" multiple style="width:145px;" tabindex="2">
+										<option value="0">All Platforms</option>
+										<optgroup label="Computer">
+											<option value="1">PC</option>
+											<option value="2">Mac</option>
+										</optgroup>
+										<optgroup label="Microsoft">
+											<option value="4">Xbox 360</option>
+										</optgroup>
+										<optgroup label="Sony">
+											<option value="10">PS3</option>
+											<option value="11">Vita</option>
+											<option value="12">PSP</option>
+										</optgroup>
+										<optgroup label="Nintendo">
+											<option value="5">DS</option>
+											<option value="6">3DS</option>
+											<option value="7">Wii</option>
+										</optgroup>
+										<optgroup label="Legacy">
+											<option value="8">Playstation</option>
+											<option value="9">PlayStation 2</option>
+											<option value="3">Xbox</option>
+											<option value="13">Gamecube</option>
+											<option value="14">N64</option>
+											<option value="15">SNES</option>
+											<option value="16">NES</option>
+											<option value="17">GBA</option>
+											<option value="18">Gameboy Color</option>
+											<option value="19">Gameboy</option>
+											<option value="20">Sega Dreamcast</option>
+											<option value="21">Sega Saturn</option>
+											<option value="22">Sega Genesis</option>
+											<option value="23">Sega GameGear</option>
+											<option value="24">Sega CD</option>
+										</optgroup>
+									</select>
+								</div>
+							</div>
+						</div>
+
+				    	<!-- release date filter -->
+						<div class="control-group">
+							<label for="releaseDate_filter" class="control-label">Release Date Filter</label>
+							<div class="controls">
+								<div id="releaseDate_filter" data-toggle="buttons-checkbox" class="btn-group">
+									<button class="btn" data-content="0">Unreleased</button>
+									<button class="btn" data-content="1">Released</button>
+								</div>
+							</div>
+						</div>
+
+				    	<!-- ownership filter -->
+						<div class="control-group">
+							<label for="playStatus_filter" class="control-label">Play Status Filter</label>
+							<div class="controls">
+								<div id="playStatus_filter" data-toggle="buttons-checkbox" class="btn-group">
+									<button class="btn" data-content="0">Playing</button>
+									<button class="btn" data-content="1">Finished</button>
+									<button class="btn" data-content="2">Not Started</button>
+								</div>
+							</div>
+						</div>
+
+				    	<!-- metascore filter -->
+						<div class="control-group">
+							<label for="metascore_filter" class="control-label">Metascore Filter</label>
+							<div class="controls">
+								<div id="metascore_filter" data-toggle="buttons-checkbox" class="btn-group">
+									<button class="btn" data-content="0">90s</button>
+									<button class="btn" data-content="1">80s</button>
+									<button class="btn" data-content="2">70s</button>
+									<button class="btn" data-content="3">60s</button>
+									<button class="btn" data-content="4">50s</button>
+									<button class="btn" data-content="5">25-49</button>
+									<button class="btn" data-content="6">0-24</button>
+								</div>
+							</div>
+						</div>
+
+				    </fieldset>
+				</form>
+
+			</div>
+			<div class="modal-footer">
+				<a id="applyFilters_btn" href="#" class="btn btn-primary" data-dismiss="modal">Apply Filters</a>
+				<a id="cancelFilters_btn" href="#" class="btn" data-dismiss="modal">Cancel</a>
+			</div>
+		</div>
 
 		<!-- HEADER -->
 		<div id="header" class="navbar navbar-fixed-top">
@@ -225,22 +330,33 @@
 					</div>
 				</div>
 
-				<!-- LIST PANEL -->
+				<!-- ITEM VIEW PANEL -->
 				<div id="panel3">
 					<div class="header"></div>
 					<div class="panel">
 
 						<div id="viewItemsContainer">
-							<div id="viewListContainer">
-								<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
-									<option></option>
-								</select>
+
+							<div class="optionsGroup">
+								<div id="viewListContainer">
+									<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
+										<option></option>
+									</select>
+								</div>
+
+								<!-- filters button -->
+								<button id="listFilters_btn" class="btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> List Filters</button>
+
 								<a href="#" id="deleteList_btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
+
+								<div class="clear"></div>
 							</div>
 
 							<!-- DISPLAY SELECT -->
 							<div class="optionsGroup">
-								<div data-toggle="buttons-radio" class="displayOptions btn-group">
+
+								<!-- display options -->
+								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
 									<button class="btn" data-content="0" data-toggle="button">List</button>
 									<button class="btn active" data-content="1" data-toggle="button">Icons</button>
 									<button class="btn" data-content="2" data-toggle="button">Cover</button>
@@ -248,11 +364,13 @@
 
 								<!-- SORT OPTIONS -->
 								<div class="sortOptions btn-group">
+									<a class="currentSort btn" href="#">Alphabetical</a>
 									<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
 									<ul class="dropdown-menu">
 										<li><a href="#" data-content="0">Alphabetical</a></li>
 										<li><a href="#" data-content="1">Review Score</a></li>
-										<li><a href="#" data-content="2">Price</a></li>
+										<li><a href="#" data-content="2">Release Date</a></li>
+										<li><a href="#" data-content="3">Price</a></li>
 									</ul>
 								</div>
 
@@ -305,57 +423,6 @@
 	      	</tbody>
 	    </script>
 
-	    <!-- search results (platform dropdown) -->
-	    <script type="text/template" id="search-results-platform-dropdown-template">
-			<ul class="nav nav-pills">
-				<li class="dropdown">
-				<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= platformList[0] %><b class="caret"></b></a>
-				<ul class="dropdown-menu">
-				<% _.each(platformList, function(item, index) { %>
-					<li data-content="<%= gbombID %>"><a href="#"><%= item %></a></li>
-				<% }); %>
-				</ul>
-			</ul>
-	    </script>
-
-	   	<!-- item results -->
-	   	<script type="text/template" id="item-results-template">
-	   		<tbody class="list display-<%= displayType %>">
-	   		<% _.each(sortedItems, function(item, index) { %>
-				<tr id="<%= item.id %>" title="<%= item.name %>" data-content="<%= item.releaseDate %>">
-					<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
-					<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
-					<td class="title item-name"><%= item.name %></td>
-					<td class="priceDetails"></td>
-					<td class="scoreDetails "><a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a></td>
-					<td class="options"><a href="#" class="deleteItem_btn btn btn-danger" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
-				</tr>
-	      	<% }); %>
-	      	</tbody>
-	   	</script>
-
-	   	<!-- dropdown list -->
-	   	<script type="text/template" id="list-results-template">
-	   		<option></option>
-	   		<% _.each(orderedList, function(item) { %>
-	   			<option id="<%= item.id %>" value="<%= item.id %>"><%= item.name %></option>
-	      	<% }); %>
-	   	</script>
-
-	   	<!-- price menu -->
-	   	<script type="text/template" id="price-menu-template">
-			<div class="btn-group priceMenu">
-			<a class="btn" href="#">Amazon: <%= buyNowPrice %></a>
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-			<span class="caret"></span>
-			</a>
-			<ul class="dropdown-menu">
-				<li><a href="#" data-content="0">Lowest New: <%= lowestNewPrice %></a></li>
-				<li><a href="#" data-content="1">Lowest Used: <%= lowestUsedPrice %></a></li>
-			</ul>
-			</div>
-	   	</script>
-
 	   	<!-- item details -->
 	   	<script type="text/template" id="item-details-template">
 	   		<table>
@@ -377,6 +444,62 @@
 				</tbody>
 			</table>
 			<div class="itemDetailThumbnail"><img src="<%= itemData.largeImage %>" alt=""></div>
+	   	</script>
+
+	   	<!-- item results -->
+	   	<script type="text/template" id="item-results-template">
+	   		<tbody class="list display-<%= displayType %>">
+	   		<% _.each(items, function(item, index) { %>
+				<tr id="<%= item.id %>" data-content="<%= item.releaseDate %>">
+					<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
+					<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
+					<td>
+						<div class="itemName"><%= item.name %></div>
+						<div><a href="" class="calendarDate" target="_blank" rel="tooltip" data-original-title="<%= item.releaseDate %>"><%= item.calendarDate %></a></div>
+					</td>
+					<td class="priceDetails"></td>
+					<td class="scoreDetails"><a href="" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
+					<td class="options"><a href="#" class="deleteItem_btn btn btn-danger btn-small" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
+				</tr>
+	      	<% }); %>
+	      	</tbody>
+	   	</script>
+
+	    <!-- platform dropdown -->
+	    <script type="text/template" id="search-results-platform-dropdown-template">
+			<ul class="nav nav-pills">
+				<li class="dropdown">
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= platformList[0] %><b class="caret"></b></a>
+				<ul class="dropdown-menu">
+				<% _.each(platformList, function(item, index) { %>
+					<li data-content="<%= gbombID %>"><a href="#"><%= item %></a></li>
+				<% }); %>
+				</ul>
+			</ul>
+	    </script>
+
+	   	<!-- dropdown list -->
+	   	<script type="text/template" id="list-results-template">
+	   		<option></option>
+   			<option value="0">View All</option>
+
+	   		<% _.each(orderedList, function(item) { %>
+	   			<option value="<%= item.id %>"><%= item.name %></option>
+	      	<% }); %>
+	   	</script>
+
+	   	<!-- price menu -->
+	   	<script type="text/template" id="price-menu-template">
+			<div class="btn-group priceMenu">
+			<a class="lowestNew btn" href="<%= productURL %>" data-price="<%= buyNowRawPrice %>" target="_blank">Amazon: <%= buyNowPrice %></a>
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="<%= offersURLNew %>" data-content="0" target="_blank">Lowest New: <%= lowestNewPrice %></a></li>
+				<li><a href="<%= offersURLUsed %>" data-content="1" target="_blank">Lowest Used: <%= lowestUsedPrice %></a></li>
+			</ul>
+			</div>
 	   	</script>
 
 	   	<!-- description modal -->
@@ -402,6 +525,7 @@
 		<script src="http://static.t-minuszero.com/lib/chosen.jquery.js"></script>
 		<script src="http://static.t-minuszero.com/lib/jquery.nanoscroller.min.js"></script>
 		<script src="http://static.t-minuszero.com/lib/jquery.ba-resize.js"></script>
+		<script src="http://static.t-minuszero.com/lib/moment.min.js"></script>
 
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-modal.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-button.js"></script>
@@ -429,7 +553,7 @@
 		<script src="http://static.t-minuszero.com/js/tmz_listData.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_searchData.js"></script>
 
-		<script src="http://static.t-minuszero.com/js/tmz_metacritic.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_metascore.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_amazonprice.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_itemLinker.js"></script>
