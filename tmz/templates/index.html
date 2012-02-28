@@ -71,41 +71,40 @@
 							<label for="platform_filter" class="control-label">Platform Filter</label>
 							<div class="controls">
 								<div id="platform_filter">
-									<select id="platformFilterList" data-placeholder="Select Platform:" class="chzn-select" multiple style="width:145px;" tabindex="2">
-										<option value="0">All Platforms</option>
+									<select id="platformFilterList" data-placeholder="Select Platform:" class="chzn-select" multiple style="width:250px;" tabindex="2">
 										<optgroup label="Computer">
-											<option value="1">PC</option>
-											<option value="2">Mac</option>
+											<option value="pc">PC</option>
+											<option value="mac">Mac</option>
 										</optgroup>
 										<optgroup label="Microsoft">
-											<option value="4">Xbox 360</option>
+											<option value="x360">Xbox 360</option>
 										</optgroup>
 										<optgroup label="Sony">
-											<option value="10">PS3</option>
-											<option value="11">Vita</option>
-											<option value="12">PSP</option>
+											<option value="ps3">PS3</option>
+											<option value="vita">Vita</option>
+											<option value="psp">PSP</option>
 										</optgroup>
 										<optgroup label="Nintendo">
-											<option value="5">DS</option>
-											<option value="6">3DS</option>
-											<option value="7">Wii</option>
+											<option value="ds">DS</option>
+											<option value="3ds">3DS</option>
+											<option value="wii">Wii</option>
 										</optgroup>
 										<optgroup label="Legacy">
-											<option value="8">Playstation</option>
-											<option value="9">PlayStation 2</option>
-											<option value="3">Xbox</option>
-											<option value="13">Gamecube</option>
-											<option value="14">N64</option>
-											<option value="15">SNES</option>
-											<option value="16">NES</option>
-											<option value="17">GBA</option>
-											<option value="18">Gameboy Color</option>
-											<option value="19">Gameboy</option>
-											<option value="20">Sega Dreamcast</option>
-											<option value="21">Sega Saturn</option>
-											<option value="22">Sega Genesis</option>
-											<option value="23">Sega GameGear</option>
-											<option value="24">Sega CD</option>
+											<option value="ps">Playstation</option>
+											<option value="ps2">PlayStation 2</option>
+											<option value="xbox">Xbox</option>
+											<option value="gc">Gamecube</option>
+											<option value="n64">N64</option>
+											<option value="snes">SNES</option>
+											<option value="nes">NES</option>
+											<option value="gba">GBA</option>
+											<option value="gbc">Gameboy Color</option>
+											<option value="gb">Gameboy</option>
+											<option value="dc">Sega Dreamcast</option>
+											<option value="saturn">Sega Saturn</option>
+											<option value="genesis">Sega Genesis</option>
+											<option value="gamegear">Sega GameGear</option>
+											<option value="cd">Sega CD</option>
 										</optgroup>
 									</select>
 								</div>
@@ -219,40 +218,40 @@
 							<!-- PLATFORM SELECT -->
 							<div id="platformContainer">
 								<select id="platformList" data-placeholder="Select Platform:" class="chzn-select" style="width:145px;" tabindex="2">
-									<option value="0">All Platforms</option>
+									<option value="all">All platforms</option>
 									<optgroup label="Computer">
-										<option value="1">PC</option>
-										<option value="2">Mac</option>
+										<option value="pc">PC</option>
+										<option value="mac">Mac</option>
 									</optgroup>
 									<optgroup label="Microsoft">
-										<option value="4">Xbox 360</option>
+										<option value="x360">Xbox 360</option>
 									</optgroup>
 									<optgroup label="Sony">
-										<option value="10">PS3</option>
-										<option value="11">Vita</option>
-										<option value="12">PSP</option>
+										<option value="ps3">PS3</option>
+										<option value="vita">Vita</option>
+										<option value="psp">PSP</option>
 									</optgroup>
 									<optgroup label="Nintendo">
-										<option value="5">DS</option>
-										<option value="6">3DS</option>
-										<option value="7">Wii</option>
+										<option value="ds">DS</option>
+										<option value="3ds">3DS</option>
+										<option value="wii">Wii</option>
 									</optgroup>
 									<optgroup label="Legacy">
-										<option value="8">Playstation</option>
-										<option value="9">PlayStation 2</option>
-										<option value="3">Xbox</option>
-										<option value="13">Gamecube</option>
-										<option value="14">N64</option>
-										<option value="15">SNES</option>
-										<option value="16">NES</option>
-										<option value="17">GBA</option>
-										<option value="18">Gameboy Color</option>
-										<option value="19">Gameboy</option>
-										<option value="20">Sega Dreamcast</option>
-										<option value="21">Sega Saturn</option>
-										<option value="22">Sega Genesis</option>
-										<option value="23">Sega GameGear</option>
-										<option value="24">Sega CD</option>
+										<option value="ps">Playstation</option>
+										<option value="ps2">PlayStation 2</option>
+										<option value="xbox">Xbox</option>
+										<option value="gc">Gamecube</option>
+										<option value="n64">N64</option>
+										<option value="snes">SNES</option>
+										<option value="nes">NES</option>
+										<option value="gba">GBA</option>
+										<option value="gbc">Gameboy Color</option>
+										<option value="gb">Gameboy</option>
+										<option value="dc">Sega Dreamcast</option>
+										<option value="saturn">Sega Saturn</option>
+										<option value="genesis">Sega Genesis</option>
+										<option value="gamegear">Sega GameGear</option>
+										<option value="cd">Sega CD</option>
 									</optgroup>
 								</select>
 							</div>
@@ -370,7 +369,8 @@
 										<li><a href="#" data-content="0">Alphabetical</a></li>
 										<li><a href="#" data-content="1">Review Score</a></li>
 										<li><a href="#" data-content="2">Release Date</a></li>
-										<li><a href="#" data-content="3">Price</a></li>
+										<li><a href="#" data-content="3">Platform</a></li>
+										<li><a href="#" data-content="4">Price</a></li>
 									</ul>
 								</div>
 
@@ -403,7 +403,12 @@
 		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-temp="<%= item.releaseDate %>">
 		   			<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
 		   			<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
-		   			<td class="title"><%= item.name %>
+		   			<td class="title">
+						<div class="itemName"><%= item.name %></div>
+						<div class="calendarDate"><%= item.calendarDate %></div>
+						<% if (item.platform !== 'n/a') { %>
+							<div class="platform"><%= item.platform %></div>
+						<% } %>
 			   			<div class="platformDropdown">
 			   				<% if (item.platformList) { %>
 							<ul class="nav nav-pills">
@@ -455,7 +460,8 @@
 					<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
 					<td>
 						<div class="itemName"><%= item.name %></div>
-						<div><a href="" class="calendarDate" target="_blank" rel="tooltip" data-original-title="<%= item.releaseDate %>"><%= item.calendarDate %></a></div>
+						<div class="calendarDate" data-content="<%= item.releaseDate %>"><%= item.calendarDate %></div>
+						<div class="platform"><%= item.platform %></div>
 					</td>
 					<td class="priceDetails"></td>
 					<td class="scoreDetails"><a href="" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
@@ -481,11 +487,18 @@
 	   	<!-- dropdown list -->
 	   	<script type="text/template" id="list-results-template">
 	   		<option></option>
-   			<option value="0">View All</option>
+	   		<optgroup label="Dynamic Lists">
+   				<option value="0">View All</option>
+   				<option value="1">Upcoming</option>
+   				<option value="2">New Releases</option>
+   				<option value="3">Best Reviewed</option>
+   			</optgroup>
 
+   			<optgroup label="User Lists">
 	   		<% _.each(orderedList, function(item) { %>
 	   			<option value="<%= item.id %>"><%= item.name %></option>
 	      	<% }); %>
+	      	</optgroup>
 	   	</script>
 
 	   	<!-- price menu -->
