@@ -487,12 +487,14 @@
 	   	<!-- dropdown list -->
 	   	<script type="text/template" id="list-results-template">
 	   		<option></option>
-	   		<optgroup label="Dynamic Lists">
-   				<option value="0">View All</option>
-   				<option value="1">Upcoming</option>
-   				<option value="2">New Releases</option>
-   				<option value="3">Best Reviewed</option>
-   			</optgroup>
+	   		<% if (showDynamic === true) { %>
+		   		<optgroup label="Dynamic Lists">
+	   				<option value="0">View All</option>
+	   				<option value="1">Upcoming</option>
+	   				<option value="2">New Releases</option>
+	   				<option value="3">Best Reviewed</option>
+	   			</optgroup>
+   			<% } %>
 
    			<optgroup label="User Lists">
 	   		<% _.each(orderedList, function(item) { %>
