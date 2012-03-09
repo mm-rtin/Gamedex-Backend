@@ -164,8 +164,8 @@ def login(request):
         if 'user_login' in request.POST and 'user_password' in request.POST:
 
             # get user parameters
-            userLogin = request.POST.get('user_login').strip()
-            userPassword = request.POST.get('user_password').strip()
+            userLogin = request.POST.get('user_login')
+            userPassword = request.POST.get('user_password')
 
             # hash password
             userPassword = hashlib.md5(userPassword).hexdigest()
@@ -209,9 +209,9 @@ def createUser(request):
     if (request.POST):
 
         # collect user parameters
-        userLogin = request.POST.get('user_login').strip()
-        userPassword = request.POST.get('user_password').strip()
-        userEmail = request.POST.get('user_email').strip()
+        userLogin = request.POST.get('user_login')
+        userPassword = request.POST.get('user_password')
+        userEmail = request.POST.get('user_email')
 
         # hash password
         userPassword = hashlib.md5(userPassword).hexdigest()
@@ -248,8 +248,8 @@ def createList(request):
     if (request.POST):
 
         # collect list item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
+        userID = request.POST.get('user_id')
+        secretKey = request.POST.get('uk')
         listName = request.POST.get('list_name').strip()
 
         # get user by userid
@@ -286,7 +286,7 @@ def getList(request):
 
         # collect list item parameters
         userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
+        secretKey = request.POST.get('uk').strip()
 
         # get user by userid
         try:
@@ -337,7 +337,7 @@ def deleteList(request):
 
         # collect item parameters
         userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
+        secretKey = request.POST.get('uk').strip()
 
         tagID = request.POST.get('id').strip()
 
@@ -391,26 +391,30 @@ def createListItem(request):
     if (request.POST):
 
         # collect list item parameters
-        initialProvider = request.POST.get('item_initialProvider').strip()
-        asin = request.POST.get('item_asin').strip()
-        gbombID = request.POST.get('item_gbombID').strip()
+        initialProvider = request.POST.get('ip')
+        asin = request.POST.get('aid')
+        gbombID = request.POST.get('gid')
 
-        itemName = request.POST.get('item_name').strip()
-        releaseDate = request.POST.get('item_releasedate').strip()
-        platform = request.POST.get('item_platform').strip()
-        smallImage = request.POST.get('item_smallImage').strip()
-        thumbnailImage = request.POST.get('item_thumbnailImage').strip()
-        largeImage = request.POST.get('item_largeImage').strip()
+        itemName = request.POST.get('n')
+        releaseDate = request.POST.get('rd')
+        platform = request.POST.get('p')
+        smallImage = request.POST.get('si')
+        thumbnailImage = request.POST.get('ti')
+        largeImage = request.POST.get('li')
 
-        metacriticPage = request.POST.get('item_metacriticPage').strip()
-        metascore = request.POST.get('item_metascore').strip()
+        metacriticPage = request.POST.get('mp')
+        metascore = request.POST.get('ms')
+
+        gameStatus = request.POST.get('gs')
+        playStatus = request.POST.get('ps')
+        userRating = request.POST.get('ur')
 
         # get listIDs as array
-        listIDs = request.POST.getlist('list_ids[]')
+        listIDs = request.POST.getlist('lids[]')
 
         # authentication
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
+        userID = request.POST.get('uid')
+        secretKey = request.POST.get('uk')
 
         # get user by userid
         try:
@@ -450,7 +454,24 @@ def createListItem(request):
             # create new item
             if (existingItem is None):
                 guid = str(uuid.uuid4())
-                item = Items(id = guid, user = existingUser, item_initialProvider = initialProvider, item_asin = asin, item_gbombID = gbombID, item_name = itemName, item_releasedate = releaseDate, item_platform = platform, item_smallImage = smallImage, item_thumbnailImage = thumbnailImage, item_largeImage = largeImage, item_metacriticPage = metacriticPage, item_metascore = metascore)
+                item = Items(
+                    id = guid,
+                    user = existingUser,
+                    item_initialProvider = initialProvider,
+                    item_asin = asin,
+                    item_gbombID = gbombID,
+                    item_name = itemName,
+                    item_releasedate = releaseDate,
+                    item_platform = platform,
+                    item_smallImage = smallImage,
+                    item_thumbnailImage = thumbnailImage,
+                    item_largeImage = largeImage,
+                    item_metacriticPage = metacriticPage,
+                    item_metascore = metascore,
+                    item_gameStatus = gameStatus,
+                    item_playStatus = playStatus,
+                    item_userRating = userRating
+                )
                 item.save()
 
             # item already exists, use instead
@@ -481,6 +502,79 @@ def createListItem(request):
         return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
 
 
+# UPDATE ITEM
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def updateItem(request):
+
+    if (request.POST):
+
+        # collect list item parameters
+        initialProvider = request.POST.get('ip')
+        itemID = request.POST.get('id')
+        asin = request.POST.get('aid')
+        gbombID = request.POST.get('gid')
+
+        itemName = request.POST.get('n')
+        releaseDate = request.POST.get('rd')
+        platform = request.POST.get('p')
+        smallImage = request.POST.get('si')
+        thumbnailImage = request.POST.get('ti')
+        largeImage = request.POST.get('li')
+
+        metacriticPage = request.POST.get('mp')
+        metascore = request.POST.get('ms')
+
+        gameStatus = request.POST.get('gs')
+        playStatus = request.POST.get('ps')
+        userRating = request.POST.get('ur')
+
+        # authentication
+        userID = request.POST.get('uid')
+        secretKey = request.POST.get('uk')
+
+        # get user by userid
+        try:
+            existingUser = Users.objects.get(pk = userID, user_secret_key = secretKey)
+        except Users.DoesNotExist:
+            existingUser = None
+
+        # get existing item
+        try:
+            item = Items.objects.get(pk = itemID, user = existingUser)
+        except Items.DoesNotExist:
+            item = None
+
+        # validate secretKey against user
+        if existingUser:
+
+            # create new item
+            if (item is not None):
+                item.item_initialProvider = initialProvider
+                item.item_asin = asin
+                item.item_gbombID = gbombID
+                item.item_name = itemName
+                item.item_releasedate = releaseDate
+                item.item_platform = platform
+                item.item_smallImage = smallImage
+                item.item_thumbnailImage = thumbnailImage
+                item.item_largeImage = largeImage
+                item.item_metacriticPage = metacriticPage
+                item.item_metascore = metascore
+                item.item_gameStatus = gameStatus
+                item.item_playStatus = playStatus
+                item.item_userRating = userRating
+
+                item.save()
+
+            return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+        else:
+            return HttpResponse('FALSE', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+
+
 # READ ITEMS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @csrf_exempt
@@ -489,9 +583,9 @@ def getListItems(request):
     if (request.POST):
 
         # collect list item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
-        tagID = request.POST.get('list_id').strip()
+        userID = request.POST.get('user_id')
+        secretKey = request.POST.get('uk')
+        tagID = request.POST.get('list_id')
 
         # get user by userid
         try:
@@ -526,7 +620,19 @@ def getListItems(request):
                 usersListItems = []
                 # construct python dictionary
                 for items in itemTagUsers:
-                    usersListItems.append({'id': items.pk, 'item_initialProvider': items.item.item_initialProvider, 'itemID': items.item.pk, 'itemAsin': items.item.item_asin, 'itemGBombID': items.item.item_gbombID, 'itemName': items.item.item_name, 'itemReleaseDate': str(items.item.item_releasedate), 'itemPlatform': items.item.item_platform, 'itemSmallImage': items.item.item_smallImage, 'itemThumbnailImage': items.item.item_thumbnailImage, 'itemLargeImage': items.item.item_largeImage})
+                    usersListItems.append({
+                        'id': items.pk,
+                        'ip': items.item.item_initialProvider,
+                        'iid': items.item.pk,
+                        'aid': items.item.item_asin,
+                        'gid': items.item.item_gbombID,
+                        'n': items.item.item_name,
+                        'rd': str(items.item.item_releasedate),
+                        'p': items.item.item_platform,
+                        'si': items.item.item_smallImage,
+                        'ti': items.item.item_thumbnailImage,
+                        'li': items.item.item_largeImage,
+                    })
 
                 itemDictionary = {'items': usersListItems}
 
@@ -549,8 +655,8 @@ def getDirectory(request):
     if (request.POST):
 
         # collect list item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
+        userID = request.POST.get('user_id')
+        secretKey = request.POST.get('uk')
 
         # get user by userid
         try:
@@ -576,11 +682,19 @@ def getDirectory(request):
 
                     # create item object
                     if items.item.pk not in directoryItems:
-                        directoryItems[items.item.pk] = {'itemAsin': items.item.item_asin, 'itemGBombID': items.item.item_gbombID, 'tags': {}, 'tagCount': 0}
+                        directoryItems[items.item.pk] = {
+                            'aid': items.item.item_asin,
+                            'gid': items.item.item_gbombID,
+                            'gs': items.item.item_gameStatus,
+                            'ps': items.item.item_playStatus,
+                            'ur': items.item.item_userRating,
+                            't': {},
+                            'tc': 0
+                        }
 
                     # append tag
-                    directoryItems[items.item.pk]['tags'][items.tag.pk] = items.pk
-                    directoryItems[items.item.pk]['tagCount'] = directoryItems[items.item.pk]['tagCount'] + 1
+                    directoryItems[items.item.pk]['t'][items.tag.pk] = items.pk
+                    directoryItems[items.item.pk]['tc'] = directoryItems[items.item.pk]['tc'] + 1
 
                 # serialize and return lists
                 return HttpResponse(simplejson.dumps({'directory': directoryItems}), mimetype='application/json')
@@ -601,9 +715,9 @@ def getItemTags(request):
     if (request.POST):
 
         # collect list item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
-        itemID = request.POST.get('item_id').strip()
+        userID = request.POST.get('user_id')
+        secretKey = request.POST.get('uk')
+        itemID = request.POST.get('item_id')
 
         # get user by userid
         try:
@@ -649,9 +763,9 @@ def getItemTagsByThirdPartyID(request):
     if (request.POST):
 
         # collect list item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
-        itemID = request.POST.get('item_id').strip()
+        userID = request.POST.get('user_id')
+        secretKey = request.POST.get('uk')
+        itemID = request.POST.get('item_id')
 
         # get user by userid
         try:
@@ -697,10 +811,10 @@ def deleteListItem(request):
     if (request.POST):
 
         # collect item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
+        userID = request.POST.get('user_id')
+        secretKey = request.POST.get('uk')
 
-        id = request.POST.get('id').strip()
+        id = request.POST.get('id')
 
         # get user by userid
         try:
@@ -740,8 +854,8 @@ def deleteListItemsInBatch(request):
     if (request.POST):
 
         # collect item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('secret_key').strip()
+        userID = request.POST.get('user_id')
+        secretKey = request.POST.get('uk')
 
         ids = request.POST.getlist('ids[]')
 

@@ -47,6 +47,9 @@ class Items(models.Model):
     item_smallImage = models.CharField(max_length=512, blank=True)
     item_thumbnailImage = models.CharField(max_length=512, blank=True)
     item_largeImage = models.CharField(max_length=512, blank=True)
+    item_gameStatus = models.CharField(max_length=16)
+    item_playStatus = models.CharField(max_length=16)
+    item_userRating = models.CharField(max_length=3)
 
     class Meta:
         verbose_name_plural = 'ListItems'

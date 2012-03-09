@@ -11,11 +11,14 @@
 		<![endif]-->
 
 		<!-- styles -->
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/bootstrap.css">
 		<link rel="stylesheet" media="screen" href="http://static.t-minuszero.com/css/tmz.css">
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/chosen.css">
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/nanoscroller.css">
-		<!-- Le fav and touch icons -->
+		<link rel="stylesheet" href="http://static.t-minuszero.com/css/jquery.ui.stars.min.css">
+		<link rel="stylesheet" href="http://static.t-minuszero.com/css/isotope.css">
+
 		<link rel="shortcut icon" href="http://static.t-minuszero.com/images/favicon.ico">
 
 	</head>
@@ -25,29 +28,36 @@
 		<div id="createuser-modal" class="modal hide">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal">×</a>
-				<h3>New Account</h3>
+				<h3>Create Account</h3>
 			</div>
 			<div class="modal-body">
-    			<div class="span6">
-					<form action="">
-						<div class="clear">
-							<input id="userNameCreate_field" class="span6" id="" name="" type="text" placeholder="User Name" />
+
+				<form class="form-horizontal">
+					<fieldset>
+						<div class="control-group">
+							<label class="control-label">Username</label>
+							<div class="controls">
+								<input id="userNameCreate_field" class="span3" name="" type="text"/>
+							</div>
 						</div>
-						<div class="clear">
-							<input id="emailCreate_field" class="span6" id="" name="" type="text" placeholder="E-mail" />
+						<div class="control-group">
+							<label class="control-label">Email</label>
+							<div class="controls">
+								<input id="emailCreate_field" class="span3" name="" type="text"/>
+							</div>
 						</div>
-						<div class="clear">
-							<input id="passwordCreate_field" class="span6" id="" name="" type="password" placeholder="Password" />
+						<div class="control-group">
+							<label class="control-label">Password</label>
+							<div class="controls">
+								<input id="passwordCreate_field" class="span3" name="" type="password"/>
+							</div>
 						</div>
-						<div class="clear">
-							<input id="password2Create_field" class="span6" id="" name="" type="password" placeholder="Password again" />
-						</div>
-					</form>
-				</div>
+					</fieldset>
+				</form>
+
 			</div>
 			<div class="modal-footer">
-				<a id="newAccount_btn" href="#" class="btn btn-primary">Create Account</a>
-				<a id="newAccount_cancel_btn" href="#" class="btn">Cancel</a>
+				<button id="newAccount_btn" href="#" class="btn btn-large btn-primary"><i class="icon-ok icon-white"></i> Sign Up</button>
 			</div>
 		</div>
 
@@ -66,9 +76,9 @@
 				<form class="form-horizontal">
 				    <fieldset>
 
-				    	<!-- platform filter -->
+						<!-- platform filter -->
 						<div class="control-group">
-							<label for="platform_filter" class="control-label">Platform Filter</label>
+							<label class="control-label">Platform Filter</label>
 							<div class="controls">
 								<div id="platform_filter">
 									<select id="platformFilterList" data-placeholder="Select Platform:" class="chzn-select" multiple style="width:250px;" tabindex="2">
@@ -113,7 +123,7 @@
 
 				    	<!-- release date filter -->
 						<div class="control-group">
-							<label for="releaseDate_filter" class="control-label">Release Date Filter</label>
+							<label class="control-label">Release Date Filter</label>
 							<div class="controls">
 								<div id="releaseDate_filter" data-toggle="buttons-checkbox" class="btn-group">
 									<button class="btn" data-content="0">Unreleased</button>
@@ -122,21 +132,34 @@
 							</div>
 						</div>
 
-				    	<!-- ownership filter -->
+						<!-- game status filter -->
 						<div class="control-group">
-							<label for="playStatus_filter" class="control-label">Play Status Filter</label>
+							<label class="control-label">Game Status Filter</label>
 							<div class="controls">
-								<div id="playStatus_filter" data-toggle="buttons-checkbox" class="btn-group">
-									<button class="btn" data-content="0">Playing</button>
-									<button class="btn" data-content="1">Finished</button>
-									<button class="btn" data-content="2">Not Started</button>
+								<div id="gameStatus_filter" data-toggle="buttons-checkbox" class="btn-group">
+									<button class="btn" data-content="0">None</button>
+									<button class="btn" data-content="1">Own</button>
+									<button class="btn" data-content="2">Sold</button>
+									<button class="btn" data-content="3">Wanted</button>
 								</div>
 							</div>
 						</div>
 
-				    	<!-- metascore filter -->
+						<!-- play status filter -->
 						<div class="control-group">
-							<label for="metascore_filter" class="control-label">Metascore Filter</label>
+							<label class="control-label">Play Status Filter</label>
+							<div class="controls">
+								<div id="playStatus_filter" data-toggle="buttons-checkbox" class="btn-group">
+									<button class="btn" data-content="0">Not Started</button>
+									<button class="btn" data-content="1">Playing</button>
+									<button class="btn" data-content="2">Finished</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- metascore filter -->
+						<div class="control-group">
+							<label class="control-label">Metascore Filter</label>
 							<div class="controls">
 								<div id="metascore_filter" data-toggle="buttons-checkbox" class="btn-group">
 									<button class="btn" data-content="0">90s</button>
@@ -144,19 +167,19 @@
 									<button class="btn" data-content="2">70s</button>
 									<button class="btn" data-content="3">60s</button>
 									<button class="btn" data-content="4">50s</button>
-									<button class="btn" data-content="5">25-49</button>
-									<button class="btn" data-content="6">0-24</button>
+									<button class="btn" data-content="5">49-25</button>
+									<button class="btn" data-content="6">24-0</button>
 								</div>
 							</div>
 						</div>
 
-				    </fieldset>
+					</fieldset>
 				</form>
 
 			</div>
 			<div class="modal-footer">
-				<a id="applyFilters_btn" href="#" class="btn btn-primary" data-dismiss="modal">Apply Filters</a>
-				<a id="cancelFilters_btn" href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<button id="applyFilters_btn" href="#" class="btn btn-primary" data-dismiss="modal">Apply Filters</a>
+				<button id="cancelFilters_btn" href="#" class="btn" data-dismiss="modal">Cancel</a>
 			</div>
 		</div>
 
@@ -181,11 +204,11 @@
 					</div>
 
 					<!-- RIGHT HEADER -->
-					<form action="" class="form-search navbar-form pull-right">
+					<form class="form-search navbar-form pull-right">
 						<input id="userLogin_field" type="text" placeholder="User Name" class="input-medium"/>
 						<input id="password_field" type="password" placeholder="Password" class="input-medium"/>
-						<button id="login_btn" class="btn">Login</button>
-						<button id="createUser_btn" class="btn" data-controls-modal="createuser-modal" data-backdrop="true" data-keyboard="true">Create User</button>
+						<button id="login_btn" class="btn btn-success"><i class="icon-ok icon-white"></i> Login</button>
+						<button id="createUser_btn" class="btn btn-success" data-controls-modal="createuser-modal" data-backdrop="true" data-keyboard="true"><i class="icon-user icon-white"></i> Sign Up</button>
 					</form>
 
 				</div>
@@ -193,10 +216,10 @@
 		</div>
 
 		<!-- SITE CONTAINER -->
-	    <div id="wrapper">
+		<div id="wrapper">
 
 			<!-- CONTENT -->
-			<div id="content">
+			<div id="content" class="standardView">
 
 				<!-- SEARCH PANEL PLACEHOLDER -->
 				<div id="panel1">
@@ -265,11 +288,11 @@
 								<button id="search_btn" class="btn btn-success" type="submit"><i class="icon-search icon-white"></i> Search</button>
 							</div>
 
-							<!--- DISPLAY SELECT -->
-							<div id="searchResultsDisplayGroup" data-toggle="buttons-radio" class="btn-group">
-								<button class="btn" data-content="0" data-toggle="button">List</button>
-								<button class="btn active" data-content="1" data-toggle="button">Icons</button>
-								<button class="btn" data-content="2" data-toggle="button">Cover</button>
+							<!--- DISPLAY OPTIONS -->
+							<div class="displayOptions btn-group" data-toggle="buttons-radio">
+								<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-th-list icon-white"></i></button>
+								<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
+								<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
 							</div>
 
 							<!-- SEARCH RESULTS -->
@@ -302,8 +325,8 @@
 									</select>
 								</div>
 								<div id="addListButtons">
-									<a href="#" id="saveItem_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</a>
-									<a href="#" id="addItem_btn" class="btn btn-success"><i class="icon-plus icon-white"></i> Add</a>
+									<button id="saveItem_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</button>
+									<button id="addItem_btn" class="btn btn-success"><i class="icon-plus icon-white"></i> Add</button>
 								</div>
 
 								<div class="clear"></div>
@@ -319,27 +342,144 @@
 								</ul>
 
 								<div id="detailTabContent" class="tab-content">
-									<div id="amazonTab" class="tab-pane active"></div>
-									<div id="giantBombTab" class="tab-pane"></div>
+									<div id="amazonTab" class="tab-pane active">
+										<table>
+											<tbody>
+												<tr>
+													<td class="itemDetailTitle">
+														<h3></h3>
+													</td>
+													<td class="itemDetailMetascore">
+														<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+										<a href="#" class="itemDetailThumbnail thumbnail">
+											<img src="" alt="">
+										</a>
+									</div>
+									<div id="giantBombTab" class="tab-pane">
+										<table>
+											<tbody>
+												<tr>
+													<td class="itemDetailTitle">
+														<h3></h3>
+													</td>
+													<td class="itemDetailMetascore">
+														<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+										<a href="#" class="itemDetailThumbnail thumbnail">
+											<img src="" alt="">
+										</a>
+									</div>
 								</div>
 
 							</div>
 
 
-							<!-- ITEM DATA -->
-							<div style="padding: 8px 0;" class="well">
-								<ul class="nav nav-list">
-									<li class="nav-header">Item Data</li>
-									<li id="platform"><a href="#"><i class="icon-tag"></i> <span class="data"></span></a></li>
-									<li id="releaseDate"><a href="#"><i class="icon-time"></i> <span class="data"></span></a></li>
-									<li id="wikipediaPage"><a href="#" target="blank"><i class="icon-book"></i> Wikipedia Entry</a></li>
-									<li id="giantBombPage"><a href="#" target="blank"><i class="icon-list-alt"></i> GiantBomb Page</a></li>
-									<li class="nav-header">Amazon Product</li>
-									<li id="amazonPriceNew"><a href="#" target="blank"><i class="icon-shopping-cart"></i> New: <span class="data"></span></a></li>
-									<li id="amazonPriceUsed"><a href="#" target="blank"><i class="icon-shopping-cart"></i> Used <span class="data"></span></a></li>
+								<ul id="dataTab" class="nav nav-tabs">
+									<li class="active">
+										<a id="itemInfotabLink" href="#infoTab" data-toggle="tab">Data</a>
+									</li>
+									<li>
+										<a id="customAttributesTabLink" href="#customTab" data-toggle="tab">User Attributes</a>
+									</li>
 								</ul>
-							</div>
 
+
+								<div id="dataTabContent" class="tab-content">
+									<div id="infoTab" class="tab-pane active">
+
+										<!-- ITEM DATA -->
+										<div id="itemAttributes">
+											<ul class="nav nav-list">
+												<li id="platform"><a href="#"><i class="icon-tag"></i> <span class="data"></span></a></li>
+												<li id="releaseDate"><a href="#"><i class="icon-time"></i> <span class="data"></span></a></li>
+												<li id="wikipediaPage"><a href="#" target="_blank"><i class="icon-book"></i> Wikipedia Entry</a></li>
+												<li id="giantBombPage"><a href="#" target="_blank"><i class="icon-list-alt"></i> GiantBomb Page</a></li>
+												<li id="metacriticPage"><a href="#" target="_blank"><i class="icon-eye-open"></i> Metacritic Page</a></li>
+												<li id="amazonPriceHeader" class="nav-header">Amazon.com</li>
+												<li id="amazonPriceNew"><a href="#" target="_blank"><i class="icon-shopping-cart"></i> New: <span class="data"></span></a></li>
+												<li id="amazonPriceUsed"><a href="#" target="_blank"><i class="icon-shopping-cart"></i> Used <span class="data"></span></a></li>
+											</ul>
+										</div>
+
+									</div>
+
+									<div id="customTab" class="tab-pane">
+
+										<!-- USER ATTRIBUTES -->
+										<form class="form-horizontal">
+											<fieldset>
+
+												<div class="control-group">
+													<label class="control-label">Game Status</label>
+													<div class="controls">
+														<!-- game status -->
+														<div id="gameStatus" class="btn-group">
+															<a class="currentSelection btn" href="#" data-initial="0">None</a>
+															<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+															<ul class="dropdown-menu">
+																<li><a href="#" data-content="0">None</a></li>
+																<li><a href="#" data-content="1">Own</a></li>
+																<li><a href="#" data-content="2">Sold</a></li>
+																<li><a href="#" data-content="3">Wanted</a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+
+
+												<div class="control-group">
+													<label class="control-label">Play Status</label>
+													<div class="controls">
+														<!-- play status -->
+														<div id="playStatus" class="btn-group">
+															<a class="currentSelection btn" href="#" data-initial="0">Not Started</a>
+															<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+															<ul class="dropdown-menu">
+																<li><a href="#" data-content="0">Not Started</a></li>
+																<li><a href="#" data-content="1">Playing</a></li>
+																<li><a href="#" data-content="2">Finished</a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+
+												<div class="control-group">
+													<label class="control-label">Rating</label>
+													<div class="controls">
+														<!-- rating -->
+														<div id="userRating" data-initial="0">
+															<input type="radio" name="newrate" value="1" title=".5" />
+															<input type="radio" name="newrate" value="2" title="1" />
+															<input type="radio" name="newrate" value="3" title="1.5" />
+															<input type="radio" name="newrate" value="4" title="2" />
+															<input type="radio" name="newrate" value="5" title="2.5" />
+															<input type="radio" name="newrate" value="6" title="3" />
+															<input type="radio" name="newrate" value="7" title="3.5" />
+															<input type="radio" name="newrate" value="8" title="4" />
+															<input type="radio" name="newrate" value="9" title="4.5" />
+															<input type="radio" name="newrate" value="10" title="5" />
+														</div>
+														<div id="ratingCaption"></div>
+													</div>
+												</div>
+
+												<div id="saveAttributesContainer" class="form-actions">
+													<button id="saveAttributes_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</button>
+												</div>
+											</fieldset>
+										</form>
+
+									</div>
+								</div>
 						</div>
 					</div>
 				</div>
@@ -359,7 +499,17 @@
 								</div>
 
 								<!-- filters button -->
-								<button id="listFilters_btn" class="btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> List Filters</button>
+								<div class="filterOptions btn-group">
+									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> List Filters</a>
+									<a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a href="#" class="listFilters_btn">Custom</a></li>
+										<li><a href="#" data-content="0">Upcoming</a></li>
+										<li><a href="#" data-content="1">New Releases</a></li>
+										<li><a href="#" data-content="2">Best Unplayed</a></li>
+										<li><a href="#" data-content="3">Best Unfinished</a></li>
+									</ul>
+								</div>
 
 								<a href="#" id="deleteList_btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
 
@@ -371,9 +521,9 @@
 
 								<!-- display options -->
 								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<button class="btn" data-content="0" data-toggle="button">List</button>
-									<button class="btn active" data-content="1" data-toggle="button">Icons</button>
-									<button class="btn" data-content="2" data-toggle="button">Cover</button>
+									<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-th-list icon-white"></i></button>
+									<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
+									<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
 								</div>
 
 								<!-- SORT OPTIONS -->
@@ -382,12 +532,14 @@
 									<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
 									<ul class="dropdown-menu">
 										<li><a href="#" data-content="0">Alphabetical</a></li>
-										<li><a href="#" data-content="1">Review Score</a></li>
+										<li><a href="#" data-content="1">Metascore</a></li>
 										<li><a href="#" data-content="2">Release Date</a></li>
 										<li><a href="#" data-content="3">Platform</a></li>
 										<li><a href="#" data-content="4">Price</a></li>
 									</ul>
 								</div>
+
+								<button id="gridView_btn" class="btn btn-success"><i class="icon-retweet icon-white"></i> Grid View</button>
 
 								<div class="clear"></div>
 							</div>
@@ -403,9 +555,73 @@
 					</div>
 				</div>
 
-				<div class="clear"></div>
+				<!-- GRID VIEW PANEL -->
+				<div id="panel4">
+					<div class="header"></div>
+					<div class="panel">
 
+						<div id="gridViewContainer" class="clearfix">
 
+						</div>
+					</div>
+				</div>
+
+				<!-- GRID OPTIONS PANEL -->
+				<div id="panel5">
+					<div class="header"></div>
+					<div class="panel">
+
+						<div id="gridViewOptions" class="clearfix">
+
+							<div class="optionsGroup">
+
+								<!-- list -->
+								<div id="gridListContainer">
+									<select id="gridList" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
+										<option></option>
+									</select>
+								</div>
+
+								<!-- display options -->
+								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
+									<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-th-list icon-white"></i></button>
+									<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
+									<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
+								</div>
+
+								<!-- filters button -->
+								<div class="filterOptions btn-group">
+									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> List Filters</a>
+									<a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a href="#" class="listFilters_btn">Custom</a></li>
+										<li><a href="#" data-content="0">Upcoming</a></li>
+										<li><a href="#" data-content="1">New Releases</a></li>
+										<li><a href="#" data-content="2">Best Unplayed</a></li>
+										<li><a href="#" data-content="3">Best Unfinished</a></li>
+									</ul>
+								</div>
+
+								<!-- SORT OPTIONS -->
+								<div class="sortOptions btn-group">
+									<a class="currentSort btn" href="#">Alphabetical</a>
+									<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a href="#" data-content="0">Alphabetical</a></li>
+										<li><a href="#" data-content="1">Metascore</a></li>
+										<li><a href="#" data-content="2">Release Date</a></li>
+										<li><a href="#" data-content="3">Platform</a></li>
+										<li><a href="#" data-content="4">Price</a></li>
+									</ul>
+								</div>
+
+								<button id="exitGridView_btn" class="btn btn-danger"><i class="icon-remove icon-white"></i> Exit Grid View</button>
+
+							</div>
+
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -443,23 +659,6 @@
 	      	</tbody>
 	    </script>
 
-	   	<!-- item details -->
-	   	<script type="text/template" id="item-details-template">
-	   		<table>
-	   			<tbody>
-	   				<tr>
-						<td class="itemDetailTitle">
-							<h3><%= itemData.name %></h3>
-						</td>
-						<td class="itemDetailMetascore">
-							<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="itemDetailThumbnail"><img src="<%= itemData.largeImage %>" alt=""></div>
-	   	</script>
-
 	   	<!-- item results -->
 	   	<script type="text/template" id="item-results-template">
 	   		<tbody class="list display-<%= displayType %>">
@@ -469,8 +668,12 @@
 					<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
 					<td>
 						<div class="itemName"><%= item.name %></div>
-						<div class="calendarDate" data-content="<%= item.releaseDate %>"><%= item.calendarDate %></div>
+						<div class="calendarDate"><%= item.calendarDate %></div>
+						<div class="releaseDate"><%= item.releaseDate %></div>
 						<div class="platform"><%= item.platform %></div>
+						<div class="gameStatus"><%= item.gameStatus %></div>
+						<div class="playStatus"><%= item.playStatus %></div>
+						<div class="userRating"><%= item.userRating %></div>
 					</td>
 					<td class="priceDetails"></td>
 					<td class="scoreDetails"><a href="" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
@@ -478,6 +681,24 @@
 				</tr>
 	      	<% }); %>
 	      	</tbody>
+	   	</script>
+
+	   	<!-- gridview results -->
+	   	<script type="text/template" id="grid-results-template">
+	   		<% _.each(items, function(item, index) { %>
+				<div class="gridItem" data-category="transition" data-content="<%= item.id %>">
+					<a href="#"><img src="<%= item.largeImage %>"/ title="<%= item.name %>"></a>
+
+					<div class="itemName"><%= item.name %></div>
+					<div class="releaseDate"><%= item.releaseDate %></div>
+					<div class="platform"><%= item.platform %></div>
+					<div class="gameStatus"><%= item.gameStatus %></div>
+					<div class="playStatus"><%= item.playStatus %></div>
+					<div class="userRating"><%= item.userRating %></div>
+					<div class="metascore"><%= item.metascore %></div>
+					<div class="price"><%= item.buyNowRawPrice %></div>
+				</div>
+	      	<% }); %>
 	   	</script>
 
 	    <!-- platform dropdown -->
@@ -495,13 +716,10 @@
 
 	   	<!-- dropdown list -->
 	   	<script type="text/template" id="list-results-template">
-	   		<option></option>
 	   		<% if (showDynamic === true) { %>
-		   		<optgroup label="Dynamic Lists">
+		   		<optgroup label="System Lists">
 	   				<option value="0">View All</option>
-	   				<option value="1">Upcoming</option>
-	   				<option value="2">New Releases</option>
-	   				<option value="3">Best Reviewed</option>
+	   				<option value="1">Most Popular</option>
 	   			</optgroup>
    			<% } %>
 
@@ -515,8 +733,8 @@
 	   	<!-- price menu -->
 	   	<script type="text/template" id="price-menu-template">
 			<div class="btn-group priceMenu">
-			<a class="lowestNew btn" href="<%= productURL %>" data-price="<%= buyNowRawPrice %>" target="_blank">Amazon: <%= buyNowPrice %></a>
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			<a class="lowestNew btn btn-small" href="<%= productURL %>" data-price="<%= buyNowRawPrice %>" target="_blank">Amazon: <%= buyNowPrice %></a>
+			<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
 			<span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu">
@@ -540,18 +758,25 @@
 			</div>
 	   	</script>
 
+
+
 		<!-- JAVASCRIPT LIBRARIES (SPECIFIC ORDER) -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="http://static.t-minuszero.com/lib/jquery-ui.min.js"></script>
+		<script src="http://static.t-minuszero.com/lib/jquery.nanoscroller.min.js"></script>
+		<script src="http://static.t-minuszero.com/lib/jquery.ui.stars.min.js"></script>
+		<script src="http://static.t-minuszero.com/lib/jquery.ba-resize.js"></script>
+
 		<script src="http://static.t-minuszero.com/lib/underscore-min.js"></script>
 		<script src="http://static.t-minuszero.com/lib/backbone.js"></script>
-		<script src="http://static.t-minuszero.com/lib/list.min.js"></script>
 
+		<script src="http://static.t-minuszero.com/lib/list.min.js"></script>
 		<script src="http://static.t-minuszero.com/lib/chosen.jquery.js"></script>
-		<script src="http://static.t-minuszero.com/lib/jquery.nanoscroller.min.js"></script>
-		<script src="http://static.t-minuszero.com/lib/jquery.ba-resize.js"></script>
 		<script src="http://static.t-minuszero.com/lib/moment.min.js"></script>
+		<script src="http://static.t-minuszero.com/lib/jquery.isotope.min.js"></script>
 
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-modal.js"></script>
+		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-collapse.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-button.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-alert.js"></script>
 		<script src="http://static.t-minuszero.com/lib/bootstrap/bootstrap-tooltip.js"></script>
@@ -572,13 +797,15 @@
 		<script src="http://static.t-minuszero.com/js/tmz_searchView.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_detailView.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_itemView.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_gridView.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_itemData.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_listData.js"></script>
-		<script src="http://static.t-minuszero.com/js/tmz_searchData.js"></script>
 
-		<script src="http://static.t-minuszero.com/js/tmz_metascore.js"></script>
-		<script src="http://static.t-minuszero.com/js/tmz_amazonprice.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_amazon.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_giantbomb.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_metacritic.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_wikipedia.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_itemLinker.js"></script>
 
