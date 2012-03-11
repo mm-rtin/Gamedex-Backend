@@ -618,21 +618,30 @@ def getListItems(request):
             if itemTagUsers:
 
                 usersListItems = []
+                addedItemIDs = []
+
                 # construct python dictionary
                 for items in itemTagUsers:
-                    usersListItems.append({
-                        'id': items.pk,
-                        'ip': items.item.item_initialProvider,
-                        'iid': items.item.pk,
-                        'aid': items.item.item_asin,
-                        'gid': items.item.item_gbombID,
-                        'n': items.item.item_name,
-                        'rd': str(items.item.item_releasedate),
-                        'p': items.item.item_platform,
-                        'si': items.item.item_smallImage,
-                        'ti': items.item.item_thumbnailImage,
-                        'li': items.item.item_largeImage,
-                    })
+
+                    if (items.item.pk not in addedItemIDs):
+
+                        # add item to userListItems
+                        usersListItems.append({
+                            'id': items.pk,
+                            'ip': items.item.item_initialProvider,
+                            'iid': items.item.pk,
+                            'aid': items.item.item_asin,
+                            'gid': items.item.item_gbombID,
+                            'n': items.item.item_name,
+                            'rd': str(items.item.item_releasedate),
+                            'p': items.item.item_platform,
+                            'si': items.item.item_smallImage,
+                            'ti': items.item.item_thumbnailImage,
+                            'li': items.item.item_largeImage,
+                        })
+
+                        # add to list of itemIDs added - prevent multiple distinct items (by itemID) from appearing in 'view all list'
+                        addedItemIDs.append(items.item.pk)
 
                 itemDictionary = {'items': usersListItems}
 

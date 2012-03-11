@@ -290,7 +290,7 @@
 
 							<!--- DISPLAY OPTIONS -->
 							<div class="displayOptions btn-group" data-toggle="buttons-radio">
-								<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-th-list icon-white"></i></button>
+								<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-list icon-white"></i></button>
 								<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
 								<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
 							</div>
@@ -457,16 +457,16 @@
 													<div class="controls">
 														<!-- rating -->
 														<div id="userRating" data-initial="0">
-															<input type="radio" name="newrate" value="1" title=".5" />
-															<input type="radio" name="newrate" value="2" title="1" />
-															<input type="radio" name="newrate" value="3" title="1.5" />
-															<input type="radio" name="newrate" value="4" title="2" />
-															<input type="radio" name="newrate" value="5" title="2.5" />
-															<input type="radio" name="newrate" value="6" title="3" />
-															<input type="radio" name="newrate" value="7" title="3.5" />
-															<input type="radio" name="newrate" value="8" title="4" />
-															<input type="radio" name="newrate" value="9" title="4.5" />
-															<input type="radio" name="newrate" value="10" title="5" />
+															<input type="radio" value="1" title=".5" />
+															<input type="radio" value="2" title="1" />
+															<input type="radio" value="3" title="1.5" />
+															<input type="radio" value="4" title="2" />
+															<input type="radio" value="5" title="2.5" />
+															<input type="radio" value="6" title="3" />
+															<input type="radio" value="7" title="3.5" />
+															<input type="radio" value="8" title="4" />
+															<input type="radio" value="9" title="4.5" />
+															<input type="radio" value="10" title="5" />
 														</div>
 														<div id="ratingCaption"></div>
 													</div>
@@ -521,7 +521,7 @@
 
 								<!-- display options -->
 								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-th-list icon-white"></i></button>
+									<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-list icon-white"></i></button>
 									<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
 									<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
 								</div>
@@ -584,9 +584,10 @@
 
 								<!-- display options -->
 								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-th-list icon-white"></i></button>
+									<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-list icon-white"></i></button>
 									<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
 									<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
+									<button class="btn btn-dark" data-content="3" data-toggle="button"><i class="icon-align-left icon-white"></i></button>
 								</div>
 
 								<!-- filters button -->
@@ -663,7 +664,7 @@
 	   	<script type="text/template" id="item-results-template">
 	   		<tbody class="list display-<%= displayType %>">
 	   		<% _.each(items, function(item, index) { %>
-				<tr id="<%= item.id %>" data-content="<%= item.releaseDate %>">
+				<tr id="<%= item.id %>" data-content="<%= item.itemID %>">
 					<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
 					<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
 					<td>
@@ -677,7 +678,9 @@
 					</td>
 					<td class="priceDetails"></td>
 					<td class="scoreDetails"><a href="" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
-					<td class="options"><a href="#" class="deleteItem_btn btn btn-danger btn-small" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
+					<% if (currentViewTagID !== '0') { %>
+						<td class="options"><a href="#" class="deleteItem_btn btn btn-danger btn-small" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
+					<% } %>
 				</tr>
 	      	<% }); %>
 	      	</tbody>
@@ -687,16 +690,25 @@
 	   	<script type="text/template" id="grid-results-template">
 	   		<% _.each(items, function(item, index) { %>
 				<div class="gridItem" data-category="transition" data-content="<%= item.id %>">
-					<a href="#"><img src="<%= item.largeImage %>"/ title="<%= item.name %>"></a>
 
+					<div class="thumbnail">
+						<img src="<%= item.largeImage %>"/ title="<%= item.name %>">
+						<div class="itemAttributes caption">
+							<ul class="nav nav-list">
+								<li class="platform"><i class="icon-tag"></i> <span class="data"><%= item.platform %></span></li>
+								<li class="releaseDate"><i class="icon-time"></i> <span class="data"><%= item.releaseDate %></span></li>
+								<li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i>Metascore: <%= item.displayMetascore %></a></li>
+								<li class="price"><a href="<%= item.offers.productURL %>" target="_blank"><i class="icon-shopping-cart"></i> <span class="data">$<%= item.offers.buyNowPrice %></span></a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="metacriticScore"><%= item.metascore %></a></div>
+					<div class="rawPrice"><%= item.offers.buyNowRawPrice %></span></div>
 					<div class="itemName"><%= item.name %></div>
-					<div class="releaseDate"><%= item.releaseDate %></div>
-					<div class="platform"><%= item.platform %></div>
 					<div class="gameStatus"><%= item.gameStatus %></div>
 					<div class="playStatus"><%= item.playStatus %></div>
 					<div class="userRating"><%= item.userRating %></div>
-					<div class="metascore"><%= item.metascore %></div>
-					<div class="price"><%= item.buyNowRawPrice %></div>
 				</div>
 	      	<% }); %>
 	   	</script>
