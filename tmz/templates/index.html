@@ -178,8 +178,8 @@
 
 			</div>
 			<div class="modal-footer">
-				<button id="applyFilters_btn" href="#" class="btn btn-primary" data-dismiss="modal">Apply Filters</a>
-				<button id="cancelFilters_btn" href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<button id="applyFilters_btn" href="#" class="btn btn-primary" data-dismiss="modal">Apply Filters</button>
+				<button id="cancelFilters_btn" href="#" class="btn" data-dismiss="modal">Cancel</button>
 			</div>
 		</div>
 
@@ -238,6 +238,14 @@
 								</select>
 							</div>
 
+							<!-- LIST SELECT -->
+							<div id="listProviderContainer">
+								<select id="listProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:145px;" tabindex="2">
+									<option value="0">Popular Games</option>
+									<option value="1">Upcoming Games</option>
+								</select>
+							</div>
+
 							<!-- PLATFORM SELECT -->
 							<div id="platformContainer">
 								<select id="platformList" data-placeholder="Select Platform:" class="chzn-select" style="width:145px;" tabindex="2">
@@ -289,16 +297,47 @@
 							</div>
 
 							<!--- DISPLAY OPTIONS -->
-							<div class="displayOptions btn-group" data-toggle="buttons-radio">
-								<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-list icon-white"></i></button>
-								<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
-								<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
+							<div class="displayOptions btn-group" data-toggle="buttons-radio" >
+								<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
+								<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
+								<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
 							</div>
 
-							<!-- SEARCH RESULTS -->
-							<div id="searchResultsContainer" class="nano">
-								<div class="content">
-									<table id="searchResults" class="table table-striped"></table>
+
+							<!-- SEARCH / LIST TABS -->
+							<ul id="finderTabLinks" class="nav nav-tabs">
+								<li class="active">
+									<a id="searchTabLink" href="#searchTab" data-toggle="tab">Search</a>
+								</li>
+								<li>
+									<a id="listTabLink" href="#listTab" data-toggle="tab">List</a>
+								</li>
+							</ul>
+
+							<div id="finderTabContent" class="tab-content">
+
+								<!-- search tab content -->
+								<div id="searchTab" class="tab-pane active">
+
+									<!-- SEARCH RESULTS -->
+									<div id="searchResultsContainer" class="nano">
+										<div class="content">
+											<table id="searchResults" class="table table-striped"></table>
+										</div>
+									</div>
+
+								</div>
+
+								<!-- list tab content -->
+								<div id="listTab" class="tab-pane">
+
+									<!-- SEARCH RESULTS -->
+									<div id="listResultsContainer" class="nano">
+										<div class="content">
+											<table id="listResults" class="table table-striped"></table>
+										</div>
+									</div>
+
 								</div>
 							</div>
 
@@ -501,15 +540,23 @@
 								<!-- filters button -->
 								<div class="filterOptions btn-group">
 									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> List Filters</a>
-									<a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+									<a class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></a>
+									<a class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></a>
 									<ul class="dropdown-menu">
 										<li><a href="#" class="listFilters_btn">Custom</a></li>
-										<li><a href="#" data-content="0">Upcoming</a></li>
+										<li class="divider"></li>
+										<li><a href="#" data-content="0">Upcoming Games</a></li>
 										<li><a href="#" data-content="1">New Releases</a></li>
-										<li><a href="#" data-content="2">Best Unplayed</a></li>
-										<li><a href="#" data-content="3">Best Unfinished</a></li>
+										<li class="divider"></li>
+										<li><a href="#" data-content="2">Never Played</a></li>
+										<li><a href="#" data-content="3">Games Playing</a></li>
+										<li><a href="#" data-content="4">Finished Games</a></li>
+										<li class="divider"></li>
+										<li><a href="#" data-content="5">Owned Games</a></li>
+										<li><a href="#" data-content="6">Wanted Games</a></li>
 									</ul>
 								</div>
+
 
 								<a href="#" id="deleteList_btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
 
@@ -521,9 +568,9 @@
 
 								<!-- display options -->
 								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-list icon-white"></i></button>
-									<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
-									<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
+									<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
+									<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
+									<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
 								</div>
 
 								<!-- SORT OPTIONS -->
@@ -584,22 +631,29 @@
 
 								<!-- display options -->
 								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<button class="btn btn-dark" data-content="0" data-toggle="button"><i class="icon-list icon-white"></i></button>
-									<button class="btn btn-dark active" data-content="1" data-toggle="button"><i class="icon-th icon-white"></i></button>
-									<button class="btn btn-dark" data-content="2" data-toggle="button"><i class="icon-th-large icon-white"></i></button>
-									<button class="btn btn-dark" data-content="3" data-toggle="button"><i class="icon-align-left icon-white"></i></button>
+									<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
+									<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
+									<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
+									<button class="btn btn-dark" data-content="3" data-toggle="button" rel="tooltip" data-original-title="Data View"><i class="icon-align-left icon-white"></i></button>
 								</div>
 
 								<!-- filters button -->
 								<div class="filterOptions btn-group">
 									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> List Filters</a>
-									<a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+									<a class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></a>
+									<a class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></a>
 									<ul class="dropdown-menu">
 										<li><a href="#" class="listFilters_btn">Custom</a></li>
-										<li><a href="#" data-content="0">Upcoming</a></li>
+										<li class="divider"></li>
+										<li><a href="#" data-content="0">Upcoming Games</a></li>
 										<li><a href="#" data-content="1">New Releases</a></li>
-										<li><a href="#" data-content="2">Best Unplayed</a></li>
-										<li><a href="#" data-content="3">Best Unfinished</a></li>
+										<li class="divider"></li>
+										<li><a href="#" data-content="2">Never Played</a></li>
+										<li><a href="#" data-content="3">Games Playing</a></li>
+										<li><a href="#" data-content="4">Finished Games</a></li>
+										<li class="divider"></li>
+										<li><a href="#" data-content="5">Owned Games</a></li>
+										<li><a href="#" data-content="6">Wanted Games</a></li>
 									</ul>
 								</div>
 
@@ -632,7 +686,7 @@
 	    <script type="text/template" id="search-results-template">
 	    	<tbody class="list display-<%= displayType %>">
 	   		<% _.each(sortedSearchResults, function(item) { %>
-		   		<tr id="<%= item.id %>" title="<%= item.platform %>" data-temp="<%= item.releaseDate %>">
+		   		<tr id="<%= item.id %>" data-temp="<%= item.releaseDate %>">
 		   			<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
 		   			<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
 		   			<td class="title">
@@ -654,6 +708,19 @@
 							</ul>
 							<% } %>
 			   			</div>
+			   		</td>
+		   		</tr>
+	      	<% }); %>
+	      	</tbody>
+	    </script>
+
+	    <!-- list results -->
+	    <script type="text/template" id="list-results-template">
+	    	<tbody class="list display-<%= displayType %>">
+	   		<% _.each(listResults, function(item) { %>
+		   		<tr>
+		   			<td class="title">
+						<div class="itemName"><%= item.name %></div>
 			   		</td>
 		   		</tr>
 	      	<% }); %>
@@ -727,7 +794,7 @@
 	    </script>
 
 	   	<!-- dropdown list -->
-	   	<script type="text/template" id="list-results-template">
+	   	<script type="text/template" id="tag-results-template">
 	   		<% if (showDynamic === true) { %>
 		   		<optgroup label="System Lists">
 	   				<option value="0">View All</option>
@@ -818,6 +885,7 @@
 		<script src="http://static.t-minuszero.com/js/tmz_giantbomb.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_metacritic.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_wikipedia.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_gamestats.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_itemLinker.js"></script>
 

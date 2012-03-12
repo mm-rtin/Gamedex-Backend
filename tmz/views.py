@@ -638,6 +638,7 @@ def getListItems(request):
                             'si': items.item.item_smallImage,
                             'ti': items.item.item_thumbnailImage,
                             'li': items.item.item_largeImage,
+                            'ms': items.item.item_metascore,
                         })
 
                         # add to list of itemIDs added - prevent multiple distinct items (by itemID) from appearing in 'view all list'
