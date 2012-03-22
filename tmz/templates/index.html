@@ -248,7 +248,7 @@
 
 							<!-- PLATFORM SELECT -->
 							<div id="platformContainer">
-								<select id="platformList" data-placeholder="Select Platform:" class="chzn-select" style="width:145px;" tabindex="2">
+								<select data-placeholder="Select Platform:" class="platformList chzn-select" style="width:145px;" tabindex="2">
 									<option value="all">All platforms</option>
 									<optgroup label="Computer">
 										<option value="pc">PC</option>
@@ -287,6 +287,27 @@
 								</select>
 							</div>
 
+							<!-- COMMON PLATFORM SELECT -->
+							<div id="commonPlatformContainer">
+								<select data-placeholder="Select Platform:" class="platformList chzn-select" style="width:145px;" tabindex="2">
+									<optgroup label="Computer">
+										<option value="pc">PC</option>
+									</optgroup>
+									<optgroup label="Microsoft">
+										<option value="x360">Xbox 360</option>
+									</optgroup>
+									<optgroup label="Sony">
+										<option value="ps3">PS3</option>
+										<option value="vita">Vita</option>
+									</optgroup>
+									<optgroup label="Nintendo">
+										<option value="ds">DS</option>
+										<option value="3ds">3DS</option>
+										<option value="wii">Wii</option>
+									</optgroup>
+								</select>
+							</div>
+
 							<div class="clear"></div>
 
 
@@ -296,8 +317,15 @@
 								<button id="search_btn" class="btn btn-success" type="submit"><i class="icon-search icon-white"></i> Search</button>
 							</div>
 
-							<!--- DISPLAY OPTIONS -->
-							<div class="displayOptions btn-group" data-toggle="buttons-radio" >
+							<!--- SEARCH DISPLAY OPTIONS -->
+							<div class="searchDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
+								<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
+								<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
+								<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
+							</div>
+
+							<!--- LIST DISPLAY OPTIONS -->
+							<div class="listDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
 								<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
 								<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
 								<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
@@ -539,7 +567,7 @@
 
 								<!-- filters button -->
 								<div class="filterOptions btn-group">
-									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> List Filters</a>
+									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> <span class="filterName">List Filters</span></a>
 									<a class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></a>
 									<a class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></a>
 									<ul class="dropdown-menu">
@@ -575,7 +603,7 @@
 
 								<!-- SORT OPTIONS -->
 								<div class="sortOptions btn-group">
-									<a class="currentSort btn" href="#">Alphabetical</a>
+									<a class="currentSort btn" href="#" data-toggle="dropdown">Alphabetical</a>
 									<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
 									<ul class="dropdown-menu">
 										<li><a href="#" data-content="0">Alphabetical</a></li>
@@ -639,7 +667,7 @@
 
 								<!-- filters button -->
 								<div class="filterOptions btn-group">
-									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> List Filters</a>
+									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> <span class="filterName">List Filters</span></a>
 									<a class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></a>
 									<a class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></a>
 									<ul class="dropdown-menu">
@@ -719,8 +747,10 @@
 	    	<tbody class="list display-<%= displayType %>">
 	   		<% _.each(listResults, function(item) { %>
 		   		<tr>
+		   			<td class="mediumImage"><img src="<%= item.mediumImage %>" alt=""></td>
 		   			<td class="title">
 						<div class="itemName"><%= item.name %></div>
+						<div class="calendarDate"><%= item.calendarDate %></div>
 			   		</td>
 		   		</tr>
 	      	<% }); %>
@@ -872,6 +902,7 @@
 		<script src="http://static.t-minuszero.com/js/tmz_user.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_listModel.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_filterPanel.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_searchView.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_detailView.js"></script>
@@ -886,6 +917,7 @@
 		<script src="http://static.t-minuszero.com/js/tmz_metacritic.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_wikipedia.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_gamestats.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_ign.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_itemLinker.js"></script>
 

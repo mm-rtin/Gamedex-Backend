@@ -32,6 +32,9 @@ urlpatterns = patterns('',
     # gamestats datasource
     (r'^popularlist/gamestats/gpm$', 'tmz.datasources.gameStatsListByGPM'),
 
+    # ign datasource
+    (r'^upcominglist/ign$', 'tmz.datasources.ignUpcomingList'),
+
 
     # t_minuszero rest api
 
