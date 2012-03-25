@@ -793,7 +793,7 @@
 						<div class="itemAttributes caption">
 							<ul class="nav nav-list">
 								<li class="platform"><i class="icon-tag"></i> <span class="data"><%= item.platform %></span></li>
-								<li class="releaseDate"><i class="icon-time"></i> <span class="data"><%= item.releaseDate %></span></li>
+								<li class="calendarDate"><i class="icon-time"></i> <span class="data"><%= item.calendarDate %></span></li>
 								<li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i>Metascore: <%= item.displayMetascore %></a></li>
 								<li class="price"><a href="<%= item.offers.productURL %>" target="_blank"><i class="icon-shopping-cart"></i> <span class="data">$<%= item.offers.buyNowPrice %></span></a></li>
 							</ul>
@@ -801,6 +801,7 @@
 					</div>
 
 					<div class="metacriticScore"><%= item.metascore %></a></div>
+					<div class="releaseDate"><%= item.releaseDate %></a></div>
 					<div class="rawPrice"><%= item.offers.buyNowRawPrice %></span></div>
 					<div class="itemName"><%= item.name %></div>
 					<div class="gameStatus"><%= item.gameStatus %></div>
@@ -825,7 +826,7 @@
 
 	   	<!-- dropdown list -->
 	   	<script type="text/template" id="tag-results-template">
-	   		<% if (showDynamic === true) { %>
+	   		<% if (viewList) { %>
 		   		<optgroup label="System Lists">
 	   				<option value="0">View All</option>
 	   				<option value="1">Most Popular</option>
@@ -837,6 +838,14 @@
 	   			<option value="<%= item.id %>"><%= item.name %></option>
 	      	<% }); %>
 	      	</optgroup>
+
+	   		<% if (viewList && emptyList.length > 0) { %>
+		   		<optgroup label="Empty Lists">
+			   		<% _.each(emptyList, function(item) { %>
+			   			<option value="<%= item.id %>"><%= item.name %></option>
+			      	<% }); %>
+	   			</optgroup>
+   			<% } %>
 	   	</script>
 
 	   	<!-- price menu -->

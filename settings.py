@@ -31,9 +31,9 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'google.appengine.ext.appstats.recording.AppStatsDjangoMiddleware',
     # This loads the index definitions, so it has to come first
     'autoload.middleware.AutoloadMiddleware',
-
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 #    'django.contrib.sessions.middleware.SessionMiddleware',

@@ -19,40 +19,40 @@ urlpatterns = patterns('',
     (r'^$', 'tmz.views.index'),
 
     # amazon product api rest proxy
-    (r'^itemsearch/amazon/$', 'tmz.views.itemSearchAmazon'),
-    (r'^itemdetail/amazon/$', 'tmz.views.itemDetailAmazon'),
+    (r'^itemsearch/amazon/$', 'tmz.searchAPI.itemSearchAmazon'),
+    (r'^itemdetail/amazon/$', 'tmz.searchAPI.itemDetailAmazon'),
 
     # giantbomt api proxy
-    (r'^itemsearch/giantbomb/$', 'tmz.views.itemSearchGiantBomb'),
-    (r'^itemdetail/giantbomb/$', 'tmz.views.itemDetailGiantBomb'),
+    (r'^itemsearch/giantbomb/$', 'tmz.searchAPI.itemSearchGiantBomb'),
+    (r'^itemdetail/giantbomb/$', 'tmz.searchAPI.itemDetailGiantBomb'),
 
     # metacritic datasource
-    (r'^itemsearch/metacritic/$', 'tmz.views.itemSearchMetacritic'),
+    (r'^itemsearch/metacritic/$', 'tmz.searchAPI.itemSearchMetacritic'),
 
     # gamestats datasource
-    (r'^popularlist/gamestats/gpm$', 'tmz.datasources.gameStatsListByGPM'),
+    (r'^popularlist/gamestats/gpm$', 'tmz.listSources.gameStatsListByGPM'),
 
     # ign datasource
-    (r'^upcominglist/ign$', 'tmz.datasources.ignUpcomingList'),
+    (r'^upcominglist/ign$', 'tmz.listSources.ignUpcomingList'),
 
 
     # t_minuszero rest api
 
     # user
-    (r'^login/$', 'tmz.views.login'),
-    (r'^createuser/$', 'tmz.views.createUser'),
+    (r'^login/$', 'tmz.tmzAPI.login'),
+    (r'^createuser/$', 'tmz.tmzAPI.createUser'),
 
     # tags
-    (r'^list/$', 'tmz.views.getList'),
-    (r'^list/add$', 'tmz.views.createList'),
-    (r'^list/delete$', 'tmz.views.deleteList'),
+    (r'^list/$', 'tmz.tmzAPI.getList'),
+    (r'^list/add$', 'tmz.tmzAPI.createList'),
+    (r'^list/delete$', 'tmz.tmzAPI.deleteList'),
 
     # items
-    (r'^item/$', 'tmz.views.getListItems'),
-    (r'^item/directory$', 'tmz.views.getDirectory'),
-    (r'^item/tags$', 'tmz.views.getItemTags'),
-    (r'^item/update$', 'tmz.views.updateItem'),
-    (r'^item/add$', 'tmz.views.createListItem'),
-    (r'^item/delete$', 'tmz.views.deleteListItem'),
-    (r'^item/batch-delete$', 'tmz.views.deleteListItemsInBatch'),
+    (r'^item/$', 'tmz.tmzAPI.getListItems'),
+    (r'^item/directory$', 'tmz.tmzAPI.getDirectory'),
+    (r'^item/tags$', 'tmz.tmzAPI.getItemTags'),
+    (r'^item/update$', 'tmz.tmzAPI.updateItem'),
+    (r'^item/add$', 'tmz.tmzAPI.createListItem'),
+    (r'^item/delete$', 'tmz.tmzAPI.deleteListItem'),
+    (r'^item/batch-delete$', 'tmz.tmzAPI.deleteListItemsInBatch'),
 )
