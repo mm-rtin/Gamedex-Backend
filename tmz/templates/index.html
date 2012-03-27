@@ -152,7 +152,8 @@
 								<div id="playStatus_filter" data-toggle="buttons-checkbox" class="btn-group">
 									<button class="btn" data-content="0">Not Started</button>
 									<button class="btn" data-content="1">Playing</button>
-									<button class="btn" data-content="2">Finished</button>
+									<button class="btn" data-content="2">Played</button>
+									<button class="btn" data-content="3">Finished</button>
 								</div>
 							</div>
 						</div>
@@ -221,7 +222,7 @@
 			<!-- CONTENT -->
 			<div id="content" class="standardView">
 
-				<!-- SEARCH PANEL PLACEHOLDER -->
+				<!-- SEARCH PANEL -->
 				<div id="panel1">
 					<div class="header"></div>
 					<div class="panel">
@@ -230,21 +231,30 @@
 						<!-- SEARCH CONTAINER -->
 						<div id="searchContainer">
 
-							<!-- SEARCH SELECT -->
-							<div id="searchProviderContainer">
-								<select id="searchProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:145px;" tabindex="2">
-									<option value="0">Amazon.com</option>
-									<option value="1">GiantBomb.com</option>
-								</select>
+							<div id="providerContainer">
+
+								<!-- SEARCH SELECT -->
+								<div id="searchProvider" class="btn-group" data-content="0">
+									<a class="providerSelect_btn btn" data-keyboard="true"><span class="providerName">Amazon.com</span></a>
+									<a class="dropdown_btn btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a href="#" data-content="0">Amazon.com</a></li>
+										<li><a href="#" data-content="1">GiantBomb.com</a></li>
+									</ul>
+								</div>
+
+								<!-- LIST SELECT -->
+								<div id="listProvider" class="btn-group" data-content="0">
+									<a class="providerSelect_btn btn" data-keyboard="true"><span class="providerName">Popular Games</span></a>
+									<a class="dropdown_btn btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a href="#" data-content="0">Popular Games</a></li>
+										<li><a href="#" data-content="1">Upcoming Games</a></li>
+									</ul>
+								</div>
+
 							</div>
 
-							<!-- LIST SELECT -->
-							<div id="listProviderContainer">
-								<select id="listProvider" data-placeholder="Select Provider:" class="chzn-select" style="width:145px;" tabindex="2">
-									<option value="0">Popular Games</option>
-									<option value="1">Upcoming Games</option>
-								</select>
-							</div>
 
 							<!-- PLATFORM SELECT -->
 							<div id="platformContainer">
@@ -295,9 +305,11 @@
 									</optgroup>
 									<optgroup label="Microsoft">
 										<option value="x360">Xbox 360</option>
+										<option value="xbl">Xbox Live</option>
 									</optgroup>
 									<optgroup label="Sony">
 										<option value="ps3">PS3</option>
+										<option value="psn">PSN</option>
 										<option value="vita">Vita</option>
 									</optgroup>
 									<optgroup label="Nintendo">
@@ -311,7 +323,7 @@
 							<div class="clear"></div>
 
 
-							<!-- SEARCH COMPONENT -->
+							<!-- SEARCH FIELD -->
 							<div id="search" class="form-horizontal">
 								<input id="search_field" type="text" class="span2" value="skyrim">
 								<button id="search_btn" class="btn btn-success" type="submit"><i class="icon-search icon-white"></i> Search</button>
@@ -350,7 +362,10 @@
 									<!-- SEARCH RESULTS -->
 									<div id="searchResultsContainer" class="nano">
 										<div class="content">
-											<table id="searchResults" class="table table-striped"></table>
+											<table id="searchResults" class="table table-striped">
+
+
+											</table>
 										</div>
 									</div>
 
@@ -362,7 +377,11 @@
 									<!-- SEARCH RESULTS -->
 									<div id="listResultsContainer" class="nano">
 										<div class="content">
-											<table id="listResults" class="table table-striped"></table>
+											<table id="listResults" class="table table-striped">
+												<tbody class="list display-1">
+
+												</tbody>
+											</table>
 										</div>
 									</div>
 
@@ -513,7 +532,8 @@
 															<ul class="dropdown-menu">
 																<li><a href="#" data-content="0">Not Started</a></li>
 																<li><a href="#" data-content="1">Playing</a></li>
-																<li><a href="#" data-content="2">Finished</a></li>
+																<li><a href="#" data-content="2">Played</a></li>
+																<li><a href="#" data-content="3">Finished</a></li>
 															</ul>
 														</div>
 													</div>
@@ -578,10 +598,11 @@
 										<li class="divider"></li>
 										<li><a href="#" data-content="2">Never Played</a></li>
 										<li><a href="#" data-content="3">Games Playing</a></li>
-										<li><a href="#" data-content="4">Finished Games</a></li>
+										<li><a href="#" data-content="4">Games Played</a></li>
+										<li><a href="#" data-content="5">Finished Games</a></li>
 										<li class="divider"></li>
-										<li><a href="#" data-content="5">Owned Games</a></li>
-										<li><a href="#" data-content="6">Wanted Games</a></li>
+										<li><a href="#" data-content="6">Owned Games</a></li>
+										<li><a href="#" data-content="7">Wanted Games</a></li>
 									</ul>
 								</div>
 
@@ -678,10 +699,11 @@
 										<li class="divider"></li>
 										<li><a href="#" data-content="2">Never Played</a></li>
 										<li><a href="#" data-content="3">Games Playing</a></li>
-										<li><a href="#" data-content="4">Finished Games</a></li>
+										<li><a href="#" data-content="4">Games Played</a></li>
+										<li><a href="#" data-content="5">Finished Games</a></li>
 										<li class="divider"></li>
-										<li><a href="#" data-content="5">Owned Games</a></li>
-										<li><a href="#" data-content="6">Wanted Games</a></li>
+										<li><a href="#" data-content="6">Owned Games</a></li>
+										<li><a href="#" data-content="7">Wanted Games</a></li>
 									</ul>
 								</div>
 
@@ -744,7 +766,6 @@
 
 	    <!-- list results -->
 	    <script type="text/template" id="list-results-template">
-	    	<tbody class="list display-<%= displayType %>">
 	   		<% _.each(listResults, function(item) { %>
 		   		<tr>
 		   			<td class="mediumImage"><img src="<%= item.mediumImage %>" alt=""></td>
@@ -754,7 +775,6 @@
 			   		</td>
 		   		</tr>
 	      	<% }); %>
-	      	</tbody>
 	    </script>
 
 	   	<!-- item results -->
@@ -773,7 +793,19 @@
 						<div class="playStatus"><%= item.playStatus %></div>
 						<div class="userRating"><%= item.userRating %></div>
 					</td>
-					<td class="priceDetails"></td>
+					<td>
+						<div class="extraData">
+							<div class="priceDetails"></div>
+
+							<div class="quickAttributes btn-group" data-content="<%= item.id %>">
+								<span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying btn btn-mini" href="#" rel="tooltip" data-content="0" data-original-title="Playing"><i class="icon-play"></i></a></span>
+								<span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed btn btn-mini" href="#" rel="tooltip" data-content="1" data-original-title="Played"><i class="icon-ok"></i></a></span>
+								<span class="playStatus-<%= item.playStatus %>"><a class="attrFinished btn btn-mini" href="#" rel="tooltip" data-content="2" data-original-title="Finished"><i class="icon-stop"></i></a></span>
+								<span class=""><a class="attrFavorite btn btn-mini" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"><i class="icon-heart"></i></a></span>
+								<span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned btn btn-mini" href="#" rel="tooltip" data-content="4" data-original-title="Owned"><i class="icon-barcode"></i></a></span>
+							</div>
+						</div>
+					</td>
 					<td class="scoreDetails"><a href="" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
 					<% if (currentViewTagID !== '0') { %>
 						<td class="options"><a href="#" class="deleteItem_btn btn btn-danger btn-small" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>

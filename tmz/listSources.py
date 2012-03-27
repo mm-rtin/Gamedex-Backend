@@ -23,11 +23,15 @@ AWS_HEADERS = {
 }
 AWS_ACL = 'public-read'
 
+# ign base URL
+IGN_BASE_URL = 'http://www.ign.com/_views/ign/ign_tinc_reviewed_games.ftl?indexType=upcoming&locale=us'
+IGN_ITEMS_PER_PAGE = 25
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # GAMESTATS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def gameStatsListByGPM(request):
+def popularList(request):
 
     if 'platform' in request.GET:
         platform = request.GET.get('platform')
@@ -50,7 +54,7 @@ def gameStatsListByGPM(request):
         if response.status_code == 200:
 
             # parse game stats list result
-            gameStatsList = parseGameStatsListByGPM(response.content)
+            gameStatsList = parsePopularList(response.content)
 
             # cache game stats list for 1 day
             if not memcache.add('gameStatsListByGPM_' + platform, gameStatsList, 86400):
@@ -62,7 +66,7 @@ def gameStatsListByGPM(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PARSE GAME STATS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def parseGameStatsListByGPM(response):
+def parsePopularList(response):
 
     list = []
 
@@ -88,10 +92,10 @@ def parseGameStatsListByGPM(response):
                     list.append(listObj)
 
             except IndexError:
-                print('parseGameStatsListByGPM: IndexError')
+                print('parsePopularList: IndexError')
 
     except:
-        print('parseGameStatsListByGPM: Parse Error')
+        print('parsePopularList: Parse Error')
 
     # return list
     return list
@@ -100,42 +104,69 @@ def parseGameStatsListByGPM(response):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # IGN
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def ignUpcomingList(request):
+def upcomingList(request):
 
     if 'platform' in request.GET:
         platform = request.GET.get('platform')
 
+    if 'page' in request.GET:
+        page = request.GET.get('page')
+
+    memcacheKey = 'ignUpcomingList_' + platform + '_' + page
+
     # return memcached list if available
-    result = memcache.get('ignUpcomingList_' + platform)
+    result = memcache.get(memcacheKey)
     if result is not None:
         return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 
     # load list from source
     else:
 
+        # http://ps3.ign.com/_views/ign/ign_tinc_reviewed_games.ftl?
+        # platform=568479
+        # releaseStartDate=20120325
+        # releaseEndDate=21120301
+        # sort=popularity
+        # order=desc
+        # sortOrders=xxd
+        # currentGenre=All
+        # currentTimeSpan=Any%20Time
+        # pageType=top
+        # indexType=upcoming
+        # timeFilter=anytime
+        # location=ps3
+        # locale=us
+        # offset=25
         # http://pc.ign.com/index/upcoming.html
-        url = 'http://' + platform + '.ign.com/index/upcoming.html'
+
+        # http://www.ign.com/_views/ign/ign_tinc_reviewed_games.ftl?indexType=upcoming&locale=us
+        # location=ps3
+        # offset=0
+        offset = IGN_ITEMS_PER_PAGE * int(page)
+        url = IGN_BASE_URL + '&location=' + platform + '&offset=' + str(offset)
 
         # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
         # allow 15 seconds for response
         response = urlfetch.fetch(url, None, 'GET', {}, False, False, 15)
 
+        logging.error(response)
+
         if response.status_code == 200:
 
             # parse game stats list result
-            result = parseIGNUpcomingList(response.content)
+            result = parseUpcomingLIst(response.content)
 
             # cache game stats list for 1 day
-            if not memcache.add('ignUpcomingList_' + platform, result, 86400):
+            if not memcache.add(memcacheKey, result, 86400):
                 logging.error('ignUpcomingList: Memcache set failed')
 
             return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# PARSE IGN UPCOMING LIST
+# PARSE UPCOMING LIST
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def parseIGNUpcomingList(response):
+def parseUpcomingLIst(response):
 
     list = []
 
@@ -193,7 +224,10 @@ def copyImageToS3(url, s3conn):
 
     # create new S3 key, set mimetype and Expires header
     k = bucket.new_key(fileName)
-    k.content_type = 'image/' + extension
+    if (extension == 'jpg'):
+        mimeType = 'jpeg'
+
+    k.content_type = 'image/' + mimeType
 
     # write file from response string set public read permission
     k.set_contents_from_string(response.content, headers=AWS_HEADERS, replace=False, policy=AWS_ACL)

@@ -412,7 +412,7 @@ def updateItem(request):
         # validate secretKey against user
         if existingUser:
 
-            # create new item
+            # update item
             if (item is not None):
                 item.item_initialProvider = initialProvider
                 item.item_asin = asin

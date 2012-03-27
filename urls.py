@@ -19,21 +19,22 @@ urlpatterns = patterns('',
     (r'^$', 'tmz.views.index'),
 
     # amazon product api rest proxy
-    (r'^itemsearch/amazon/$', 'tmz.searchAPI.itemSearchAmazon'),
-    (r'^itemdetail/amazon/$', 'tmz.searchAPI.itemDetailAmazon'),
+    (r'^amazon/search/$', 'tmz.searchAPI.searchAmazon'),
+    (r'^amazon/detail/$', 'tmz.searchAPI.detailAmazon'),
 
     # giantbomt api proxy
-    (r'^itemsearch/giantbomb/$', 'tmz.searchAPI.itemSearchGiantBomb'),
-    (r'^itemdetail/giantbomb/$', 'tmz.searchAPI.itemDetailGiantBomb'),
+    (r'^giantbomb/search/$', 'tmz.searchAPI.searchGiantBomb'),
+    (r'^giantbomb/detail/$', 'tmz.searchAPI.detailGiantBomb'),
 
     # metacritic datasource
-    (r'^itemsearch/metacritic/$', 'tmz.searchAPI.itemSearchMetacritic'),
+    (r'^metacritic/search/$', 'tmz.searchAPI.searchMetacritic'),
+    (r'^metacritic/cache/$', 'tmz.searchAPI.cacheMetacritic'),
 
     # gamestats datasource
-    (r'^popularlist/gamestats/gpm$', 'tmz.listSources.gameStatsListByGPM'),
+    (r'^popularlist/$', 'tmz.listSources.popularList'),
 
     # ign datasource
-    (r'^upcominglist/ign$', 'tmz.listSources.ignUpcomingList'),
+    (r'^upcominglist/$', 'tmz.listSources.upcomingList'),
 
 
     # t_minuszero rest api

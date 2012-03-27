@@ -23,44 +23,71 @@ giantBombAPIKey = 'e89927b08203137d0252fbf1f611a38489edb208'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # METACRITIC
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def itemSearchMetacritic(request):
+def searchMetacritic(request):
 
     if 'keywords' in request.GET:
         keywords = request.GET.get('keywords')
 
     # memcache key
-    memcacheKey = 'itemSearchMetacritic_' + keywords
+    memcacheKey = 'searchMetacritic_' + keywords
 
     # return memcached search if available
     metacriticSearch = memcache.get(memcacheKey)
 
     if metacriticSearch is not None:
         logging.info('')
-        logging.info('************** itemSearchMetacritic CACHE HIT **************')
+        logging.info('************** searchMetacritic CACHE HIT **************')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
 
-        return HttpResponse(metacriticSearch, mimetype='text/html')
+        # return json
+        return HttpResponse(simplejson.dumps(metacriticSearch), mimetype='application/json')
 
     else:
 
-        # http://www.metacritic.com/search/game/something/results
         url = 'http://www.metacritic.com/search/game/' + keywords + '/results'
-        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 15)
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
-        # cache for 2 days
-        if not memcache.add(memcacheKey, response.content, 127800):
-            logging.error('itemSearchMetacritic: Memcache set failed')
-
+    # return raw response html
     return HttpResponse(response.content, mimetype='text/html')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# cacheMetacritic
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def cacheMetacritic(request):
+
+    if 'keywords' in request.GET:
+        keywords = request.GET.get('keywords')
+
+    if 'metascore' in request.GET:
+        metascore = request.GET.get('metascore')
+
+    if 'metascorePage' in request.GET:
+        metascorePage = request.GET.get('metascorePage')
+
+    # construct object to cache
+    cachedObject = {'metascore': metascore, 'metascorePage': metascorePage}
+
+    # memcache key
+    memcacheKey = 'searchMetacritic_' + keywords
+
+    # cache for 2 days
+    if not memcache.add(memcacheKey, cachedObject, 127800):
+        logging.error('searchMetacritic: Memcache set failed')
+        return HttpResponse('FALSE', mimetype='text/html')
+
+    return HttpResponse('TRUE', mimetype='text/html')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # AMAZON PRODUCT API REST PROXY
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# item search
-def itemSearchAmazon(request):
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# searchAmazon
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def searchAmazon(request):
 
     amazon = bottlenose.Amazon(accessKey, secretKey, associate_tag)
 
@@ -80,18 +107,18 @@ def itemSearchAmazon(request):
         page = request.GET.get('page')
 
     # memcache key
-    memcacheKey = 'itemSearchAmazon_' + keywords + '_' + browseNode + '_' + responseGroup + '_' + searchIndex + '_' + page
+    memcacheKey = 'searchAmazon_' + keywords + '_' + browseNode + '_' + responseGroup + '_' + searchIndex + '_' + page
 
     # return memcached search if available
-    itemSearch = memcache.get(memcacheKey)
+    search = memcache.get(memcacheKey)
 
-    if itemSearch is not None:
+    if search is not None:
         logging.info('')
-        logging.info('************** itemSearchAmazon CACHE HIT **************')
+        logging.info('************** searchAmazon CACHE HIT **************')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
-        return HttpResponse(itemSearch, mimetype='application/xml')
+        return HttpResponse(search, mimetype='application/xml')
 
     else:
         # Availability='Available', Condition='All', MerchantId='Amazon', MinimumPrice='800', MaximumPrice='13500'
@@ -102,13 +129,15 @@ def itemSearchAmazon(request):
 
         # cache amazon detail for 1 day
         if not memcache.add(memcacheKey, response, 86400):
-            logging.error('itemSearchAmazon: Memcache set failed')
+            logging.error('searchAmazon: Memcache set failed')
 
         return HttpResponse(response, mimetype='application/xml')
 
 
-# item detail by asin
-def itemDetailAmazon(request):
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# detailAmazon
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def detailAmazon(request):
 
     # get request parameters
     if 'asin' in request.GET:
@@ -117,18 +146,18 @@ def itemDetailAmazon(request):
     if 'response_group' in request.GET:
         responseGroup = request.GET.get('response_group')
 
-    memcacheKey = 'itemDetailAmazon_' + asin + '_' + responseGroup
+    memcacheKey = 'detailAmazon_' + asin + '_' + responseGroup
 
     # return memcached detail if available
-    itemDetail = memcache.get(memcacheKey)
+    detail = memcache.get(memcacheKey)
 
-    if itemDetail is not None:
+    if detail is not None:
         logging.info('')
-        logging.info('************** itemDetailAmazon HIT **************')
+        logging.info('************** detailAmazon HIT **************')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
-        return HttpResponse(itemDetail, mimetype='application/xml')
+        return HttpResponse(detail, mimetype='application/xml')
 
     # get detail from source
     else:
@@ -137,16 +166,45 @@ def itemDetailAmazon(request):
 
         # cache amazon detail for 1 day
         if not memcache.add(memcacheKey, response, 86400):
-            logging.error('itemDetailAmazon: Memcache set failed')
+            logging.error('detailAmazon: Memcache set failed')
 
         return HttpResponse(response, mimetype='application/xml')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# cacheAmazonDetail
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def cacheAmazonDetail(request):
+
+    if 'asin' in request.GET:
+        asin = request.GET.get('asin')
+
+    if 'response_group' in request.GET:
+        response_group = request.GET.get('response_group')
+
+    memcacheKey = 'detailAmazon_' + asin + '_' + responseGroup
+
+    # construct object to cache
+    cachedObject = {'metascore': metascore, 'metascorePage': metascorePage}
+
+    # memcache key
+    memcacheKey = 'searchMetacritic_' + keywords
+
+    # cache for 2 days
+    if not memcache.add(memcacheKey, cachedObject, 127800):
+        logging.error('searchMetacritic: Memcache set failed')
+        return HttpResponse('FALSE', mimetype='text/html')
+
+    return HttpResponse('TRUE', mimetype='text/html')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # GIANT BOMB API REST PROXY
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# item search
-def itemSearchGiantBomb(request):
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# searchGiantBomb
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def searchGiantBomb(request):
 
     queryParameters = {'resources': 'game', 'resource_type': 'game'}
 
@@ -165,8 +223,10 @@ def itemSearchGiantBomb(request):
     return HttpResponse(simplejson.dumps(response), mimetype='application/json')
 
 
-# item detail by gbombID
-def itemDetailGiantBomb(request):
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# detailGiantBomb
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def detailGiantBomb(request):
 
     queryParameters = {}
 
@@ -182,7 +242,9 @@ def itemDetailGiantBomb(request):
     return HttpResponse(simplejson.dumps(response), mimetype='application/json')
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # giantBombAPICall
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def giantBombAPICall(resource, queryParameters):
 
     # http://api.giantbomb.com/search/?api_key=e89927b08203137d0252fbf1f611a38489edb208&format=xml&query=killzone
