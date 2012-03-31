@@ -22,7 +22,7 @@
 		<link rel="shortcut icon" href="http://static.t-minuszero.com/images/favicon.ico">
 
 	</head>
-	<body>
+	<body class="infoHeader">
 
 		<!-- NEW ACCOUNT MODAL -->
 		<div id="createuser-modal" class="modal hide">
@@ -184,43 +184,51 @@
 			</div>
 		</div>
 
-		<!-- HEADER -->
-		<div id="header" class="navbar navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container-fluid">
+		<!-- SITE CONTAINER -->
+		<div id="wrapper" class="standardView">
 
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<a class="brand" href="#">T-MinusZero</a>
+			<!-- HEADER -->
+			<div id="infoHeader">
+				<div id="logo"></div>
+				<div id="siteDescription"></div>
+				<div id="signupButton"></div>
+				<div id="loginButton"></div>
+			</div>
 
-					<div class="nav-collapse">
-						<ul class="nav">
-							<li class="active"><a href="#">Home</a></li>
-							<li><a href="#about">About</a></li>
-							<li><a href="#contact">Contact</a></li>
-						</ul>
+			<!-- HEADER -->
+			<div id="header" class="navbar navbar-fixed-top">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+
+						<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</a>
+						<a class="brand" href="#">T-MinusZero</a>
+
+						<div class="nav-collapse">
+							<ul class="nav">
+								<li class="active"><a href="#">Home</a></li>
+								<li><a href="#about">About</a></li>
+								<li><a href="#contact">Contact</a></li>
+							</ul>
+						</div>
+
+						<!-- RIGHT HEADER -->
+						<form class="form-search navbar-form pull-right">
+							<input id="userLogin_field" type="text" placeholder="User Name" class="input-medium"/>
+							<input id="password_field" type="password" placeholder="Password" class="input-medium"/>
+							<button id="login_btn" class="btn btn-success"><i class="icon-ok icon-white"></i> Login</button>
+							<button id="createUser_btn" class="btn btn-success" data-controls-modal="createuser-modal" data-backdrop="true" data-keyboard="true"><i class="icon-user icon-white"></i> Sign Up</button>
+						</form>
+
 					</div>
-
-					<!-- RIGHT HEADER -->
-					<form class="form-search navbar-form pull-right">
-						<input id="userLogin_field" type="text" placeholder="User Name" class="input-medium"/>
-						<input id="password_field" type="password" placeholder="Password" class="input-medium"/>
-						<button id="login_btn" class="btn btn-success"><i class="icon-ok icon-white"></i> Login</button>
-						<button id="createUser_btn" class="btn btn-success" data-controls-modal="createuser-modal" data-backdrop="true" data-keyboard="true"><i class="icon-user icon-white"></i> Sign Up</button>
-					</form>
-
 				</div>
 			</div>
-		</div>
-
-		<!-- SITE CONTAINER -->
-		<div id="wrapper">
 
 			<!-- CONTENT -->
-			<div id="content" class="standardView">
+			<div id="content">
 
 				<!-- SEARCH PANEL -->
 				<div id="panel1">
@@ -234,7 +242,7 @@
 							<div id="providerContainer">
 
 								<!-- SEARCH SELECT -->
-								<div id="searchProvider" class="btn-group" data-content="0">
+								<div id="searchProvider" class="btn-group" data-content="0" data-toggle="dropdown">
 									<a class="providerSelect_btn btn" data-keyboard="true"><span class="providerName">Amazon.com</span></a>
 									<a class="dropdown_btn btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
 									<ul class="dropdown-menu">
@@ -245,11 +253,11 @@
 
 								<!-- LIST SELECT -->
 								<div id="listProvider" class="btn-group" data-content="0">
-									<a class="providerSelect_btn btn" data-keyboard="true"><span class="providerName">Popular Games</span></a>
+									<a class="providerSelect_btn btn" data-keyboard="true" data-toggle="dropdown"><span class="providerName">Popular Games</span></a>
 									<a class="dropdown_btn btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
 									<ul class="dropdown-menu">
-										<li><a href="#" data-content="0">Popular Games</a></li>
-										<li><a href="#" data-content="1">Upcoming Games</a></li>
+										<li><a href="#" data-content="0">Popular</a></li>
+										<li><a href="#" data-content="1">Upcoming</a></li>
 									</ul>
 								</div>
 
@@ -509,7 +517,7 @@
 													<div class="controls">
 														<!-- game status -->
 														<div id="gameStatus" class="btn-group">
-															<a class="currentSelection btn" href="#" data-initial="0">None</a>
+															<a class="currentSelection btn" href="#" data-initial="0" data-toggle="dropdown">None</a>
 															<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
 															<ul class="dropdown-menu">
 																<li><a href="#" data-content="0">None</a></li>
@@ -527,7 +535,7 @@
 													<div class="controls">
 														<!-- play status -->
 														<div id="playStatus" class="btn-group">
-															<a class="currentSelection btn" href="#" data-initial="0">Not Started</a>
+															<a class="currentSelection btn" href="#" data-initial="0" data-toggle="dropdown">Not Started</a>
 															<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
 															<ul class="dropdown-menu">
 																<li><a href="#" data-content="0">Not Started</a></li>
@@ -587,27 +595,26 @@
 
 								<!-- filters button -->
 								<div class="filterOptions btn-group">
-									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> <span class="filterName">List Filters</span></a>
-									<a class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></a>
-									<a class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></a>
+									<button class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> <span class="filterName">List Filters</span></button>
+									<button class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></button>
+									<button class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<li><a href="#" class="listFilters_btn">Custom</a></li>
 										<li class="divider"></li>
-										<li><a href="#" data-content="0">Upcoming Games</a></li>
+										<li><a href="#" data-content="0">Upcoming</a></li>
 										<li><a href="#" data-content="1">New Releases</a></li>
 										<li class="divider"></li>
 										<li><a href="#" data-content="2">Never Played</a></li>
-										<li><a href="#" data-content="3">Games Playing</a></li>
-										<li><a href="#" data-content="4">Games Played</a></li>
-										<li><a href="#" data-content="5">Finished Games</a></li>
+										<li><a href="#" data-content="3">Playing</a></li>
+										<li><a href="#" data-content="4">Played</a></li>
+										<li><a href="#" data-content="5">Finished </a></li>
 										<li class="divider"></li>
-										<li><a href="#" data-content="6">Owned Games</a></li>
-										<li><a href="#" data-content="7">Wanted Games</a></li>
+										<li><a href="#" data-content="6">Owned</a></li>
+										<li><a href="#" data-content="7">Wanted</a></li>
 									</ul>
 								</div>
 
-
-								<a href="#" id="deleteList_btn" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete List</a>
+								<button id="deleteList_btn" class="btn btn-danger"><i class="icon-remove icon-white"></i> Delete List</button>
 
 								<div class="clear"></div>
 							</div>
@@ -624,8 +631,8 @@
 
 								<!-- SORT OPTIONS -->
 								<div class="sortOptions btn-group">
-									<a class="currentSort btn" href="#" data-toggle="dropdown">Alphabetical</a>
-									<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
+									<button class="currentSort btn" href="#" data-toggle="dropdown">Alphabetical</button>
+									<button class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<li><a href="#" data-content="0">Alphabetical</a></li>
 										<li><a href="#" data-content="1">Metascore</a></li>
@@ -688,29 +695,29 @@
 
 								<!-- filters button -->
 								<div class="filterOptions btn-group">
-									<a class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> <span class="filterName">List Filters</span></a>
-									<a class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></a>
-									<a class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></a>
+									<button class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> <span class="filterName">List Filters</span></button>
+									<button class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></button>
+									<button class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<li><a href="#" class="listFilters_btn">Custom</a></li>
 										<li class="divider"></li>
-										<li><a href="#" data-content="0">Upcoming Games</a></li>
+										<li><a href="#" data-content="0">Upcoming</a></li>
 										<li><a href="#" data-content="1">New Releases</a></li>
 										<li class="divider"></li>
 										<li><a href="#" data-content="2">Never Played</a></li>
-										<li><a href="#" data-content="3">Games Playing</a></li>
-										<li><a href="#" data-content="4">Games Played</a></li>
-										<li><a href="#" data-content="5">Finished Games</a></li>
+										<li><a href="#" data-content="3">Playing</a></li>
+										<li><a href="#" data-content="4">Played</a></li>
+										<li><a href="#" data-content="5">Finished </a></li>
 										<li class="divider"></li>
-										<li><a href="#" data-content="6">Owned Games</a></li>
-										<li><a href="#" data-content="7">Wanted Games</a></li>
+										<li><a href="#" data-content="6">Owned</a></li>
+										<li><a href="#" data-content="7">Wanted</a></li>
 									</ul>
 								</div>
 
 								<!-- SORT OPTIONS -->
 								<div class="sortOptions btn-group">
-									<a class="currentSort btn" href="#">Alphabetical</a>
-									<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></a>
+									<button class="currentSort btn" href="#" data-toggle="dropdown">Alphabetical</button>
+									<button class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<li><a href="#" data-content="0">Alphabetical</a></li>
 										<li><a href="#" data-content="1">Metascore</a></li>
@@ -808,7 +815,7 @@
 					</td>
 					<td class="scoreDetails"><a href="" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
 					<% if (currentViewTagID !== '0') { %>
-						<td class="options"><a href="#" class="deleteItem_btn btn btn-danger btn-small" data-content="<%= item.id %>"><i class="icon-trash icon-white"></i></a></td>
+						<td class="options"><a href="#" class="deleteItem_btn btn btn-mini" data-content="<%= item.id %>"><i class="icon-remove"></i></a></td>
 					<% } %>
 				</tr>
 	      	<% }); %>
