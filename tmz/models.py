@@ -29,7 +29,7 @@ class ItemTagUser(models.Model):
     user = models.ForeignKey('Users')
     tag = models.ForeignKey('Tags')
     item = models.ForeignKey('Items')
-    item_note = models.TextField(blank=True)
+    item_note = models.TextField(blank=True, null=True)
 
 
 # LIST ITEMS
@@ -37,19 +37,19 @@ class Items(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
     user = models.ForeignKey('Users')
     item_initialProvider = models.CharField(max_length=32)
-    item_asin = models.CharField(max_length=16, blank=True)
-    item_gbombID = models.CharField(max_length=16, blank=True)
-    item_metacriticPage = models.CharField(max_length=512, blank=True)
-    item_metascore = models.SmallIntegerField(max_length=3, blank=True)
     item_name = models.CharField(max_length=128)
-    item_releasedate = models.DateField(blank=True)
-    item_platform = models.CharField(max_length=32, blank=True)
-    item_smallImage = models.CharField(max_length=512, blank=True)
-    item_thumbnailImage = models.CharField(max_length=512, blank=True)
-    item_largeImage = models.CharField(max_length=512, blank=True)
-    item_gameStatus = models.CharField(max_length=16)
-    item_playStatus = models.CharField(max_length=16)
-    item_userRating = models.CharField(max_length=3)
+    item_gameStatus = models.CharField(max_length=16, blank=True, null=True)
+    item_playStatus = models.CharField(max_length=16, blank=True, null=True)
+    item_userRating = models.CharField(max_length=3, blank=True, null=True)
+    item_asin = models.CharField(max_length=16, blank=True, null=True)
+    item_gbombID = models.CharField(max_length=16, blank=True, null=True)
+    item_metacriticPage = models.CharField(max_length=512, blank=True, null=True)
+    item_metascore = models.SmallIntegerField(max_length=3, blank=True, null=True)
+    item_releasedate = models.DateField(blank=True, null=True)
+    item_platform = models.CharField(max_length=32, blank=True, null=True)
+    item_smallImage = models.CharField(max_length=512, blank=True, null=True)
+    item_thumbnailImage = models.CharField(max_length=512, blank=True, null=True)
+    item_largeImage = models.CharField(max_length=512, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'ListItems'

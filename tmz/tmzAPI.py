@@ -25,10 +25,10 @@ def login(request):
 
     if (request.POST):
 
-        if 'user_login' in request.POST and 'user_password' in request.POST:
+        if 'user_email' in request.POST and 'user_password' in request.POST:
 
             # get user parameters
-            userLogin = request.POST.get('user_login')
+            userEmail = request.POST.get('user_email')
             userPassword = request.POST.get('user_password')
 
             # hash password
@@ -36,14 +36,14 @@ def login(request):
 
             # validate login
             try:
-                user = Users.objects.get(user_login=userLogin, user_password=userPassword)
+                user = Users.objects.get(user_email=userEmail, user_password=userPassword)
             except Users.DoesNotExist:
                 user = None
 
             if user:
 
                 # generate secret key
-                secretKey = hashlib.md5(userLogin)
+                secretKey = hashlib.md5(userEmail)
                 secretKey.update(str(time.time()))
                 secretKey = secretKey.hexdigest()
 
@@ -62,7 +62,7 @@ def login(request):
             return HttpResponse('false', mimetype='text/html')
 
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # CREATE USER
@@ -73,22 +73,49 @@ def createUser(request):
     if (request.POST):
 
         # collect user parameters
-        userLogin = request.POST.get('user_login')
-        userPassword = request.POST.get('user_password')
         userEmail = request.POST.get('user_email')
+        userPassword = request.POST.get('user_password')
 
-        # hash password
-        userPassword = hashlib.md5(userPassword).hexdigest()
+        # check existing email
+        try:
+            user = Users.objects.get(user_email=userEmail)
+        except Users.DoesNotExist:
+            user = None
 
-        # create user
-        guid = str(uuid.uuid4())
-        user = Users(id=guid, user_login=userLogin, user_password=userPassword, user_email=userEmail, user_secret_key='')
-        user.save()
+        # user does not exist: create new user
+        if user == None:
+            # hash password
+            userPassword = hashlib.md5(userPassword).hexdigest()
 
-        return HttpResponse('TRUE', mimetype='text/html')
+            # create user
+            guid = str(uuid.uuid4())
+            user = Users(id=guid, user_email=userEmail, user_password=userPassword, user_secret_key='')
+            user.save()
 
+            # generate secret key
+            secretKey = hashlib.md5(userEmail)
+            secretKey.update(str(time.time()))
+            secretKey = secretKey.hexdigest()
+
+            # save secret key
+            user.user_secret_key = secretKey
+            user.save()
+
+            # create default list
+            listguid = str(uuid.uuid4())
+            newList = Tags(id=listguid, user=user, list_name='wishlist')
+            newList.save()
+
+            # construct json return object
+            data = {'userID': user.pk, 'secretKey': secretKey}
+
+            return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+        # user exists
+        else:
+            return HttpResponse(simplejson.dumps({'status': 'user_exists'}), mimetype='application/json')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # READ USER
@@ -137,7 +164,7 @@ def createList(request):
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # READ TAGS
@@ -185,7 +212,7 @@ def getList(request):
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # UPDATE TAG
@@ -240,7 +267,7 @@ def deleteList(request):
             return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
 
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ITEMS
@@ -363,7 +390,7 @@ def createListItem(request):
             return HttpResponse('FALSE', mimetype='text/html')
 
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # UPDATE ITEM
@@ -436,7 +463,7 @@ def updateItem(request):
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # READ ITEMS
@@ -518,7 +545,7 @@ def getListItems(request):
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # GET DIRECTORY OF ID/3RD PARTY IDs
@@ -574,11 +601,11 @@ def getDirectory(request):
                 return HttpResponse(simplejson.dumps({'directory': directoryItems}), mimetype='application/json')
 
             else:
-                return HttpResponse('FALSE', mimetype='text/html')
+                return HttpResponse(simplejson.dumps({'status': 'empty'}), mimetype='application/json')
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # GET TAGS FOR ITEM
@@ -626,7 +653,7 @@ def getItemTags(request):
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # GET ITEM TAGS BY 3RD PARTY ID
@@ -674,7 +701,7 @@ def getItemTagsByThirdPartyID(request):
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # DELETE ITEM
@@ -717,7 +744,7 @@ def deleteListItem(request):
             return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
 
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # DELETE ITEMS IN BATCH
@@ -761,4 +788,4 @@ def deleteListItemsInBatch(request):
         else:
             return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
     else:
-        return HttpResponse(simplejson.dumps({'status': 'not POST request'}), mimetype='application/json')
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')

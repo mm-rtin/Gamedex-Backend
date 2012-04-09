@@ -48,8 +48,8 @@ def popularList(request):
         url = 'http://www.gamestats.com/index/gpm/' + platform + '.html'
 
         # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-        # allow 15 seconds for response
-        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 15)
+        # allow 30 seconds for response
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
         if response.status_code == 200:
 
@@ -146,8 +146,8 @@ def upcomingList(request):
         url = IGN_BASE_URL + '&location=' + platform + '&offset=' + str(offset)
 
         # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-        # allow 15 seconds for response
-        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 15)
+        # allow 30 seconds for response
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
         logging.error(response)
 
@@ -220,7 +220,7 @@ def copyImageToS3(url, s3conn):
     extension = fileName.split('.')[-1]
 
     # load url
-    response = urlfetch.fetch(url, None, 'GET', {}, False, False, 15)
+    response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
     # create new S3 key, set mimetype and Expires header
     k = bucket.new_key(fileName)
