@@ -155,7 +155,10 @@ def createList(request):
             # create list
             guid = str(uuid.uuid4())
             newList = Tags(id=guid, user=user, list_name=listName)
-            newList.save()
+
+            # prevent demo account from saving data
+            if (secretKey != '1'):
+                newList.save()
 
             returnData = {'listID': newList.pk, 'listName': listName}
 
@@ -232,6 +235,10 @@ def deleteList(request):
 
         tagID = request.POST.get('id').strip()
 
+        # prevent demo account
+        if (secretKey == '1'):
+            return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+
         # get user by userid
         try:
             existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
@@ -300,8 +307,8 @@ def createListItem(request):
         playStatus = request.POST.get('ps')
         userRating = request.POST.get('ur')
 
-        # get listIDs as array
-        listIDs = request.POST.getlist('lids[]')
+        # get tagIDs as array
+        tagIDs = request.POST.getlist('lids[]')
 
         # authentication
         userID = request.POST.get('uid')
@@ -309,7 +316,7 @@ def createListItem(request):
 
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk = userID)
+            existingUser = Users.objects.get(pk=userID)
         except Users.DoesNotExist:
             existingUser = None
 
@@ -317,53 +324,41 @@ def createListItem(request):
         try:
             existingItem = None
             if asin != '0':
-                existingItem = Items.objects.get(item_asin = asin, user = existingUser)
+                existingItem = Items.objects.get(item_asin=asin, user=existingUser)
             elif gbombID != '0':
-                existingItem = Items.objects.get(item_gbombID = gbombID, user = existingUser)
+                existingItem = Items.objects.get(item_gbombID=gbombID, user=existingUser)
 
         except Items.DoesNotExist:
             existingItem = None
 
-        # get existing tags by tagID
-        try:
-            newTags = []
-            for listID in listIDs:
-                existingTag = Tags.objects.get(pk = listID)
-
-                # if user, tag, item combination exists skip adding to new tag list
-                try:
-                    ItemTagUser.objects.get(user = existingUser, tag = existingTag, item = existingItem)
-                except ItemTagUser.DoesNotExist:
-                    newTags.append(existingTag)
-
-        except Tags.DoesNotExist:
-            newTags = None
-
         # validate secretKey against user
-        if existingUser and newTags and existingUser.user_secret_key == secretKey:
+        if existingUser and existingUser.user_secret_key == secretKey:
 
             # create new item
             if (existingItem is None):
                 guid = str(uuid.uuid4())
                 item = Items(
-                    id = guid,
-                    user = existingUser,
-                    item_initialProvider = initialProvider,
-                    item_asin = asin,
-                    item_gbombID = gbombID,
-                    item_name = itemName,
-                    item_releasedate = releaseDate,
-                    item_platform = platform,
-                    item_smallImage = smallImage,
-                    item_thumbnailImage = thumbnailImage,
-                    item_largeImage = largeImage,
-                    item_metacriticPage = metacriticPage,
-                    item_metascore = metascore,
-                    item_gameStatus = gameStatus,
-                    item_playStatus = playStatus,
-                    item_userRating = userRating
+                    id=guid,
+                    user=existingUser,
+                    item_initialProvider=initialProvider,
+                    item_asin=asin,
+                    item_gbombID=gbombID,
+                    item_name=itemName,
+                    item_releasedate=releaseDate,
+                    item_platform=platform,
+                    item_smallImage=smallImage,
+                    item_thumbnailImage=thumbnailImage,
+                    item_largeImage=largeImage,
+                    item_metacriticPage=metacriticPage,
+                    item_metascore=metascore,
+                    item_gameStatus=gameStatus,
+                    item_playStatus=playStatus,
+                    item_userRating=userRating
                 )
-                item.save()
+
+                # prevent demo account from saving data
+                if (secretKey != '1'):
+                    item.save()
 
             # item already exists, use instead
             else:
@@ -373,14 +368,20 @@ def createListItem(request):
             tagIDsAdded = []
             idsAdded = []
 
-            for existingTag in newTags:
+            for tagID in tagIDs:
                 guid = str(uuid.uuid4())
-                link = ItemTagUser(id = guid, user = existingUser, tag = existingTag, item = item)
-                link.save()
+
+                # prevent demo account from saving data
+                if (secretKey != '1'):
+                    # get tag
+                    tag = Tags.objects.get(pk=tagID)
+                    # create link
+                    link = ItemTagUser(id=guid, user=existingUser, tag=tag, item=item)
+                    link.save()
 
                 # record item ids and tag ids that have been added
-                tagIDsAdded.append(existingTag.pk)
-                idsAdded.append(link.pk)
+                tagIDsAdded.append(tagID)
+                idsAdded.append(guid)
 
             returnData = {'idsAdded': idsAdded, 'itemID': item.pk, 'tagIDsAdded': tagIDsAdded}
 
@@ -424,39 +425,87 @@ def updateItem(request):
         userID = request.POST.get('uid')
         secretKey = request.POST.get('uk')
 
+        # prevent demo account
+        if (secretKey == '1'):
+            return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk = userID, user_secret_key = secretKey)
+            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
         except Users.DoesNotExist:
             existingUser = None
 
         # get existing item
         try:
-            item = Items.objects.get(pk = itemID, user = existingUser)
+            item = Items.objects.get(pk=itemID, user=existingUser)
         except Items.DoesNotExist:
             item = None
 
         # validate secretKey against user
-        if existingUser:
+        if existingUser and item is not None:
 
             # update item
-            if (item is not None):
-                item.item_initialProvider = initialProvider
-                item.item_asin = asin
-                item.item_gbombID = gbombID
-                item.item_name = itemName
-                item.item_releasedate = releaseDate
-                item.item_platform = platform
-                item.item_smallImage = smallImage
-                item.item_thumbnailImage = thumbnailImage
-                item.item_largeImage = largeImage
-                item.item_metacriticPage = metacriticPage
-                item.item_metascore = metascore
-                item.item_gameStatus = gameStatus
-                item.item_playStatus = playStatus
-                item.item_userRating = userRating
+            item.item_initialProvider = initialProvider
+            item.item_asin = asin
+            item.item_gbombID = gbombID
+            item.item_name = itemName
+            item.item_releasedate = releaseDate
+            item.item_platform = platform
+            item.item_smallImage = smallImage
+            item.item_thumbnailImage = thumbnailImage
+            item.item_largeImage = largeImage
+            item.item_metacriticPage = metacriticPage
+            item.item_metascore = metascore
+            item.item_gameStatus = gameStatus
+            item.item_playStatus = playStatus
+            item.item_userRating = userRating
 
-                item.save()
+            item.save()
+
+            return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+        else:
+            return HttpResponse('FALSE', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
+
+
+# UPDATE METACRITIC INFO
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def updateMetacritic(request):
+
+    if (request.POST):
+
+        # collect list item parameters
+        itemID = request.POST.get('id')
+        metacriticPage = request.POST.get('mp')
+        metascore = request.POST.get('ms')
+
+        # authentication
+        userID = request.POST.get('uid')
+        secretKey = request.POST.get('uk')
+
+        # get user by userid
+        try:
+            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
+        except Users.DoesNotExist:
+            existingUser = None
+
+        # get existing item
+        try:
+            item = Items.objects.get(pk=itemID, user=existingUser)
+        except Items.DoesNotExist:
+            item = None
+
+        # validate secretKey against user
+        if existingUser and item is not None:
+
+            # update item
+            item.item_metacriticPage = metacriticPage
+            item.item_metascore = metascore
+
+            item.save()
 
             return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
 
@@ -480,13 +529,13 @@ def getListItems(request):
 
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk = userID)
+            existingUser = Users.objects.get(pk=userID)
         except Users.DoesNotExist:
             existingUser = None
 
         # get existing list by tagID
         try:
-            existingTag = Tags.objects.get(pk = tagID)
+            existingTag = Tags.objects.get(pk=tagID)
         except Tags.DoesNotExist:
             existingTag = None
 
@@ -497,10 +546,10 @@ def getListItems(request):
             try:
                 # items for all tags
                 if tagID == '0':
-                    itemTagUsers = ItemTagUser.objects.filter(user = existingUser)
+                    itemTagUsers = ItemTagUser.objects.filter(user=existingUser)
                 # items filtered by tag
                 else:
-                    itemTagUsers = ItemTagUser.objects.filter(user = existingUser, tag = existingTag)
+                    itemTagUsers = ItemTagUser.objects.filter(user=existingUser, tag=existingTag)
 
             except ItemTagUser.DoesNotExist:
                 itemTagUsers = None
@@ -561,7 +610,7 @@ def getDirectory(request):
 
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk = userID)
+            existingUser = Users.objects.get(pk=userID)
         except Users.DoesNotExist:
             existingUser = None
 
@@ -570,7 +619,7 @@ def getDirectory(request):
 
             # get tag items
             try:
-                itemTagUsers = ItemTagUser.objects.filter(user = existingUser)
+                itemTagUsers = ItemTagUser.objects.filter(user=existingUser)
             except ItemTagUser.DoesNotExist:
                 itemTagUsers = None
 
@@ -622,7 +671,7 @@ def getItemTags(request):
 
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk = userID)
+            existingUser = Users.objects.get(pk=userID)
         except Users.DoesNotExist:
             existingUser = None
 
@@ -631,7 +680,7 @@ def getItemTags(request):
 
             # get item tags
             try:
-                itemTagUsers = ItemTagUser.objects.filter(user = existingUser, item = itemID)
+                itemTagUsers = ItemTagUser.objects.filter(user=existingUser, item=itemID)
             except ItemTagUser.DoesNotExist:
                 itemTagUsers = None
 
@@ -670,7 +719,7 @@ def getItemTagsByThirdPartyID(request):
 
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk = userID)
+            existingUser = Users.objects.get(pk=userID)
         except Users.DoesNotExist:
             existingUser = None
 
@@ -679,7 +728,7 @@ def getItemTagsByThirdPartyID(request):
 
             # get item tags
             try:
-                itemTagUsers = ItemTagUser.objects.filter(user = existingUser, item = itemID)
+                itemTagUsers = ItemTagUser.objects.filter(user=existingUser, item=itemID)
             except ItemTagUser.DoesNotExist:
                 itemTagUsers = None
 
@@ -719,7 +768,7 @@ def deleteListItem(request):
 
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk = userID, user_secret_key = secretKey)
+            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
         except Users.DoesNotExist:
             existingUser = None
 
@@ -728,14 +777,18 @@ def deleteListItem(request):
 
             # get element to delete from ItemTagUser
             try:
-                itemTagUser = ItemTagUser.objects.get(pk = id, user = existingUser)
+                itemTagUser = ItemTagUser.objects.get(pk=id, user=existingUser)
             except ItemTagUser.DoesNotExist:
                 itemTagUser = None
 
             # found record > delete
             if itemTagUser:
                 tagID = itemTagUser.tag.pk
-                itemTagUser.delete()
+
+                # prevent demo account from saving data
+                if (secretKey != '1'):
+                    itemTagUser.delete()
+
                 return HttpResponse(simplejson.dumps({'tagID': tagID}), mimetype='application/json')
 
             return HttpResponse(simplejson.dumps({'status': 'record not found'}), mimetype='application/json')
@@ -762,7 +815,7 @@ def deleteListItemsInBatch(request):
 
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk = userID, user_secret_key = secretKey)
+            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
         except Users.DoesNotExist:
             existingUser = None
 
@@ -774,7 +827,7 @@ def deleteListItemsInBatch(request):
             for id in ids:
                 # get element to delete from ItemTagUser
                 try:
-                    itemTagUser = ItemTagUser.objects.get(pk = id, user = existingUser)
+                    itemTagUser = ItemTagUser.objects.get(pk=id, user=existingUser)
                 except ItemTagUser.DoesNotExist:
                     itemTagUser = None
 
@@ -782,7 +835,10 @@ def deleteListItemsInBatch(request):
                 if itemTagUser:
                     # add to list of items deleted
                     itemsDeleted.append({'id': itemTagUser.pk, 'tagID': itemTagUser.tag.pk})
-                    itemTagUser.delete()
+
+                    # prevent demo account from saving data
+                    if (secretKey != '1'):
+                        itemTagUser.delete()
 
             return HttpResponse(simplejson.dumps({'itemsDeleted': itemsDeleted}), mimetype='application/json')
         else:

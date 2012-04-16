@@ -187,17 +187,17 @@
 
 						<div class="miniLogo"></div>
 
+
 						<!-- RIGHT HEADER -->
-						<div class="pull-right">
-							<div id="userMenu" class="btn-group" data-content="0" data-toggle="dropdown" style="display: block; ">
-								<a id="loggedInButton" class="btn" data-keyboard="true"><span class="userEmail"></span></a>
-								<a class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-								<ul class="dropdown-menu pull-right">
+						<ul class="nav pull-right">
+							<li id="userMenu" class="dropdown">
+							<a href="#" id="loggedInButton" class="dropdown-toggle" data-toggle="dropdown"><span class="userEmail"></span> <b class="caret"></b></a>
+								<ul class="dropdown-menu">
 									<li><a href="#" id="logoutButton"><i class="icon-off"></i> Logout</a></li>
 									<li><a href="#" id="managementButton"><i class="icon-list-alt"></i> Account Management</a></li>
 								</ul>
-							</div>
-						</div>
+							</li>
+						</ul>
 
 					</div>
 				</div>
@@ -215,102 +215,95 @@
 						<!-- SEARCH CONTAINER -->
 						<div id="searchContainer">
 
-							<div id="providerContainer">
+							<!-- search view navbar -->
+							<div id="searchViewMenu" class="navbar navbar-static clearfix">
+								<div class="navbar-inner">
+									<div class="container" style="width: auto;">
+										<ul class="nav">
 
-								<!-- SEARCH SELECT -->
-								<div id="searchProvider" class="btn-group" data-content="0" data-toggle="dropdown">
-									<a class="providerSelect_btn btn" data-keyboard="true"><span class="providerName">Amazon.com</span></a>
-									<a class="dropdown_btn btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-									<ul class="dropdown-menu">
-										<li><a href="#" data-content="0">Amazon.com</a></li>
-										<li><a href="#" data-content="1">GiantBomb.com</a></li>
-									</ul>
+											<!-- search provider menu -->
+											<li id="searchProvider" class="dropdown" data-content="0">
+												<a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-search icon-white"></i> <span class="providerName">Amazon</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="0">Amazon</a></li>
+													<li><a href="#" data-content="1">GiantBomb</a></li>
+												</ul>
+											</li>
+
+											<!-- list provider menu -->
+											<li id="listProvider" class="dropdown" data-content="1">
+												<a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-time icon-white"></i> <span class="providerName">Popular</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="1"><i class="icon-time"></i> Upcoming</a></li>
+													<li><a href="#" data-content="0"><i class="icon-fire"></i> Popular</a></li>
+												</ul>
+											</li>
+
+											<!-- search platforms -->
+											<li id="searchPlatforms" class="dropdown" data-content="1">
+												<a href="#" class="platformSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tag icon-white"></i> <span class="platformName">All Platforms</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="all">All Platforms</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="pc">PC</a></li>
+													<li><a href="#" data-content="mac">Mac</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="x360">Xbox 360</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="ps3">PS3</a></li>
+													<li><a href="#" data-content="vita">Vita</a></li>
+													<li><a href="#" data-content="psp">PSP</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="ds">DS</a></li>
+													<li><a href="#" data-content="3ds">3DS</a></li>
+													<li><a href="#" data-content="wii">Wii</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="ps">Playstation</a></li>
+													<li><a href="#" data-content="ps2">Playstation 2</a></li>
+													<li><a href="#" data-content="xbox">Xbox</a></li>
+													<li><a href="#" data-content="gc">Gamecube</a></li>
+													<li><a href="#" data-content="n64">N64</a></li>
+													<li><a href="#" data-content="snes">SNES</a></li>
+													<li><a href="#" data-content="nes">NES</a></li>
+													<li><a href="#" data-content="gba">GBA</a></li>
+													<li><a href="#" data-content="gbc">Gameboy Color</a></li>
+													<li><a href="#" data-content="gb">Gameboy</a></li>
+													<li><a href="#" data-content="dc">Dreamcast</a></li>
+													<li><a href="#" data-content="saturn">Saturn</a></li>
+													<li><a href="#" data-content="gamegear">GameGear</a></li>
+													<li><a href="#" data-content="segacd">SegaCD</a></li>
+												</ul>
+											</li>
+
+											<!-- list platforms -->
+											<li id="listPlatforms" class="dropdown" data-content="1">
+												<a href="#" class="platformSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tag icon-white"></i> <span class="platformName">All Platforms</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="all">All Platforms</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="pc">PC</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="x360">Xbox 360</a></li>
+													<li><a href="#" data-content="xbl">Xbox Live</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="ps3">PS3</a></li>
+													<li><a href="#" data-content="psn">PSN</a></li>
+													<li><a href="#" data-content="vita">Vita</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="ds">DS</a></li>
+													<li><a href="#" data-content="3ds">3DS</a></li>
+													<li><a href="#" data-content="wii">Wii</a></li>
+												</ul>
+											</li>
+										</ul>
+
+									</div>
 								</div>
-
-								<!-- LIST SELECT -->
-								<div id="listProvider" class="btn-group" data-content="1">
-									<a class="providerSelect_btn btn" data-keyboard="true" data-toggle="dropdown"><span class="providerName">Popular Games</span></a>
-									<a class="dropdown_btn btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-									<ul class="dropdown-menu">
-										<li><a href="#" data-content="1">Upcoming</a></li>
-										<li><a href="#" data-content="0">Popular</a></li>
-									</ul>
-								</div>
-
 							</div>
-
-
-							<!-- PLATFORM SELECT -->
-							<div id="platformContainer">
-								<select data-placeholder="Select Platform:" class="platformList chzn-select" style="width:145px;" tabindex="2">
-									<option value="all">All platforms</option>
-									<optgroup label="Computer">
-										<option value="pc">PC</option>
-										<option value="mac">Mac</option>
-									</optgroup>
-									<optgroup label="Microsoft">
-										<option value="x360">Xbox 360</option>
-									</optgroup>
-									<optgroup label="Sony">
-										<option value="ps3">PS3</option>
-										<option value="vita">Vita</option>
-										<option value="psp">PSP</option>
-									</optgroup>
-									<optgroup label="Nintendo">
-										<option value="ds">DS</option>
-										<option value="3ds">3DS</option>
-										<option value="wii">Wii</option>
-									</optgroup>
-									<optgroup label="Legacy">
-										<option value="ps">Playstation</option>
-										<option value="ps2">PlayStation 2</option>
-										<option value="xbox">Xbox</option>
-										<option value="gc">Gamecube</option>
-										<option value="n64">N64</option>
-										<option value="snes">SNES</option>
-										<option value="nes">NES</option>
-										<option value="gba">GBA</option>
-										<option value="gbc">Gameboy Color</option>
-										<option value="gb">Gameboy</option>
-										<option value="dc">Sega Dreamcast</option>
-										<option value="saturn">Sega Saturn</option>
-										<option value="genesis">Sega Genesis</option>
-										<option value="gamegear">Sega GameGear</option>
-										<option value="cd">Sega CD</option>
-									</optgroup>
-								</select>
-							</div>
-
-							<!-- COMMON PLATFORM SELECT -->
-							<div id="commonPlatformContainer">
-								<select data-placeholder="Select Platform:" class="platformList chzn-select" style="width:145px;" tabindex="2">
-									<optgroup label="Computer">
-										<option value="pc">PC</option>
-									</optgroup>
-									<optgroup label="Microsoft">
-										<option value="x360">Xbox 360</option>
-										<option value="xbl">Xbox Live</option>
-									</optgroup>
-									<optgroup label="Sony">
-										<option value="ps3">PS3</option>
-										<option value="psn">PSN</option>
-										<option value="vita">Vita</option>
-									</optgroup>
-									<optgroup label="Nintendo">
-										<option value="ds">DS</option>
-										<option value="3ds">3DS</option>
-										<option value="wii">Wii</option>
-									</optgroup>
-								</select>
-							</div>
-
-							<div class="clear"></div>
-
 
 							<!-- SEARCH FIELD -->
-							<div id="search" class="form-horizontal">
-								<input id="search_field" type="text" class="span2" value="skyrim">
-								<button id="search_btn" class="btn btn-success" type="submit"><i class="icon-search icon-white"></i> Search</button>
+							<div id="searchField" class="input-prepend input-append">
+								<span class="add-on"><i class="icon-search"></i></span><input type="text" class="span2" value="skyrim" placeholder="search..."><span class="add-on"></span>
 							</div>
 
 							<!--- SEARCH DISPLAY OPTIONS -->
@@ -327,16 +320,13 @@
 								<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
 							</div>
 
-
 							<!-- SEARCH / LIST TABS -->
 							<ul id="finderTabLinks" class="nav nav-tabs">
-								<li class="active">
-									<a id="searchTabLink" href="#searchTab" data-toggle="tab">Search</a>
-								</li>
-								<li>
-									<a id="listTabLink" href="#listTab" data-toggle="tab">List</a>
-								</li>
+								<li class="active"><a id="searchTabLink" href="#searchTab" data-toggle="tab">Search</a></li>
+								<li><a id="listTabLink" href="#listTab" data-toggle="tab">List</a></li>
 							</ul>
+
+							<div class="clear"></div>
 
 							<div id="finderTabContent" class="tab-content">
 
@@ -392,7 +382,7 @@
 
 								<!-- TAG LIST -->
 								<div id="addListContainer">
-									<select id="addList" data-placeholder="Add to list:" class="chzn-select list" multiple tabindex="2">
+									<select id="addList" data-placeholder="Type a tag name..." class="chzn-select list" multiple tabindex="2">
 										<option></option>
 									</select>
 								</div>
@@ -415,36 +405,28 @@
 
 								<div id="detailTabContent" class="tab-content">
 									<div id="amazonTab" class="tab-pane active">
-										<table>
-											<tbody>
-												<tr class="detailTitleBar">
-													<td class="itemDetailTitle">
-														<h3></h3>
-													</td>
-													<td class="itemDetailMetascore">
-														<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
-													</td>
-												</tr>
-											</tbody>
-										</table>
+										<div class="detailTitleBar clearfix">
+											<div class="itemDetailTitle">
+												<h3></h3>
+											</div>
+											<div class="itemDetailMetascore">
+												<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
+											</div>
+										</div>
 
 										<a href="#" class="itemDetailThumbnail thumbnail">
 											<img src="http://static.t-minuszero.com/images/no_selection_placeholder.png" alt="">
 										</a>
 									</div>
 									<div id="giantBombTab" class="tab-pane">
-										<table>
-											<tbody>
-												<tr class="detailTitleBar">
-													<td class="itemDetailTitle">
-														<h3></h3>
-													</td>
-													<td class="itemDetailMetascore">
-														<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
-													</td>
-												</tr>
-											</tbody>
-										</table>
+										<div class="detailTitleBar clearfix">
+											<div class="itemDetailTitle">
+												<h3></h3>
+											</div>
+											<div class="itemDetailMetascore">
+												<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
+											</div>
+										</div>
 
 										<a href="#" class="itemDetailThumbnail thumbnail">
 											<img src="http://static.t-minuszero.com/images/no_selection_placeholder.png" alt="">
@@ -564,37 +546,68 @@
 
 						<div id="viewItemsContainer">
 
-							<div class="optionsGroup">
-								<div id="viewListContainer">
-									<select id="viewList" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
-										<option></option>
-									</select>
+							<!-- item view navbar -->
+							<div id="itemViewMenu" class="navbar navbar-static">
+								<div class="navbar-inner">
+									<div class="container" style="width: auto;">
+										<ul class="nav">
+
+											<!-- view list menu -->
+											<li id="viewList" class="dropdown">
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tag icon-white"></i> <span class="viewName">View All</span> <b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#">Empty</a></li>
+												</ul>
+											</li>
+
+											<!-- filter menu -->
+											<li class="filterOptions dropdown">
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-adjust icon-white"></i> Filter: <Span class="filterType">None</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="0">Custom</a></li>
+													<li class="divider"></li>
+													<li class="clearFilters_btn"><a href="#"><i class="icon-remove"></i> Clear Filters</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="1">Upcoming</a></li>
+													<li><a href="#" data-content="2">New Releases</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="3">Never Played</a></li>
+													<li><a href="#" data-content="4">Playing</a></li>
+													<li><a href="#" data-content="5">Played</a></li>
+													<li><a href="#" data-content="6">Finished </a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="7">Owned</a></li>
+													<li><a href="#" data-content="8">Wanted</a></li>
+												</ul>
+											</li>
+
+											<!-- sort menu -->
+											<li class="sortOptions dropdown">
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-random icon-white"></i> Sort: <span class="sortType">Alphabetical</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="0">Alphabetical</a></li>
+													<li><a href="#" data-content="1">Review Score</a></li>
+													<li><a href="#" data-content="2">Release Date</a></li>
+													<li><a href="#" data-content="3">Platform</a></li>
+													<li><a href="#" data-content="4">Price</a></li>
+												</ul>
+											</li>
+										</ul>
+
+										<!-- edit menu -->
+										<ul class="nav pull-right">
+											<li id="fat-menu" class="dropdown">
+											<a href="#" class="dropdown-toggle" data-toggle="dropdown">Edit <b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#">Delete List: <span class="listName">ps3</span></a></li>
+													<li><a href="#">Edit List Name</a></li>
+													<li class="divider"></li>
+													<li><a href="#">Edit List Items</a></li>
+												</ul>
+											</li>
+										</ul>
+									</div>
 								</div>
-
-								<!-- filters button -->
-								<div class="filterOptions btn-group">
-									<button class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> <span class="filterName">List Filters</span></button>
-									<button class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></button>
-									<button class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a href="#" class="listFilters_btn">Custom</a></li>
-										<li class="divider"></li>
-										<li><a href="#" data-content="0">Upcoming</a></li>
-										<li><a href="#" data-content="1">New Releases</a></li>
-										<li class="divider"></li>
-										<li><a href="#" data-content="2">Never Played</a></li>
-										<li><a href="#" data-content="3">Playing</a></li>
-										<li><a href="#" data-content="4">Played</a></li>
-										<li><a href="#" data-content="5">Finished </a></li>
-										<li class="divider"></li>
-										<li><a href="#" data-content="6">Owned</a></li>
-										<li><a href="#" data-content="7">Wanted</a></li>
-									</ul>
-								</div>
-
-								<button id="deleteList_btn" class="btn btn-danger"><i class="icon-remove icon-white"></i> Delete List</button>
-
-								<div class="clear"></div>
 							</div>
 
 							<!-- DISPLAY SELECT -->
@@ -605,19 +618,6 @@
 									<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
 									<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
 									<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
-								</div>
-
-								<!-- SORT OPTIONS -->
-								<div class="sortOptions btn-group">
-									<button class="currentSort btn" href="#" data-toggle="dropdown">Alphabetical</button>
-									<button class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a href="#" data-content="0">Alphabetical</a></li>
-										<li><a href="#" data-content="1">Metascore</a></li>
-										<li><a href="#" data-content="2">Release Date</a></li>
-										<li><a href="#" data-content="3">Platform</a></li>
-										<li><a href="#" data-content="4">Price</a></li>
-									</ul>
 								</div>
 
 								<button id="gridView_btn" class="btn btn-success"><i class="icon-retweet icon-white"></i> Grid View</button>
@@ -655,66 +655,75 @@
 
 				<!-- GRID OPTIONS PANEL -->
 				<div id="panel5">
-					<div class="header"></div>
-					<div class="panel">
 
-						<div id="gridViewOptions" class="clearfix">
+					<div id="gridViewOptions" class="clearfix">
 
-							<div class="optionsGroup">
+						<div class="optionsGroup">
 
-								<!-- list -->
-								<div id="gridListContainer">
-									<select id="gridList" data-placeholder="View list items:" class="chzn-select list" style="width:170px;" tabindex="2">
-										<option></option>
-									</select>
+							<!-- item view navbar -->
+							<div id="gridViewMenu" class="navbar navbar-static">
+								<div class="navbar-inner">
+									<div class="container" style="width: auto;">
+										<ul class="nav">
+
+											<!-- view list menu -->
+											<li id="gridList" class="dropdown">
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tag icon-white"></i> <span class="viewName">View All</span> <b class="caret"></b></a>
+												<ul class="dropdown-menu">
+
+												</ul>
+											</li>
+
+											<!-- filter menu -->
+											<li class="filterOptions dropdown">
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-adjust icon-white"></i> Filter: <Span class="filterType">None</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="0">Custom</a></li>
+													<li class="divider"></li>
+													<li class="clearFilters_btn"><a href="#"><i class="icon-remove"></i> Clear Filters</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="1">Upcoming</a></li>
+													<li><a href="#" data-content="2">New Releases</a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="3">Never Played</a></li>
+													<li><a href="#" data-content="4">Playing</a></li>
+													<li><a href="#" data-content="5">Played</a></li>
+													<li><a href="#" data-content="6">Finished </a></li>
+													<li class="divider"></li>
+													<li><a href="#" data-content="7">Owned</a></li>
+													<li><a href="#" data-content="8">Wanted</a></li>
+												</ul>
+											</li>
+
+											<!-- sort menu -->
+											<li class="sortOptions dropdown">
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-random icon-white"></i> Sort: <span class="sortType">Alphabetical</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="0">Alphabetical</a></li>
+													<li><a href="#" data-content="1">Review Score</a></li>
+													<li><a href="#" data-content="2">Release Date</a></li>
+													<li><a href="#" data-content="3">Platform</a></li>
+													<li><a href="#" data-content="4">Price</a></li>
+												</ul>
+											</li>
+
+											<!-- display menu -->
+											<li class="displayOptions dropdown">
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th icon-white"></i> Display: <span class="displayType">Medium</span><b class="caret"></b></a>
+												<ul class="dropdown-menu">
+													<li><a href="#" data-content="0">Small</a></li>
+													<li><a href="#" data-content="1">Medium</a></li>
+													<li><a href="#" data-content="2">Large</a></li>
+													<li><a href="#" data-content="3">Info</a></li>
+												</ul>
+											</li>
+
+											<!-- exit button -->
+											<li id="exitGridView_btn"><a href="#"><i class="icon-remove icon-white"></i> Exit Grid View</a></li>
+										</ul>
+									</div>
 								</div>
-
-								<!-- display options -->
-								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
-									<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
-									<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
-									<button class="btn btn-dark" data-content="3" data-toggle="button" rel="tooltip" data-original-title="Data View"><i class="icon-align-left icon-white"></i></button>
-								</div>
-
-								<!-- filters button -->
-								<div class="filterOptions btn-group">
-									<button class="listFilters_btn btn btn-success" data-controls-modal="filters-modal" data-backdrop="true" data-keyboard="true"><i class="icon-adjust icon-white"></i> <span class="filterName">List Filters</span></button>
-									<button class="filterStatus btn btn-success" rel="tooltip" data-original-title="Clear all Filters"><i class="icon-remove icon-white"></i></button>
-									<button class="filterDropDown_btn btn btn-success dropdown-toggle" data-toggle="dropdown" rel="tooltip" data-original-title="Quick Filters"><span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a href="#" class="listFilters_btn">Custom</a></li>
-										<li class="divider"></li>
-										<li><a href="#" data-content="0">Upcoming</a></li>
-										<li><a href="#" data-content="1">New Releases</a></li>
-										<li class="divider"></li>
-										<li><a href="#" data-content="2">Never Played</a></li>
-										<li><a href="#" data-content="3">Playing</a></li>
-										<li><a href="#" data-content="4">Played</a></li>
-										<li><a href="#" data-content="5">Finished </a></li>
-										<li class="divider"></li>
-										<li><a href="#" data-content="6">Owned</a></li>
-										<li><a href="#" data-content="7">Wanted</a></li>
-									</ul>
-								</div>
-
-								<!-- SORT OPTIONS -->
-								<div class="sortOptions btn-group">
-									<button class="currentSort btn" href="#" data-toggle="dropdown">Alphabetical</button>
-									<button class="btn dropdown-toggle" data-toggle="dropdown" href="#">Sort <span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<li><a href="#" data-content="0">Alphabetical</a></li>
-										<li><a href="#" data-content="1">Metascore</a></li>
-										<li><a href="#" data-content="2">Release Date</a></li>
-										<li><a href="#" data-content="3">Platform</a></li>
-										<li><a href="#" data-content="4">Price</a></li>
-									</ul>
-								</div>
-
-								<button id="exitGridView_btn" class="btn btn-danger"><i class="icon-remove icon-white"></i> Exit Grid View</button>
-
 							</div>
-
 						</div>
 					</div>
 				</div>
@@ -863,28 +872,28 @@
 			</ul>
 	    </script>
 
-	   	<!-- dropdown list -->
-	   	<script type="text/template" id="tag-results-template">
-	   		<% if (viewList) { %>
-		   		<optgroup label="System Lists">
-	   				<option value="0">View All</option>
-	   				<option value="1">Most Popular</option>
-	   			</optgroup>
+	   	<!-- view list dropdown -->
+	   	<script type="text/template" id="view-list-template">
+			<li><a href="#" data-content="0">View All</a></li>
+			<li class="divider"></li>
+	   		<% _.each(orderedList, function(item) { %>
+   				<li><a href="#" data-content="<%= item.id %>"><%= item.name %></a></li>
+	      	<% }); %>
+	   		<% if (viewList && emptyList.length > 0) { %>
+      		<li class="divider"></li>
+				<% _.each(emptyList, function(item) { %>
+					<li><a href="#" data-content="<%= item.id %>"><%= item.name %></a></li>
+				<% }); %>
    			<% } %>
+	   	</script>
 
+	   	<!-- add list dropdown -->
+	   	<script type="text/template" id="add-list-template">
    			<optgroup label="User Lists">
 	   		<% _.each(orderedList, function(item) { %>
 	   			<option value="<%= item.id %>"><%= item.name %></option>
 	      	<% }); %>
 	      	</optgroup>
-
-	   		<% if (viewList && emptyList.length > 0) { %>
-		   		<optgroup label="Empty Lists">
-			   		<% _.each(emptyList, function(item) { %>
-			   			<option value="<%= item.id %>"><%= item.name %></option>
-			      	<% }); %>
-	   			</optgroup>
-   			<% } %>
 	   	</script>
 
 	   	<!-- price menu -->

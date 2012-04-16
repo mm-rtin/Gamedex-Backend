@@ -180,7 +180,7 @@ def cacheAmazonDetail(request):
         asin = request.GET.get('asin')
 
     if 'response_group' in request.GET:
-        response_group = request.GET.get('response_group')
+        responseGroup = request.GET.get('response_group')
 
     memcacheKey = 'detailAmazon_' + asin + '_' + responseGroup
 
