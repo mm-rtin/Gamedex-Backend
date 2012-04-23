@@ -191,6 +191,8 @@ def getList(request):
         # validate secretKey against user
         if user and user.user_secret_key == secretKey:
 
+            listDictionary = {'list': []}
+
             # get lists
             try:
                 lists = Tags.objects.filter(user=user)
@@ -211,7 +213,7 @@ def getList(request):
                 return HttpResponse(simplejson.dumps(listDictionary), mimetype='application/json')
 
             else:
-                return HttpResponse('FALSE', mimetype='text/html')
+                return HttpResponse(simplejson.dumps(listDictionary), mimetype='application/json')
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:
@@ -542,6 +544,8 @@ def getListItems(request):
         # validate secretKey against user
         if existingUser and (existingTag or tagID == '0') and existingUser.user_secret_key == secretKey:
 
+            itemDictionary = {'items': []}
+
             # get tag items
             try:
                 # items for all tags
@@ -567,7 +571,7 @@ def getListItems(request):
 
                         # add item to userListItems
                         usersListItems.append({
-                            'id': items.pk,
+                            'id': items.item.pk,
                             'ip': items.item.item_initialProvider,
                             'iid': items.item.pk,
                             'aid': items.item.item_asin,
@@ -590,7 +594,8 @@ def getListItems(request):
                 return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
 
             else:
-                return HttpResponse('FALSE', mimetype='text/html')
+
+                return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
         else:
             return HttpResponse('FALSE', mimetype='text/html')
     else:

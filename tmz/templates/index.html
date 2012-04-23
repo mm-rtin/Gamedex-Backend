@@ -303,7 +303,7 @@
 
 							<!-- SEARCH FIELD -->
 							<div id="searchField" class="input-prepend input-append">
-								<span class="add-on"><i class="icon-search"></i></span><input type="text" class="span2" value="skyrim" placeholder="search..."><span class="add-on"></span>
+								<span class="add-on"><i class="icon-search"></i></span><input type="text" class="span2" value="" placeholder="search..."><span class="add-on"></span>
 							</div>
 
 							<!--- SEARCH DISPLAY OPTIONS -->
@@ -473,24 +473,6 @@
 											<fieldset>
 
 												<div class="control-group">
-													<label class="control-label">Game Status</label>
-													<div class="controls">
-														<!-- game status -->
-														<div id="gameStatus" class="btn-group">
-															<a class="currentSelection btn" href="#" data-initial="0" data-toggle="dropdown">None</a>
-															<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-															<ul class="dropdown-menu">
-																<li><a href="#" data-content="0">None</a></li>
-																<li><a href="#" data-content="1">Own</a></li>
-																<li><a href="#" data-content="2">Sold</a></li>
-																<li><a href="#" data-content="3">Wanted</a></li>
-															</ul>
-														</div>
-													</div>
-												</div>
-
-
-												<div class="control-group">
 													<label class="control-label">Play Status</label>
 													<div class="controls">
 														<!-- play status -->
@@ -502,6 +484,23 @@
 																<li><a href="#" data-content="1">Playing</a></li>
 																<li><a href="#" data-content="2">Played</a></li>
 																<li><a href="#" data-content="3">Finished</a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+
+												<div class="control-group">
+													<label class="control-label">Game Status</label>
+													<div class="controls">
+														<!-- game status -->
+														<div id="gameStatus" class="btn-group">
+															<a class="currentSelection btn" href="#" data-initial="0" data-toggle="dropdown">None</a>
+															<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+															<ul class="dropdown-menu">
+																<li><a href="#" data-content="0">None</a></li>
+																<li><a href="#" data-content="1">Own</a></li>
+																<li><a href="#" data-content="2">Sold</a></li>
+																<li><a href="#" data-content="3">Wanted</a></li>
 															</ul>
 														</div>
 													</div>
@@ -595,14 +594,14 @@
 										</ul>
 
 										<!-- edit menu -->
-										<ul class="nav pull-right">
+										<ul id="editMenu" class="nav pull-right">
 											<li id="fat-menu" class="dropdown">
 											<a href="#" class="dropdown-toggle" data-toggle="dropdown">Edit <b class="caret"></b></a>
 												<ul class="dropdown-menu">
-													<li><a href="#">Delete List: <span class="listName">ps3</span></a></li>
-													<li><a href="#">Edit List Name</a></li>
+													<li id="deleteList_btn"><a href="#">Delete List: <span class="listName"></span></a></li>
+													<li id="editList_btn"><a href="#">Edit List Name</a></li>
 													<li class="divider"></li>
-													<li><a href="#">Edit List Items</a></li>
+													<li id="editListItems_btn"><a href="#">Edit List Items</a></li>
 												</ul>
 											</li>
 										</ul>
@@ -875,11 +874,13 @@
 	   	<!-- view list dropdown -->
 	   	<script type="text/template" id="view-list-template">
 			<li><a href="#" data-content="0">View All</a></li>
+			<% if (orderedList.length > 0) { %>
 			<li class="divider"></li>
 	   		<% _.each(orderedList, function(item) { %>
    				<li><a href="#" data-content="<%= item.id %>"><%= item.name %></a></li>
 	      	<% }); %>
-	   		<% if (viewList && emptyList.length > 0) { %>
+	      	<% } %>
+	   		<% if (emptyList.length > 0) { %>
       		<li class="divider"></li>
 				<% _.each(emptyList, function(item) { %>
 					<li><a href="#" data-content="<%= item.id %>"><%= item.name %></a></li>
@@ -957,6 +958,7 @@
 		<!-- MODULES -->
 		<script src="http://static.t-minuszero.com/js/tmz_util.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_user.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_storage.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_listModel.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_filterPanel.js"></script>
@@ -966,6 +968,8 @@
 		<script src="http://static.t-minuszero.com/js/tmz_detailView.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_itemView.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_gridView.js"></script>
+
+		<script src="http://static.t-minuszero.com/js/tmz_itemCache.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_itemData.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_listData.js"></script>
