@@ -40,6 +40,104 @@
 		<div id="giantBombDescription-modal" class="modal hide"></div>
 		<div id="amazonDescription-modal" class="modal hide"></div>
 
+		<!-- ACCOUNT MANAGEMENT MODAL -->
+		<div id="accountManagement-modal" class="modal hide">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Account Management</h3>
+			</div>
+			<div class="modal-body">
+
+				<form class="form-horizontal" action="#">
+					<fieldset>
+						<div class="control-group">
+							<label class="control-label">User Name</label>
+							<div class="controls">
+								<input class="input" id="userNameUpdateField" type="text" value="">
+							</div>
+						</div>
+						<div class="emailGroup control-group">
+							<label class="control-label">E-mail</label>
+							<div class="controls">
+								<input class="input" id="emailUpdateField" type="text" value="">
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label">New Password</label>
+							<div class="controls">
+								<input class="input" id="passwordUpdateField" type="password" value="">
+							</div>
+						</div>
+						<div class="existingPasswordGroup control-group">
+							<label class="control-label">Existing Password</label>
+							<div class="controls">
+								<input class="input" id="passwordField" type="password" value="">
+							</div>
+						</div>
+					</fieldset>
+				</form>
+
+				<div class="alert alert-success">
+					<strong>Success: </strong> <span class="alertText"></span>
+				</div>
+
+				<div class="alert alert-error">
+					<strong>Error: </strong> <span class="alertText"></span>
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<a id="deleteAccount_btn" href="#" class="btn btn-danger">Delete Account</a>
+				<a id="clearLocalStorage_btn" href="#" class="btn btn-warning">Clear Storage</a>
+				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<a id="updateAccount_btn" href="#" class="btn btn-primary">Update Account</a>
+			</div>
+          </div>
+		</div>
+
+		<!-- DELETE LIST CONFIRM MODAL -->
+		<div id="deleteListConfirm-modal" class="modal hide">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Confirm List Deletion</h3>
+			</div>
+			<div class="modal-body">
+				All list contents will be removed.
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<a id="deleteListConfirm_btn" href="#" class="btn btn-primary">Delete List</a>
+			</div>
+          </div>
+
+		</div>
+
+		<!-- UPDATE LIST MODAL -->
+		<div id="updateList-modal" class="modal hide">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Edit Tag</h3>
+			</div>
+			<div class="modal-body">
+
+				<form class="form-horizontal" action="#">
+					<fieldset>
+						<div class="control-group">
+							<label class="control-label">Tag Name</label>
+							<div class="controls">
+								<input class="input" id="tagNameField" type="text" value="">
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<a id="updateListConfirm_btn" href="#" class="btn btn-primary">Update Tag</a>
+			</div>
+          </div>
+		</div>
+
 		<!-- FILTERS MODAL -->
 		<div id="filters-modal" class="modal hide">
 			<div class="modal-header">
@@ -176,6 +274,7 @@
 						<div id="signupSubmitButton"></div>
 						<div id="loginSubmitButton"></div>
 						<div id="backButton"></div>
+						<div id="rememberCheckbox"></div>
 					</form>
 				</div>
 			</div>
@@ -193,8 +292,8 @@
 							<li id="userMenu" class="dropdown">
 							<a href="#" id="loggedInButton" class="dropdown-toggle" data-toggle="dropdown"><span class="userEmail"></span> <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><a href="#" id="logoutButton"><i class="icon-off"></i> Logout</a></li>
 									<li><a href="#" id="managementButton"><i class="icon-list-alt"></i> Account Management</a></li>
+									<li><a href="#" id="logoutButton"><i class="icon-off"></i> Logout</a></li>
 								</ul>
 							</li>
 						</ul>
@@ -600,8 +699,6 @@
 												<ul class="dropdown-menu">
 													<li id="deleteList_btn"><a href="#">Delete List: <span class="listName"></span></a></li>
 													<li id="editList_btn"><a href="#">Edit List Name</a></li>
-													<li class="divider"></li>
-													<li id="editListItems_btn"><a href="#">Edit List Items</a></li>
 												</ul>
 											</li>
 										</ul>
@@ -815,7 +912,7 @@
 										<span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying btn btn-mini" href="#" rel="tooltip" data-content="0" data-original-title="Playing"><i class="icon-play"></i></a></span>
 										<span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed btn btn-mini" href="#" rel="tooltip" data-content="1" data-original-title="Played"><i class="icon-ok"></i></a></span>
 										<span class="playStatus-<%= item.playStatus %>"><a class="attrFinished btn btn-mini" href="#" rel="tooltip" data-content="2" data-original-title="Finished"><i class="icon-stop"></i></a></span>
-										<span class=""><a class="attrFavorite btn btn-mini" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"><i class="icon-heart"></i></a></span>
+										<span class="rating-<%= item.userRating %>"><a class="attrFavorite btn btn-mini" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"><i class="icon-heart"></i></a></span>
 										<span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned btn btn-mini" href="#" rel="tooltip" data-content="4" data-original-title="Owned"><i class="icon-barcode"></i></a></span>
 									</div>
 								</div>
@@ -900,13 +997,16 @@
 	   	<!-- price menu -->
 	   	<script type="text/template" id="price-menu-template">
 			<div class="btn-group priceMenu">
-			<a class="lowestNew btn btn-small" href="<%= productURL %>" data-price="<%= buyNowRawPrice %>" target="_blank">Amazon: <%= buyNowPrice %></a>
+			<a class="lowestNew btn btn-small" href="<%= productURL %>" data-price="<%= buyNowRawPrice %>" target="_blank"><span class="priceDesc">Amazon:</span> <%= buyNowPrice %></a>
 			<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
 			<span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="<%= offersURLNew %>" data-content="0" target="_blank">Lowest New: <%= lowestNewPrice %></a></li>
-				<li><a href="<%= offersURLUsed %>" data-content="1" target="_blank">Lowest Used: <%= lowestUsedPrice %></a></li>
+				<li><a href="<%= offersURLNew %>" data-content="0" target="_blank"><span class="priceDesc">Lowest New:</span> <%= lowestNewPrice %></a></li>
+
+				<% if (lowestUsedPrice !== '') { %>
+				<li><a href="<%= offersURLUsed %>" data-content="1" target="_blank"><span class="priceDesc">Lowest Used:</span> <%= lowestUsedPrice %></a></li>
+				<% } %>
 			</ul>
 			</div>
 	   	</script>

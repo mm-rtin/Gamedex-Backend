@@ -4,10 +4,11 @@ from django.db import models
 # USERS
 class Users(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
-    user_login = models.CharField(max_length=128)
+    user_name = models.CharField(max_length=128)
     user_password = models.CharField(max_length=128)
     user_email = models.CharField(max_length=256)
     user_secret_key = models.CharField(max_length=256)
+    user_update_timestamp = models.CharField(max_length=32)
 
     class Meta:
         verbose_name_plural = 'Users'
@@ -30,17 +31,16 @@ class ItemTagUser(models.Model):
     tag = models.ForeignKey('Tags')
     item = models.ForeignKey('Items')
     item_note = models.TextField(blank=True, null=True)
+    item_gameStatus = models.CharField(max_length=16, blank=True, null=True)
+    item_playStatus = models.CharField(max_length=16, blank=True, null=True)
+    item_userRating = models.CharField(max_length=3, blank=True, null=True)
 
 
 # LIST ITEMS
 class Items(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
-    user = models.ForeignKey('Users')
     item_initialProvider = models.CharField(max_length=32)
     item_name = models.CharField(max_length=128)
-    item_gameStatus = models.CharField(max_length=16, blank=True, null=True)
-    item_playStatus = models.CharField(max_length=16, blank=True, null=True)
-    item_userRating = models.CharField(max_length=3, blank=True, null=True)
     item_asin = models.CharField(max_length=16, blank=True, null=True)
     item_gbombID = models.CharField(max_length=16, blank=True, null=True)
     item_metacriticPage = models.CharField(max_length=512, blank=True, null=True)

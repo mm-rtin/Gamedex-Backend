@@ -46,6 +46,12 @@ def searchMetacritic(request):
 
     else:
 
+        logging.info('')
+        logging.info('************** searchMetacritic MISS **************')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
         url = 'http://www.metacritic.com/search/game/' + keywords + '/results'
         response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
@@ -76,6 +82,7 @@ def cacheMetacritic(request):
     # cache for 2 days
     if not memcache.add(memcacheKey, cachedObject, 127800):
         logging.error('searchMetacritic: Memcache set failed')
+        logging.error(memcacheKey)
         return HttpResponse('FALSE', mimetype='text/html')
 
     return HttpResponse('TRUE', mimetype='text/html')
@@ -127,9 +134,16 @@ def searchAmazon(request):
         else:
             response = amazon.ItemSearch(SearchIndex=searchIndex, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, Sort='salesrank', MinimumPrice='800', MaximumPrice='13500', BrowseNode=browseNode)
 
-        # cache amazon detail for 1 day
+        logging.info('')
+        logging.info('************** searchAmazon MISS **************')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
+        # cache amazon search for 1 day
         if not memcache.add(memcacheKey, response, 86400):
             logging.error('searchAmazon: Memcache set failed')
+            logging.error(memcacheKey)
 
         return HttpResponse(response, mimetype='application/xml')
 
@@ -164,38 +178,18 @@ def detailAmazon(request):
         amazon = bottlenose.Amazon(accessKey, secretKey, associate_tag)
         response = amazon.ItemLookup(ItemId=asin, IdType='ASIN', ResponseGroup=responseGroup)
 
+        logging.info('')
+        logging.info('************** detailAmazon MISS **************')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
         # cache amazon detail for 1 day
         if not memcache.add(memcacheKey, response, 86400):
             logging.error('detailAmazon: Memcache set failed')
+            logging.error(memcacheKey)
 
         return HttpResponse(response, mimetype='application/xml')
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# cacheAmazonDetail
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def cacheAmazonDetail(request):
-
-    if 'asin' in request.GET:
-        asin = request.GET.get('asin')
-
-    if 'response_group' in request.GET:
-        responseGroup = request.GET.get('response_group')
-
-    memcacheKey = 'detailAmazon_' + asin + '_' + responseGroup
-
-    # construct object to cache
-    cachedObject = {'metascore': metascore, 'metascorePage': metascorePage}
-
-    # memcache key
-    memcacheKey = 'searchMetacritic_' + keywords
-
-    # cache for 2 days
-    if not memcache.add(memcacheKey, cachedObject, 127800):
-        logging.error('searchMetacritic: Memcache set failed')
-        return HttpResponse('FALSE', mimetype='text/html')
-
-    return HttpResponse('TRUE', mimetype='text/html')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -237,9 +231,9 @@ def detailGiantBomb(request):
     if 'id' in request.GET:
         id = request.GET.get('id')
 
-    response = giantBombAPICall('game/' + id, queryParameters)
+        response = giantBombAPICall('game/' + id, queryParameters)
 
-    return HttpResponse(simplejson.dumps(response), mimetype='application/json')
+        return HttpResponse(simplejson.dumps(response), mimetype='application/json')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -247,12 +241,40 @@ def detailGiantBomb(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def giantBombAPICall(resource, queryParameters):
 
-    # http://api.giantbomb.com/search/?api_key=e89927b08203137d0252fbf1f611a38489edb208&format=xml&query=killzone
-    api_string = 'http://api.giantbomb.com/' + resource + '/?api_key=' + giantBombAPIKey + '&format=json&' + urllib.urlencode(queryParameters)
-    req = urllib2.Request(api_string, headers={'Accept-Encoding': 'gzip'})
+    parameters = urllib.urlencode(queryParameters)
+    memcacheKey = 'giantBombAPICall_' + resource + '_' + parameters
 
-    opener = urllib2.build_opener()
-    f = opener.open(req)
-    jsonResponse = simplejson.load(f)
+    # return memcached detail if available
+    giantbombData = memcache.get(memcacheKey)
 
-    return jsonResponse
+    if giantbombData is not None:
+
+        logging.info('')
+        logging.info('************** giantBombAPICall HIT **************')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
+        return giantbombData
+
+    else:
+        logging.info('')
+        logging.info('************** giantBombAPICall MISS **************')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
+        # http://api.giantbomb.com/search/?api_key=e89927b08203137d0252fbf1f611a38489edb208&format=xml&query=killzone
+        api_string = 'http://api.giantbomb.com/' + resource + '/?api_key=' + giantBombAPIKey + '&format=json&' + urllib.urlencode(queryParameters)
+        req = urllib2.Request(api_string, headers={'Accept-Encoding': 'gzip'})
+
+        opener = urllib2.build_opener()
+        f = opener.open(req)
+        jsonResponse = simplejson.load(f)
+
+        # cache giantbomb detail for 1 day
+        if not memcache.add(memcacheKey, jsonResponse, 86400):
+            logging.error('detailGiantBomb: Memcache set failed')
+            logging.error(memcacheKey)
+
+        return jsonResponse

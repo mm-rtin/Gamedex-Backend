@@ -42,17 +42,18 @@ def login(request):
 
             if user:
 
-                # generate secret key
-                secretKey = hashlib.md5(userEmail)
-                secretKey.update(str(time.time()))
-                secretKey = secretKey.hexdigest()
+                if userEmail != 'demo@gamedex.net':
+                    # generate secret key
+                    secretKey = hashlib.md5(userEmail)
+                    secretKey.update(str(time.time()))
+                    secretKey = secretKey.hexdigest()
 
-                # save secret key
-                user.user_secret_key = secretKey
-                user.save()
+                    # save secret key
+                    user.user_secret_key = secretKey
+                    user.save()
 
                 # construct json return object
-                data = {'userID': user.pk, 'secretKey': secretKey}
+                data = {'userID': user.pk, 'secretKey': secretKey, 'timestamp': user.user_update_timestamp, 'userName': user.user_name}
 
                 return HttpResponse(simplejson.dumps(data), mimetype='application/json')
             else:
@@ -118,11 +119,49 @@ def createUser(request):
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
-# READ USER
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 # UPDATE USER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def updateUser(request):
+
+    if (request.POST):
+
+        if 'user_id' in request.POST and 'user_password' in request.POST:
+
+            userID = request.POST.get('user_id')
+            userPassword = request.POST.get('user_password')
+
+            # hash password
+            userPassword = hashlib.md5(userPassword).hexdigest()
+
+            # validate login
+            try:
+                user = Users.objects.get(pk=userID, user_password=userPassword)
+            except Users.DoesNotExist:
+                user = None
+
+            if user:
+
+                # update user
+                if 'user_email' in request.POST:
+                    user.user_email = request.POST.get('user_email')
+                if 'user_name' in request.POST:
+                    user.user_name = request.POST.get('user_name')
+                if 'user_new_password' in request.POST:
+                    userNewPassword = request.POST.get('user_new_password')
+                    user.user_password = hashlib.md5(userNewPassword).hexdigest()
+
+                if ('user_email' in request.POST or 'user_name' in request.POST or 'user_new_password' in request.POST):
+                    user.save()
+
+                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'incorrect password'}), mimetype='application/json')
+        else:
+            return HttpResponse('false', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
+
 
 # DELETE USER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,15 +181,20 @@ def createList(request):
         userID = request.POST.get('user_id')
         secretKey = request.POST.get('uk')
         listName = request.POST.get('list_name').strip()
+        updateTimestamp = request.POST.get('ts')
 
         # get user by userid
         try:
-            user = Users.objects.get(pk=userID)
+            user = Users.objects.get(pk=userID, user_secret_key=secretKey)
         except Users.DoesNotExist:
             user = None
 
         # validate secretKey against user
-        if user and user.user_secret_key == secretKey:
+        if user:
+
+            # set new timestamp
+            user.user_update_timestamp = updateTimestamp
+            user.save()
 
             # create list
             guid = str(uuid.uuid4())
@@ -184,12 +228,12 @@ def getList(request):
 
         # get user by userid
         try:
-            user = Users.objects.get(pk=userID)
+            user = Users.objects.get(pk=userID, user_secret_key=secretKey)
         except Users.DoesNotExist:
             user = None
 
         # validate secretKey against user
-        if user and user.user_secret_key == secretKey:
+        if user:
 
             listDictionary = {'list': []}
 
@@ -221,7 +265,53 @@ def getList(request):
 
 
 # UPDATE TAG
+# update tag name
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def updateList(request):
+
+    if (request.POST):
+
+        # collect list item parameters
+        userID = request.POST.get('user_id')
+        secretKey = request.POST.get('uk')
+        listName = request.POST.get('list_name').strip()
+        listID = request.POST.get('list_id').strip()
+        updateTimestamp = request.POST.get('ts')
+
+        # get user by userid
+        try:
+            user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+        except Users.DoesNotExist:
+            user = None
+
+        # validate secretKey against user
+        if user:
+
+            # set new timestamp
+            user.user_update_timestamp = updateTimestamp
+            user.save()
+
+            # get list
+            try:
+                listItem = Tags.objects.get(pk=listID, user=user)
+            except Tags.DoesNotExist:
+                listItem = None
+
+            # listItem found
+            if listItem:
+
+                listItem.list_name = listName
+                listItem.save()
+
+                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'not found'}), mimetype='application/json')
+        else:
+            return HttpResponse('FALSE', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
 # DELETE TAG
@@ -234,6 +324,7 @@ def deleteList(request):
         # collect item parameters
         userID = request.POST.get('user_id').strip()
         secretKey = request.POST.get('uk').strip()
+        updateTimestamp = request.POST.get('ts')
 
         tagID = request.POST.get('id').strip()
 
@@ -249,6 +340,10 @@ def deleteList(request):
 
         # validate secretKey against user
         if existingUser:
+
+            # set new timestamp
+            existingUser.user_update_timestamp = updateTimestamp
+            existingUser.save()
 
             # get all ItemTagUser entries in List
             try:
@@ -315,10 +410,11 @@ def createListItem(request):
         # authentication
         userID = request.POST.get('uid')
         secretKey = request.POST.get('uk')
+        updateTimestamp = request.POST.get('ts').strip()
 
         # get user by userid
         try:
-            existingUser = Users.objects.get(pk=userID)
+            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
         except Users.DoesNotExist:
             existingUser = None
 
@@ -326,22 +422,25 @@ def createListItem(request):
         try:
             existingItem = None
             if asin != '0':
-                existingItem = Items.objects.get(item_asin=asin, user=existingUser)
+                existingItem = Items.objects.get(item_asin=asin)
             elif gbombID != '0':
-                existingItem = Items.objects.get(item_gbombID=gbombID, user=existingUser)
+                existingItem = Items.objects.get(item_gbombID=gbombID)
 
         except Items.DoesNotExist:
             existingItem = None
 
         # validate secretKey against user
-        if existingUser and existingUser.user_secret_key == secretKey:
+        if existingUser:
+
+            # set new timestamp
+            existingUser.user_update_timestamp = updateTimestamp
+            existingUser.save()
 
             # create new item
             if (existingItem is None):
                 guid = str(uuid.uuid4())
                 item = Items(
                     id=guid,
-                    user=existingUser,
                     item_initialProvider=initialProvider,
                     item_asin=asin,
                     item_gbombID=gbombID,
@@ -352,10 +451,7 @@ def createListItem(request):
                     item_thumbnailImage=thumbnailImage,
                     item_largeImage=largeImage,
                     item_metacriticPage=metacriticPage,
-                    item_metascore=metascore,
-                    item_gameStatus=gameStatus,
-                    item_playStatus=playStatus,
-                    item_userRating=userRating
+                    item_metascore=metascore
                 )
 
                 # prevent demo account from saving data
@@ -378,7 +474,15 @@ def createListItem(request):
                     # get tag
                     tag = Tags.objects.get(pk=tagID)
                     # create link
-                    link = ItemTagUser(id=guid, user=existingUser, tag=tag, item=item)
+                    link = ItemTagUser(
+                        id=guid,
+                        user=existingUser,
+                        tag=tag,
+                        item=item,
+                        item_gameStatus=gameStatus,
+                        item_playStatus=playStatus,
+                        item_userRating=userRating
+                    )
                     link.save()
 
                 # record item ids and tag ids that have been added
@@ -426,6 +530,7 @@ def updateItem(request):
         # authentication
         userID = request.POST.get('uid')
         secretKey = request.POST.get('uk')
+        updateTimestamp = request.POST.get('ts')
 
         # prevent demo account
         if (secretKey == '1'):
@@ -439,12 +544,22 @@ def updateItem(request):
 
         # get existing item
         try:
-            item = Items.objects.get(pk=itemID, user=existingUser)
+            item = Items.objects.get(pk=itemID)
         except Items.DoesNotExist:
             item = None
 
+        # get existing link
+        try:
+            links = ItemTagUser.objects.filter(item=itemID, user=existingUser)
+        except ItemTagUser.DoesNotExist:
+            links = None
+
         # validate secretKey against user
-        if existingUser and item is not None:
+        if existingUser and item is not None and links is not None:
+
+            # set new timestamp
+            existingUser.user_update_timestamp = updateTimestamp
+            existingUser.save()
 
             # update item
             item.item_initialProvider = initialProvider
@@ -458,11 +573,16 @@ def updateItem(request):
             item.item_largeImage = largeImage
             item.item_metacriticPage = metacriticPage
             item.item_metascore = metascore
-            item.item_gameStatus = gameStatus
-            item.item_playStatus = playStatus
-            item.item_userRating = userRating
 
             item.save()
+
+            # iterate all links items and update attributes
+            for link in links:
+                link.item_gameStatus = gameStatus
+                link.item_playStatus = playStatus
+                link.item_userRating = userRating
+
+                link.save()
 
             return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
 
@@ -487,6 +607,7 @@ def updateMetacritic(request):
         # authentication
         userID = request.POST.get('uid')
         secretKey = request.POST.get('uk')
+        updateTimestamp = request.POST.get('ts')
 
         # get user by userid
         try:
@@ -502,6 +623,10 @@ def updateMetacritic(request):
 
         # validate secretKey against user
         if existingUser and item is not None:
+
+            # set new timestamp
+            existingUser.user_update_timestamp = updateTimestamp
+            existingUser.save()
 
             # update item
             item.item_metacriticPage = metacriticPage
@@ -640,9 +765,9 @@ def getDirectory(request):
                         directoryItems[items.item.pk] = {
                             'aid': items.item.item_asin,
                             'gid': items.item.item_gbombID,
-                            'gs': items.item.item_gameStatus,
-                            'ps': items.item.item_playStatus,
-                            'ur': items.item.item_userRating,
+                            'gs': items.item_gameStatus,
+                            'ps': items.item_playStatus,
+                            'ur': items.item_userRating,
                             't': {},
                             'tc': 0
                         }
@@ -768,6 +893,7 @@ def deleteListItem(request):
         # collect item parameters
         userID = request.POST.get('user_id')
         secretKey = request.POST.get('uk')
+        updateTimestamp = request.POST.get('ts')
 
         id = request.POST.get('id')
 
@@ -779,6 +905,10 @@ def deleteListItem(request):
 
         # validate secretKey against user
         if existingUser:
+
+            # set new timestamp
+            existingUser.user_update_timestamp = updateTimestamp
+            existingUser.save()
 
             # get element to delete from ItemTagUser
             try:
@@ -815,6 +945,7 @@ def deleteListItemsInBatch(request):
         # collect item parameters
         userID = request.POST.get('user_id')
         secretKey = request.POST.get('uk')
+        updateTimestamp = request.POST.get('ts')
 
         ids = request.POST.getlist('ids[]')
 
@@ -826,6 +957,10 @@ def deleteListItemsInBatch(request):
 
         # validate secretKey against user
         if existingUser:
+
+            # set new timestamp
+            existingUser.user_update_timestamp = updateTimestamp
+            existingUser.save()
 
             itemsDeleted = []
 
