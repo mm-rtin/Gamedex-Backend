@@ -43,21 +43,26 @@ urlpatterns = patterns('',
     (r'^login/$', 'tmz.tmzAPI.login'),
     (r'^createuser/$', 'tmz.tmzAPI.createUser'),
     (r'^updateuser/$', 'tmz.tmzAPI.updateUser'),
-
+    (r'^sendresetcode/$', 'tmz.tmzAPI.sendResetCode'),
+    (r'^submitresetcode/$', 'tmz.tmzAPI.submitResetCode'),
+    (r'^updatepassword/$', 'tmz.tmzAPI.updatePassword'),
 
     # tags
-    (r'^list/$', 'tmz.tmzAPI.getList'),
-    (r'^list/add$', 'tmz.tmzAPI.createList'),
-    (r'^list/update$', 'tmz.tmzAPI.updateList'),
-    (r'^list/delete$', 'tmz.tmzAPI.deleteList'),
+    (r'^tag/$', 'tmz.tmzAPI.getList'),
+    (r'^tag/add/$', 'tmz.tmzAPI.createList'),
+    (r'^tag/update/$', 'tmz.tmzAPI.updateList'),
+    (r'^tag/delete/$', 'tmz.tmzAPI.deleteList'),
 
     # items
     (r'^item/$', 'tmz.tmzAPI.getListItems'),
-    (r'^item/directory$', 'tmz.tmzAPI.getDirectory'),
-    (r'^item/tags$', 'tmz.tmzAPI.getItemTags'),
-    (r'^item/update$', 'tmz.tmzAPI.updateItem'),
-    (r'^item/updateMetacritic$', 'tmz.tmzAPI.updateMetacritic'),
-    (r'^item/add$', 'tmz.tmzAPI.createListItem'),
-    (r'^item/delete$', 'tmz.tmzAPI.deleteListItem'),
-    (r'^item/batch-delete$', 'tmz.tmzAPI.deleteListItemsInBatch'),
+    (r'^item/directory/$', 'tmz.tmzAPI.getDirectory'),
+    (r'^item/tags/$', 'tmz.tmzAPI.getItemTags'),
+    (r'^item/update/$', 'tmz.tmzAPI.updateItem'),
+    (r'^item/update/metacritic/$', 'tmz.tmzAPI.updateMetacritic'),
+    (r'^item/add/$', 'tmz.tmzAPI.createListItem'),
+    (r'^item/delete/$', 'tmz.tmzAPI.deleteListItem'),
+    (r'^item/delete/batch$', 'tmz.tmzAPI.deleteListItemsInBatch'),
+
+
+    (r'^gamewallpapers/$', 'tmz.listSources.gamewallpapers'),
 )

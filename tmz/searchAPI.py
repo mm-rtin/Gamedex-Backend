@@ -36,7 +36,7 @@ def searchMetacritic(request):
 
     if metacriticSearch is not None:
         logging.info('')
-        logging.info('************** searchMetacritic CACHE HIT **************')
+        logging.info('-------------- searchMetacritic CACHE HIT --------------')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
@@ -47,7 +47,7 @@ def searchMetacritic(request):
     else:
 
         logging.info('')
-        logging.info('************** searchMetacritic MISS **************')
+        logging.info('-------------- searchMetacritic MISS --------------')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
@@ -121,7 +121,7 @@ def searchAmazon(request):
 
     if search is not None:
         logging.info('')
-        logging.info('************** searchAmazon CACHE HIT **************')
+        logging.info('-------------- searchAmazon CACHE HIT --------------')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
@@ -135,7 +135,7 @@ def searchAmazon(request):
             response = amazon.ItemSearch(SearchIndex=searchIndex, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, Sort='salesrank', MinimumPrice='800', MaximumPrice='13500', BrowseNode=browseNode)
 
         logging.info('')
-        logging.info('************** searchAmazon MISS **************')
+        logging.info('-------------- searchAmazon MISS --------------')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
@@ -167,7 +167,7 @@ def detailAmazon(request):
 
     if detail is not None:
         logging.info('')
-        logging.info('************** detailAmazon HIT **************')
+        logging.info('-------------- detailAmazon HIT --------------')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
@@ -179,7 +179,7 @@ def detailAmazon(request):
         response = amazon.ItemLookup(ItemId=asin, IdType='ASIN', ResponseGroup=responseGroup)
 
         logging.info('')
-        logging.info('************** detailAmazon MISS **************')
+        logging.info('-------------- detailAmazon MISS --------------')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
@@ -250,7 +250,7 @@ def giantBombAPICall(resource, queryParameters):
     if giantbombData is not None:
 
         logging.info('')
-        logging.info('************** giantBombAPICall HIT **************')
+        logging.info('-------------- giantBombAPICall HIT --------------')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')
@@ -259,7 +259,7 @@ def giantBombAPICall(resource, queryParameters):
 
     else:
         logging.info('')
-        logging.info('************** giantBombAPICall MISS **************')
+        logging.info('-------------- giantBombAPICall MISS --------------')
         logging.info(memcacheKey)
         logging.info('')
         logging.info('')

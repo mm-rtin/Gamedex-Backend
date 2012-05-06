@@ -4,11 +4,12 @@ from django.db import models
 # USERS
 class Users(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
-    user_name = models.CharField(max_length=128)
+    user_name = models.CharField(max_length=128, blank=True, null=True)
     user_password = models.CharField(max_length=128)
     user_email = models.CharField(max_length=256)
     user_secret_key = models.CharField(max_length=256)
-    user_update_timestamp = models.CharField(max_length=32)
+    user_reset_code = models.CharField(max_length=256, blank=True, null=True)
+    user_update_timestamp = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Users'

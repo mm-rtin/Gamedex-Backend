@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Gamedex</title>
-		<meta name="description" content="">
-		<meta name="author" content="">
+		<meta name="description" content="video game collection">
+		<meta name="author" content="Michael Martin">
 		<!-- HTML5 shim, for IE6-8 support of HTML elements -->
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -92,7 +92,6 @@
 				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
 				<a id="updateAccount_btn" href="#" class="btn btn-primary">Update Account</a>
 			</div>
-          </div>
 		</div>
 
 		<!-- DELETE LIST CONFIRM MODAL -->
@@ -108,8 +107,6 @@
 				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
 				<a id="deleteListConfirm_btn" href="#" class="btn btn-primary">Delete List</a>
 			</div>
-          </div>
-
 		</div>
 
 		<!-- UPDATE LIST MODAL -->
@@ -134,6 +131,59 @@
 			<div class="modal-footer">
 				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
 				<a id="updateListConfirm_btn" href="#" class="btn btn-primary">Update Tag</a>
+			</div>
+          </div>
+		</div>
+
+		<!-- RESET PASSWORD MODAL -->
+		<div id="resetpassword-modal" class="modal hide">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Reset Password</h3>
+			</div>
+			<div class="modal-body">
+
+				<form class="resetCodeForm form-horizontal" action="#">
+					<fieldset>
+						<div class="passwordResetEmailContainer control-group">
+							<label class="control-label">E-mail Address</label>
+							<div class="controls">
+								<input class="input" id="resetPasswordEmailField" type="text" value="">
+							</div>
+						</div>
+						<div class="passwordResetCodeContainer control-group">
+							<label class="control-label">Password Reset Code</label>
+							<div class="controls">
+								<input class="input" id="resetPasswordCodeField" type="text" value="">
+							</div>
+						</div>
+					</fieldset>
+				</form>
+
+				<form class="updatePasswordForm form-horizontal" action="#">
+					<fieldset>
+						<div class="control-group">
+							<label class="control-label">New Password</label>
+							<div class="controls">
+								<input class="input" id="resetPasswordPasswordField" type="password" value="">
+							</div>
+						</div>
+					</fieldset>
+				</form>
+
+				<div class="alert alert-success">
+					<strong class="alertTitle"></strong> <span class="alertText"></span>
+				</div>
+				<div class="alert alert-error">
+					<strong class="alertTitle"></strong> <span class="alertText"></span>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<a id="sendResetCode_btn" href="#" class="btn btn-primary">Send Reset Code</a>
+				<a id="submitResetCode_btn" href="#" class="btn btn-primary">Submit Reset Code</a>
+				<a id="updatePassword_btn" href="#" class="btn btn-primary">Update Password</a>
 			</div>
           </div>
 		</div>
@@ -274,7 +324,10 @@
 						<div id="signupSubmitButton"></div>
 						<div id="loginSubmitButton"></div>
 						<div id="backButton"></div>
-						<div id="rememberCheckbox"></div>
+						<div id="rememberCheckboxToggle"></div>
+						<div id="resetPasswordButton"></div>
+						<div id="accountExistsTag"></div>
+						<div id="invalidLoginTag"></div>
 					</form>
 				</div>
 			</div>
@@ -716,7 +769,7 @@
 									<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
 								</div>
 
-								<button id="gridView_btn" class="btn btn-success"><i class="icon-retweet icon-white"></i> Grid View</button>
+								<button id="gridView_btn" class="btn btn-success"><i class="icon-fullscreen icon-white"></i> Grid View</button>
 
 								<div class="clear"></div>
 							</div>
@@ -939,14 +992,16 @@
 								<li class="platform"><i class="icon-tag"></i> <span class="data"><%= item.platform %></span></li>
 								<li class="calendarDate"><i class="icon-time"></i> <span class="data"><%= item.calendarDate %></span></li>
 								<li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i>Metascore: <%= item.displayMetascore %></a></li>
+								<% if (item.offers.buyNowPrice !== '') { %>
 								<li class="price"><a href="<%= item.offers.productURL %>" target="_blank"><i class="icon-shopping-cart"></i> <span class="data">$<%= item.offers.buyNowPrice %></span></a></li>
+								<% } %>
 							</ul>
 						</div>
 					</div>
 
 					<div class="metacriticScore"><%= item.metascore %></a></div>
 					<div class="releaseDate"><%= item.releaseDate %></a></div>
-					<div class="rawPrice"><%= item.offers.buyNowRawPrice %></span></div>
+					<div class="rawPrice"><%= item.offers.buyNowPrice %></span></div>
 					<div class="itemName"><%= item.name %></div>
 					<div class="gameStatus"><%= item.gameStatus %></div>
 					<div class="playStatus"><%= item.playStatus %></div>
@@ -997,7 +1052,7 @@
 	   	<!-- price menu -->
 	   	<script type="text/template" id="price-menu-template">
 			<div class="btn-group priceMenu">
-			<a class="lowestNew btn btn-small" href="<%= productURL %>" data-price="<%= buyNowRawPrice %>" target="_blank"><span class="priceDesc">Amazon:</span> <%= buyNowPrice %></a>
+			<a class="lowestNew btn btn-small" href="<%= productURL %>" data-price="<%= buyNowPrice %>" target="_blank"><span class="priceDesc">Amazon:</span> <%= buyNowPrice %></a>
 			<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
 			<span class="caret"></span>
 			</a>
@@ -1035,7 +1090,6 @@
 		<script src="http://static.t-minuszero.com/lib/jquery.ba-resize.js"></script>
 
 		<script src="http://static.t-minuszero.com/lib/underscore-min.js"></script>
-		<script src="http://static.t-minuszero.com/lib/backbone.js"></script>
 
 		<script src="http://static.t-minuszero.com/lib/list.min.js"></script>
 		<script src="http://static.t-minuszero.com/lib/chosen.jquery.js"></script>
@@ -1060,8 +1114,9 @@
 		<script src="http://static.t-minuszero.com/js/tmz_user.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_storage.js"></script>
 
-		<script src="http://static.t-minuszero.com/js/tmz_listModel.js"></script>
-		<script src="http://static.t-minuszero.com/js/tmz_filterPanel.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_itemData.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_tagData.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_itemCache.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_siteView.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_searchView.js"></script>
@@ -1069,10 +1124,8 @@
 		<script src="http://static.t-minuszero.com/js/tmz_itemView.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_gridView.js"></script>
 
-		<script src="http://static.t-minuszero.com/js/tmz_itemCache.js"></script>
-
-		<script src="http://static.t-minuszero.com/js/tmz_itemData.js"></script>
-		<script src="http://static.t-minuszero.com/js/tmz_listData.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_tagView.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_filterPanel.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_amazon.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_giantbomb.js"></script>

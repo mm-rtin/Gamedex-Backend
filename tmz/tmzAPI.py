@@ -1,10 +1,12 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils import simplejson
+from google.appengine.api import mail
 
 import hashlib
 import time
 import uuid
+import random
 
 # database models
 from tmz.models import Users, Items, Tags, ItemTagUser
@@ -42,26 +44,26 @@ def login(request):
 
             if user:
 
-                if userEmail != 'demo@gamedex.net':
+                if userEmail == 'demo2@gamedex.net':
+                    secretKey = '1'
+
+                else:
                     # generate secret key
                     secretKey = hashlib.md5(userEmail)
                     secretKey.update(str(time.time()))
                     secretKey = secretKey.hexdigest()
-
                     # save secret key
                     user.user_secret_key = secretKey
                     user.save()
 
                 # construct json return object
-                data = {'userID': user.pk, 'secretKey': secretKey, 'timestamp': user.user_update_timestamp, 'userName': user.user_name}
+                data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey, 'timestamp': user.user_update_timestamp, 'userName': user.user_name}
 
                 return HttpResponse(simplejson.dumps(data), mimetype='application/json')
             else:
-                return HttpResponse('false', mimetype='text/html')
-
+                return HttpResponse(simplejson.dumps({'status': 'invalid_login'}), mimetype='application/json')
         else:
-            return HttpResponse('false', mimetype='text/html')
-
+            return HttpResponse(simplejson.dumps({'status': 'invalid_login'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -108,7 +110,7 @@ def createUser(request):
             newList.save()
 
             # construct json return object
-            data = {'userID': user.pk, 'secretKey': secretKey}
+            data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey}
 
             return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
@@ -163,12 +165,150 @@ def updateUser(request):
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
+# SEND PASSWORD RESET CODE
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def sendResetCode(request):
+
+    if (request.POST):
+
+        if 'user_email' in request.POST:
+
+            email = request.POST.get('user_email')
+
+            # get user by email
+            try:
+                user = Users.objects.get(user_email=email)
+            except Users.DoesNotExist:
+                user = None
+
+            # send email with reset code parameter
+            if mail.is_email_valid(email):
+
+                if user:
+
+                    # create reset code
+                    random.seed()
+                    resetCode = str(random.randint(100, 999))
+
+                    # save code to user record
+                    user.user_reset_code = resetCode
+                    user.save()
+
+                    message = mail.EmailMessage(sender='Gamedex.net <no-reply@gamedex.net>', subject='Gamedex.net: Password Reset Code')
+                    message.to = email
+                    message.body = """
+Your password reset code for %s is:
+
+%s
+
+Please return to Gamedex.net and enter the 3-digit number above into the "Password Reset Code" field.
+""" % (email, resetCode)
+
+                    message.html = """
+<html>
+
+<head>
+<title>Gamedex.net</title>
+</head>
+
+<body style="font-family: arial,sans-serif; margin: 10px 10px;"
+<h3>Your password reset code for %s is:</h3>
+
+<h1>%s</h1>
+
+<h4>Please return to Gamedex.net and enter the 3-digit number above into the "Password Reset Code" field.</h4>
+</body>
+</html>
+""" % (email, resetCode)
+                    message.send()
+
+                    return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+                # user not found - do not reveal the registration status of email addresses > send success
+                else:
+                    return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+            # invalid email - only checks that string is non-empty
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'invalid_email'}), mimetype='application/json')
+        # user_mail not in request
+        else:
+            return HttpResponse('false', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
+
+
+# SUBMIT PASSWORD RESET CODE
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def submitResetCode(request):
+
+    if (request.POST):
+
+        if 'user_email' in request.POST and 'user_reset_code' in request.POST:
+
+            email = request.POST.get('user_email')
+            resetCode = request.POST.get('user_reset_code')
+
+            # get user by email and reset code
+            try:
+                user = Users.objects.get(user_email=email, user_reset_code=resetCode)
+            except Users.DoesNotExist:
+                user = None
+
+            if user:
+                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'incorrect_code'}), mimetype='application/json')
+
+        else:
+            return HttpResponse('false', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
+
+
+# UPDATE PASSWORD
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def updatePassword(request):
+
+    if (request.POST):
+
+        if 'user_email' in request.POST and 'user_new_password' in request.POST and 'user_reset_code' in request.POST:
+
+            email = request.POST.get('user_email')
+            newPassword = request.POST.get('user_new_password')
+            resetCode = request.POST.get('user_reset_code')
+
+            # validate login
+            try:
+                user = Users.objects.get(user_email=email, user_reset_code=resetCode)
+            except Users.DoesNotExist:
+                user = None
+
+            if user:
+
+                # remove reset code from user record
+                user.user_reset_code = ''
+                # update user password
+                user.user_password = hashlib.md5(newPassword).hexdigest()
+                user.save()
+
+                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'user_not_found'}), mimetype='application/json')
+        else:
+            return HttpResponse('false', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
+
 # DELETE USER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # TAGS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 # CREATE TAG
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -180,7 +320,7 @@ def createList(request):
         # collect list item parameters
         userID = request.POST.get('user_id')
         secretKey = request.POST.get('uk')
-        listName = request.POST.get('list_name').strip()
+        listName = request.POST.get('tag_name').strip()
         updateTimestamp = request.POST.get('ts')
 
         # get user by userid
@@ -275,8 +415,8 @@ def updateList(request):
         # collect list item parameters
         userID = request.POST.get('user_id')
         secretKey = request.POST.get('uk')
-        listName = request.POST.get('list_name').strip()
-        listID = request.POST.get('list_id').strip()
+        listName = request.POST.get('tag_name').strip()
+        listID = request.POST.get('tag_id').strip()
         updateTimestamp = request.POST.get('ts')
 
         # get user by userid
