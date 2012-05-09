@@ -19,6 +19,8 @@
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/jquery.ui.stars.min.css">
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/isotope.css">
 
+		<link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
+
 		<link rel="shortcut icon" href="http://static.t-minuszero.com/images/favicon.ico">
 
 		<script type="text/javascript">
@@ -106,6 +108,27 @@
 			<div class="modal-footer">
 				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
 				<a id="deleteListConfirm_btn" href="#" class="btn btn-primary">Delete List</a>
+			</div>
+		</div>
+
+		<!-- VIDEO MODAL -->
+		<div id="video-modal" class="modal hide">
+			<div class="modal-body">
+
+				<div id="videoPlayerContainer">
+					<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" height="490" poster="my_video_poster.png" data-setup="{}">
+						<source src="" type='video/mp4'>
+					</video>
+				</div>
+
+				<div id="videoListContainer">
+					<ul id="videoList" class="display-1"></ul>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">Close</a>
+				<a id="playAllVideos_btn" href="#" class="btn btn-primary">Play All</a>
 			</div>
 		</div>
 
@@ -310,29 +333,32 @@
 		<!-- SITE CONTAINER -->
 		<div id="wrapper" class="standardView">
 
-			<!-- HEADER -->
+			<!-- INFO HEADER -->
 			<div id="infoHeader">
-				<div id="logo"></div>
-				<div id="siteDescription"></div>
-				<div id="siteFeatures"></div>
-				<div id="signupButton"></div>
-				<div id="loginButton"></div>
-				<div id="loginForm">
-					<form>
-						<div id="email"><input type="text"></div>
-						<div id="password"><input type="password"></div>
-						<div id="signupSubmitButton"></div>
-						<div id="loginSubmitButton"></div>
-						<div id="backButton"></div>
-						<div id="rememberCheckboxToggle"></div>
-						<div id="resetPasswordButton"></div>
-						<div id="accountExistsTag"></div>
-						<div id="invalidLoginTag"></div>
-					</form>
+
+				<div class="infoHeaderContent">
+					<div id="logo"></div>
+					<div id="siteDescription"></div>
+					<div id="siteFeatures"></div>
+					<div id="signupButton"></div>
+					<div id="loginButton"></div>
+					<div id="loginForm">
+						<form>
+							<div id="email"><input type="text"></div>
+							<div id="password"><input type="password"></div>
+							<div id="signupSubmitButton"></div>
+							<div id="loginSubmitButton"></div>
+							<div id="backButton"></div>
+							<div id="rememberCheckboxToggle"></div>
+							<div id="resetPasswordButton"></div>
+							<div id="accountExistsTag"></div>
+							<div id="invalidLoginTag"></div>
+						</form>
+					</div>
 				</div>
 			</div>
 
-			<!-- HEADER -->
+			<!-- APP HEADER -->
 			<div id="header" class="navbar navbar-fixed-top">
 				<div class="navbar-inner">
 					<div class="container-fluid">
@@ -454,8 +480,12 @@
 							</div>
 
 							<!-- SEARCH FIELD -->
-							<div id="searchField" class="input-prepend input-append">
-								<span class="add-on"><i class="icon-search"></i></span><input type="text" class="span2" value="" placeholder="search..."><span class="add-on"></span>
+							<div id="searchContainer" class="clearfix">
+								<div id="searchField" class="input-append">
+									<input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-remove icon-black"></i></span>
+								</div>
+
+								<button id="search_btn" class="btn btn-success"><i class="icon-search icon-white"></i> Search</button>
 							</div>
 
 							<!--- SEARCH DISPLAY OPTIONS -->
@@ -921,6 +951,22 @@
 	      	</tbody>
 	    </script>
 
+		<!-- video results -->
+		<script type="text/template" id="video-results-template">
+			<% _.each(videoResults, function(item) { %>
+				<li class="videoItem smallImage" data-id="<%= item.id %>" data-url="<%= item.url %>">
+					<a href="#" rel="popover" data-content="Publish Date: <%= item.publish_date %> Length: <%= item.length_seconds %>" data-original-title="<%= item.deck %>">
+						<img src="<%= item.image.small_url %>" alt="">
+					</a>
+				</li>
+				<li class="videoItem mediumImage" data-id="<%= item.id %>" data-url="<%= item.url %>">
+					<a href="#" rel="popover" data-content="Publish Date: <%= item.publish_date %> Length: <%= item.length_seconds %>" data-original-title="<%= item.deck %>">
+						<img src="<%= item.image.thumb_url %>" alt="">
+					</a>
+				</li>
+	      	<% }); %>
+	    </script>
+
 	    <!-- list results -->
 	    <script type="text/template" id="list-results-template">
 	   		<% _.each(listResults, function(item) { %>
@@ -992,7 +1038,7 @@
 								<li class="platform"><i class="icon-tag"></i> <span class="data"><%= item.platform %></span></li>
 								<li class="calendarDate"><i class="icon-time"></i> <span class="data"><%= item.calendarDate %></span></li>
 								<li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i>Metascore: <%= item.displayMetascore %></a></li>
-								<% if (item.offers.buyNowPrice !== '') { %>
+								<% if (typeof item.offers.buyNowPrice !== 'undefined' && item.offers.buyNowPrice !== '') { %>
 								<li class="price"><a href="<%= item.offers.productURL %>" target="_blank"><i class="icon-shopping-cart"></i> <span class="data">$<%= item.offers.buyNowPrice %></span></a></li>
 								<% } %>
 							</ul>
@@ -1091,6 +1137,8 @@
 
 		<script src="http://static.t-minuszero.com/lib/underscore-min.js"></script>
 
+		<script src="http://vjs.zencdn.net/c/video.js"></script>
+
 		<script src="http://static.t-minuszero.com/lib/list.min.js"></script>
 		<script src="http://static.t-minuszero.com/lib/chosen.jquery.js"></script>
 		<script src="http://static.t-minuszero.com/lib/moment.min.js"></script>
@@ -1126,6 +1174,7 @@
 
 		<script src="http://static.t-minuszero.com/js/tmz_tagView.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_filterPanel.js"></script>
+		<script src="http://static.t-minuszero.com/js/tmz_videoPanel.js"></script>
 
 		<script src="http://static.t-minuszero.com/js/tmz_amazon.js"></script>
 		<script src="http://static.t-minuszero.com/js/tmz_giantbomb.js"></script>
