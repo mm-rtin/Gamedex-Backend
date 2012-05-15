@@ -28,8 +28,11 @@ def searchMetacritic(request):
     if 'keywords' in request.GET:
         keywords = request.GET.get('keywords')
 
+    if 'platform' in request.GET:
+        platform = request.GET.get('platform')
+
     # memcache key
-    memcacheKey = 'searchMetacritic_' + keywords
+    memcacheKey = 'searchMetacritic_' + keywords + '_' + platform
 
     # return memcached search if available
     metacriticSearch = memcache.get(memcacheKey)
@@ -67,6 +70,9 @@ def cacheMetacritic(request):
     if 'keywords' in request.GET:
         keywords = request.GET.get('keywords')
 
+    if 'platform' in request.GET:
+        platform = request.GET.get('platform')
+
     if 'metascore' in request.GET:
         metascore = request.GET.get('metascore')
 
@@ -77,7 +83,7 @@ def cacheMetacritic(request):
     cachedObject = {'metascore': metascore, 'metascorePage': metascorePage}
 
     # memcache key
-    memcacheKey = 'searchMetacritic_' + keywords
+    memcacheKey = 'searchMetacritic_' + keywords + '_' + platform
 
     # cache for 2 days
     if not memcache.add(memcacheKey, cachedObject, 127800):

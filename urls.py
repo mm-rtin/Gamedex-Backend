@@ -57,11 +57,12 @@ urlpatterns = patterns('',
     (r'^item/$', 'tmz.tmzAPI.getListItems'),
     (r'^item/directory/$', 'tmz.tmzAPI.getDirectory'),
     (r'^item/tags/$', 'tmz.tmzAPI.getItemTags'),
+    (r'^item/update/user/$', 'tmz.tmzAPI.updateUserItem'),
     (r'^item/update/$', 'tmz.tmzAPI.updateItem'),
     (r'^item/update/metacritic/$', 'tmz.tmzAPI.updateMetacritic'),
     (r'^item/add/$', 'tmz.tmzAPI.createListItem'),
     (r'^item/delete/$', 'tmz.tmzAPI.deleteListItem'),
-    (r'^item/delete/batch$', 'tmz.tmzAPI.deleteListItemsInBatch'),
+    (r'^item/delete/batch/$', 'tmz.tmzAPI.deleteListItemsInBatch'),
 
 
     (r'^gamewallpapers/$', 'tmz.listSources.gamewallpapers'),

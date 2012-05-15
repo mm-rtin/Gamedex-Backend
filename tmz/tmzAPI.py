@@ -558,13 +558,16 @@ def createListItem(request):
         except Users.DoesNotExist:
             existingUser = None
 
-        # get existing item
+        # get existing item based on initial provider
         try:
             existingItem = None
-            if asin != '0':
-                existingItem = Items.objects.get(item_asin=asin)
-            elif gbombID != '0':
-                existingItem = Items.objects.get(item_gbombID=gbombID)
+
+            # amazon provider
+            if initialProvider == '0':
+                existingItem = Items.objects.get(item_asin=asin, item_initialProvider='0')
+            # giantbomb provider
+            elif initialProvider == '1':
+                existingItem = Items.objects.get(item_gbombID=gbombID, item_initialProvider='1', item_platform=platform)
 
         except Items.DoesNotExist:
             existingItem = None
@@ -581,9 +584,9 @@ def createListItem(request):
                 guid = str(uuid.uuid4())
                 item = Items(
                     id=guid,
-                    item_initialProvider=initialProvider,
                     item_asin=asin,
                     item_gbombID=gbombID,
+                    item_initialProvider=initialProvider,
                     item_name=itemName,
                     item_releasedate=releaseDate,
                     item_platform=platform,
@@ -621,7 +624,7 @@ def createListItem(request):
                         item=item,
                         item_gameStatus=gameStatus,
                         item_playStatus=playStatus,
-                        item_userRating=userRating
+                        item_userRating=userRating,
                     )
                     link.save()
 
@@ -640,28 +643,15 @@ def createListItem(request):
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
-# UPDATE ITEM
+# UPDATE USER ITEM
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @csrf_exempt
-def updateItem(request):
+def updateUserItem(request):
 
     if (request.POST):
 
         # collect list item parameters
-        initialProvider = request.POST.get('ip')
         itemID = request.POST.get('id')
-        asin = request.POST.get('aid')
-        gbombID = request.POST.get('gid')
-
-        itemName = request.POST.get('n')
-        releaseDate = request.POST.get('rd')
-        platform = request.POST.get('p')
-        smallImage = request.POST.get('si')
-        thumbnailImage = request.POST.get('ti')
-        largeImage = request.POST.get('li')
-
-        metacriticPage = request.POST.get('mp')
-        metascore = request.POST.get('ms')
 
         gameStatus = request.POST.get('gs')
         playStatus = request.POST.get('ps')
@@ -682,12 +672,6 @@ def updateItem(request):
         except Users.DoesNotExist:
             existingUser = None
 
-        # get existing item
-        try:
-            item = Items.objects.get(pk=itemID)
-        except Items.DoesNotExist:
-            item = None
-
         # get existing link
         try:
             links = ItemTagUser.objects.filter(item=itemID, user=existingUser)
@@ -695,26 +679,11 @@ def updateItem(request):
             links = None
 
         # validate secretKey against user
-        if existingUser and item is not None and links is not None:
+        if existingUser and links is not None:
 
             # set new timestamp
             existingUser.user_update_timestamp = updateTimestamp
             existingUser.save()
-
-            # update item
-            item.item_initialProvider = initialProvider
-            item.item_asin = asin
-            item.item_gbombID = gbombID
-            item.item_name = itemName
-            item.item_releasedate = releaseDate
-            item.item_platform = platform
-            item.item_smallImage = smallImage
-            item.item_thumbnailImage = thumbnailImage
-            item.item_largeImage = largeImage
-            item.item_metacriticPage = metacriticPage
-            item.item_metascore = metascore
-
-            item.save()
 
             # iterate all links items and update attributes
             for link in links:
@@ -757,7 +726,7 @@ def updateMetacritic(request):
 
         # get existing item
         try:
-            item = Items.objects.get(pk=itemID, user=existingUser)
+            item = Items.objects.get(pk=itemID)
         except Items.DoesNotExist:
             item = None
 
@@ -771,6 +740,69 @@ def updateMetacritic(request):
             # update item
             item.item_metacriticPage = metacriticPage
             item.item_metascore = metascore
+
+            item.save()
+
+            return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+        else:
+            return HttpResponse('FALSE', mimetype='text/html')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
+
+
+# UPDATE ITEM DATA
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def updateItem(request):
+
+    if (request.POST):
+
+        # authentication
+        userID = request.POST.get('uid')
+        secretKey = request.POST.get('uk')
+        updateTimestamp = request.POST.get('ts')
+
+        # collect list item parameters
+        itemID = request.POST.get('id')
+        asin = request.POST.get('aid')
+        gbombID = request.POST.get('gid')
+
+        releaseDate = request.POST.get('rd')
+        smallImage = request.POST.get('si')
+        thumbnailImage = request.POST.get('ti')
+        largeImage = request.POST.get('li')
+
+        # prevent demo account
+        if (secretKey == '1'):
+            return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+
+        # get user by userid
+        try:
+            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
+        except Users.DoesNotExist:
+            existingUser = None
+
+        # get existing item
+        try:
+            item = Items.objects.get(pk=itemID)
+        except Items.DoesNotExist:
+            item = None
+
+        # validate secretKey against user
+        if existingUser and item is not None:
+
+            # set new timestamp
+            existingUser.user_update_timestamp = updateTimestamp
+            existingUser.save()
+
+            # update item
+            item.item_asin = asin
+            item.item_gbombID = gbombID
+            item.item_releasedate = releaseDate
+            item.item_smallImage = smallImage
+            item.item_thumbnailImage = thumbnailImage
+            item.item_largeImage = largeImage
 
             item.save()
 
