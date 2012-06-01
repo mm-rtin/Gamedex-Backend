@@ -343,8 +343,14 @@
 					<div id="siteDescription"></div>
 					<div id="siteFeatures"></div>
 					<div id="siteFeaturesDetail"></div>
-					<div id="loginButton"></div>
-					<div id="signupButton"></div>
+
+					<div id="buttonContainer">
+						<div id="loginHitArea"></div>
+						<div id="signupHitArea"></div>
+						<div id="signupButton"></div>
+						<div id="loginButton"></div>
+					</div>
+
 					<div id="loginForm">
 						<form>
 							<div id="email"><input type="text"></div>
@@ -550,7 +556,7 @@
 									<input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-remove icon-black"></i></span>
 								</div>
 
-								<button id="search_btn" class="btn btn-success"><i class="icon-search icon-white"></i> Search</button>
+								<div id="search_btn" class="button"></div>
 							</div>
 
 							<!--- SEARCH DISPLAY OPTIONS -->
@@ -635,8 +641,8 @@
 									</select>
 								</div>
 								<div id="addListButtons">
-									<button id="saveItem_btn" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</button>
-									<button id="addItem_btn" class="btn btn-success"><i class="icon-plus icon-white"></i> Add</button>
+									<div id="saveItem_btn" class="button"></div>
+									<div id="addItem_btn" class="button"></div>
 								</div>
 
 								<div class="clear"></div>
@@ -871,7 +877,7 @@
 									<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
 								</div>
 
-								<button id="gridView_btn" class="btn btn-success"><i class="icon-fullscreen icon-white"></i> Grid View</button>
+								<div id="gridView_btn" class="button"></div>
 
 								<div class="clear"></div>
 							</div>
