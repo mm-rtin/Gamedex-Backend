@@ -5,18 +5,9 @@ from django.conf.urls.defaults import patterns
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'T_MinusZero.views.home', name='home'),
-    # url(r'^T_MinusZero/', include('T_MinusZero.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
 
     # index
-    (r'^$', 'tmz.views.index'),
+    (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
 
     # amazon product api rest proxy
     (r'^amazon/search/$', 'tmz.searchAPI.searchAmazon'),
@@ -37,7 +28,7 @@ urlpatterns = patterns('',
     (r'^upcominglist/$', 'tmz.listSources.upcomingList'),
 
 
-    # t_minuszero rest api
+    # gamedex rest api
 
     # user
     (r'^login/$', 'tmz.tmzAPI.login'),
@@ -66,4 +57,7 @@ urlpatterns = patterns('',
 
 
     (r'^gamewallpapers/$', 'tmz.listSources.gamewallpapers'),
+
+    # catch all
+    (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
 )

@@ -462,7 +462,8 @@
 
 							<!-- search view navbar -->
 							<div id="searchViewMenu" class="navbar navbar-static clearfix">
-								<div class="navbar-inner">
+								<span class="leftCap"></span>
+								<div class="navigationBar">
 									<div class="container" style="width: auto;">
 										<ul class="nav">
 
@@ -548,6 +549,7 @@
 
 									</div>
 								</div>
+								<span class="rightCap"></span>
 							</div>
 
 							<!-- SEARCH FIELD -->
@@ -561,16 +563,16 @@
 
 							<!--- SEARCH DISPLAY OPTIONS -->
 							<div class="searchDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
-								<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
-								<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
-								<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
+								<div class="button display1" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></div>
+								<div class="button display2 active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></div>
+								<div class="button display3" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></div>
 							</div>
 
 							<!--- LIST DISPLAY OPTIONS -->
 							<div class="listDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
-								<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
-								<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
-								<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
+								<div class="button display1" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></div>
+								<div class="button display2 active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></div>
+								<div class="button display3" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></div>
 							</div>
 
 							<!-- SEARCH / LIST TABS -->
@@ -661,7 +663,7 @@
 									<div id="amazonTab" class="tab-pane active">
 										<div class="detailTitleBar clearfix">
 											<div class="itemDetailTitle">
-												<h3></h3>
+												<span class="leftCap"></span><h3></h3><span class="rightCap"></span>
 											</div>
 											<div class="itemDetailMetascore">
 												<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
@@ -678,7 +680,7 @@
 									<div id="giantBombTab" class="tab-pane">
 										<div class="detailTitleBar clearfix">
 											<div class="itemDetailTitle">
-												<h3></h3>
+												<span class="leftCap"></span><h3></h3><span class="rightCap"></span>
 											</div>
 											<div class="itemDetailMetascore">
 												<a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
@@ -806,8 +808,9 @@
 						<div id="viewItemsContainer">
 
 							<!-- item view navbar -->
-							<div id="itemViewMenu" class="navbar navbar-static">
-								<div class="navbar-inner">
+							<div id="itemViewMenu" class="navbar navbar-static clearfix">
+								<span class="leftCap"></span>
+								<div class="navigationBar">
 									<div class="container" style="width: auto;">
 										<ul class="nav">
 
@@ -865,6 +868,7 @@
 										</ul>
 									</div>
 								</div>
+								<span class="rightCap"></span>
 							</div>
 
 							<!-- DISPLAY SELECT -->
@@ -872,9 +876,9 @@
 
 								<!-- display options -->
 								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<button class="btn btn-dark" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"><i class="icon-list icon-white"></i></button>
-									<button class="btn btn-dark active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"><i class="icon-th icon-white"></i></button>
-									<button class="btn btn-dark" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"><i class="icon-th-large icon-white"></i></button>
+									<div class="button display1" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></div>
+									<div class="button display2 active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></div>
+									<div class="button display3" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></div>
 								</div>
 
 								<div id="gridView_btn" class="button"></div>
@@ -1006,18 +1010,18 @@
 								<div class="extraData">
 									<div class="priceDetails"></div>
 
-									<div class="quickAttributes btn-group" data-content="<%= item.id %>">
-										<span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying btn btn-mini" href="#" rel="tooltip" data-content="0" data-original-title="Playing"><i class="icon-play"></i></a></span>
-										<span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed btn btn-mini" href="#" rel="tooltip" data-content="1" data-original-title="Played"><i class="icon-ok"></i></a></span>
-										<span class="playStatus-<%= item.playStatus %>"><a class="attrFinished btn btn-mini" href="#" rel="tooltip" data-content="2" data-original-title="Finished"><i class="icon-stop"></i></a></span>
-										<span class="rating-<%= item.userRating %>"><a class="attrFavorite btn btn-mini" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"><i class="icon-heart"></i></a></span>
-										<span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned btn btn-mini" href="#" rel="tooltip" data-content="4" data-original-title="Owned"><i class="icon-barcode"></i></a></span>
+									<div class="quickAttributes" data-content="<%= item.id %>">
+										<span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying" href="#" rel="tooltip" data-content="0" data-original-title="Playing"></a></span>
+										<span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed" href="#" rel="tooltip" data-content="1" data-original-title="Played"></a></span>
+										<span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" rel="tooltip" data-content="2" data-original-title="Finished"></a></span>
+										<span class="rating-<%= item.userRating %>"><a class="attrFavorite" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"></a></span>
+										<span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned" href="#" rel="tooltip" data-content="4" data-original-title="Owned"></a></span>
 									</div>
 								</div>
 							</td>
-							<td class="scoreDetails"><a href="" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
+							<td class="scoreDetails"><a href="#" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
 							<% if (currentViewTagID !== '0') { %>
-								<td class="options"><a href="#" class="deleteItem_btn btn btn-small btn-danger" data-content="<%= item.id %>"><i class="icon-remove icon-white"></i></a></td>
+								<td class="options"><a href="#" class="deleteItem_btn" data-content="<%= item.id %>"></a></td>
 							<% } %>
 						</tr>
 			      	<% }); %>
@@ -1096,18 +1100,16 @@
 
 	   	<!-- price menu -->
 	   	<script type="text/template" id="price-menu-template">
-			<div class="btn-group priceMenu">
-			<a class="lowestNew btn btn-small" href="<%= productURL %>" data-price="<%= buyNowPrice %>" target="_blank"><span class="priceDesc">Amazon:</span> <%= buyNowPrice %></a>
-			<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
-			<span class="caret"></span>
-			</a>
-			<ul class="dropdown-menu">
-				<li><a href="<%= offersURLNew %>" data-content="0" target="_blank"><span class="priceDesc">Lowest New:</span> <%= lowestNewPrice %></a></li>
+			<div class="priceMenu">
+				<a class="priceButton lowestNew" href="<%= productURL %>" data-price="<%= buyNowPrice %>" target="_blank"><span class="priceSource">Amazon:</span> <span class="priceValue"><%= buyNowPrice %></span></a>
+				<a class="priceToggle" data-toggle="dropdown" href="#"></a>
+				<ul class="dropdown-menu">
+					<li><a href="<%= offersURLNew %>" data-content="0" target="_blank"><span class="priceDesc">Lowest New:</span> <%= lowestNewPrice %></a></li>
 
-				<% if (lowestUsedPrice !== '') { %>
-				<li><a href="<%= offersURLUsed %>" data-content="1" target="_blank"><span class="priceDesc">Lowest Used:</span> <%= lowestUsedPrice %></a></li>
-				<% } %>
-			</ul>
+					<% if (lowestUsedPrice !== '') { %>
+					<li><a href="<%= offersURLUsed %>" data-content="1" target="_blank"><span class="priceDesc">Lowest Used:</span> <%= lowestUsedPrice %></a></li>
+					<% } %>
+				</ul>
 			</div>
 	   	</script>
 
@@ -1124,7 +1126,6 @@
 				<a id="description_close_btn" href="#" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i> Close</a>
 			</div>
 	   	</script>
-
 
 
 		<!-- JAVASCRIPT LIBRARIES (SPECIFIC ORDER) -->
