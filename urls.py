@@ -32,6 +32,7 @@ urlpatterns = patterns('',
 
     # user
     (r'^login/$', 'tmz.tmzAPI.login'),
+    (r'^user/$', 'tmz.tmzAPI.user'),
     (r'^createuser/$', 'tmz.tmzAPI.createUser'),
     (r'^updateuser/$', 'tmz.tmzAPI.updateUser'),
     (r'^sendresetcode/$', 'tmz.tmzAPI.sendResetCode'),
@@ -59,5 +60,5 @@ urlpatterns = patterns('',
     (r'^gamewallpapers/$', 'tmz.listSources.gamewallpapers'),
 
     # catch all
-    (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
+    (r'^.*/$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
 )

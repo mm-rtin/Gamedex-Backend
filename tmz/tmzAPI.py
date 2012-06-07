@@ -27,7 +27,7 @@ def login(request):
 
     if (request.POST):
 
-        if 'user_email' in request.POST and 'user_password' in request.POST:
+        if all(k in request.POST for k in ('user_email', 'user_password')):
 
             # get user parameters
             userEmail = request.POST.get('user_email')
@@ -63,7 +63,36 @@ def login(request):
             else:
                 return HttpResponse(simplejson.dumps({'status': 'invalid_login'}), mimetype='application/json')
         else:
-            return HttpResponse(simplejson.dumps({'status': 'invalid_login'}), mimetype='application/json')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
+
+
+@csrf_exempt
+def user(request):
+
+    if (request.POST):
+
+        if 'user_name' in request.POST:
+
+            # get user parameters
+            userName = request.POST.get('user_name')
+
+            # find user
+            try:
+                user = Users.objects.get(user_name=userName)
+            except Users.DoesNotExist:
+                user = None
+
+            if user:
+                # construct json return object
+                data = {'status': 'success', 'userName': user.user_name}
+
+                return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'invalid_user'}), mimetype='application/json')
+        else:
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -75,48 +104,52 @@ def createUser(request):
 
     if (request.POST):
 
-        # collect user parameters
-        userEmail = request.POST.get('user_email')
-        userPassword = request.POST.get('user_password')
+        if all(k in request.POST for k in ('user_email', 'user_password')):
 
-        # check existing email
-        try:
-            user = Users.objects.get(user_email=userEmail)
-        except Users.DoesNotExist:
-            user = None
+            # collect user parameters
+            userEmail = request.POST.get('user_email')
+            userPassword = request.POST.get('user_password')
 
-        # user does not exist: create new user
-        if user == None:
-            # hash password
-            userPassword = hashlib.md5(userPassword).hexdigest()
+            # check existing email
+            try:
+                user = Users.objects.get(user_email=userEmail)
+            except Users.DoesNotExist:
+                user = None
 
-            # create user
-            guid = str(uuid.uuid4())
-            user = Users(id=guid, user_email=userEmail, user_password=userPassword, user_secret_key='')
-            user.save()
+            # user does not exist: create new user
+            if user == None:
+                # hash password
+                userPassword = hashlib.md5(userPassword).hexdigest()
 
-            # generate secret key
-            secretKey = hashlib.md5(userEmail)
-            secretKey.update(str(time.time()))
-            secretKey = secretKey.hexdigest()
+                # create user
+                guid = str(uuid.uuid4())
+                user = Users(id=guid, user_email=userEmail, user_password=userPassword, user_secret_key='', user_name='')
+                user.save()
 
-            # save secret key
-            user.user_secret_key = secretKey
-            user.save()
+                # generate secret key
+                secretKey = hashlib.md5(userEmail)
+                secretKey.update(str(time.time()))
+                secretKey = secretKey.hexdigest()
 
-            # create default list
-            listguid = str(uuid.uuid4())
-            newList = Tags(id=listguid, user=user, list_name='wishlist')
-            newList.save()
+                # save secret key
+                user.user_secret_key = secretKey
+                user.save()
 
-            # construct json return object
-            data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey}
+                # create default list
+                listguid = str(uuid.uuid4())
+                newList = Tags(id=listguid, user=user, list_name='wishlist')
+                newList.save()
 
-            return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+                # construct json return object
+                data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey}
 
-        # user exists
+                return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+
+            # user exists
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'user_exists'}), mimetype='application/json')
         else:
-            return HttpResponse(simplejson.dumps({'status': 'user_exists'}), mimetype='application/json')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -128,9 +161,9 @@ def updateUser(request):
 
     if (request.POST):
 
-        if 'user_id' in request.POST and 'user_password' in request.POST:
+        if all(k in request.POST for k in ('uid', 'user_password')):
 
-            userID = request.POST.get('user_id')
+            userID = request.POST.get('uid')
             userPassword = request.POST.get('user_password')
 
             # hash password
@@ -144,23 +177,28 @@ def updateUser(request):
 
             if user:
 
+                save = False
+
                 # update user
                 if 'user_email' in request.POST:
                     user.user_email = request.POST.get('user_email')
+                    save = True
                 if 'user_name' in request.POST:
                     user.user_name = request.POST.get('user_name')
+                    save = True
                 if 'user_new_password' in request.POST:
                     userNewPassword = request.POST.get('user_new_password')
                     user.user_password = hashlib.md5(userNewPassword).hexdigest()
+                    save = True
 
-                if ('user_email' in request.POST or 'user_name' in request.POST or 'user_new_password' in request.POST):
+                if (save):
                     user.save()
 
                 return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'incorrect password'}), mimetype='application/json')
+                return HttpResponse(simplejson.dumps({'status': 'incorrect_password'}), mimetype='application/json')
         else:
-            return HttpResponse('false', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -233,7 +271,7 @@ Please return to Gamedex.net and enter the 3-digit number above into the "Passwo
                 return HttpResponse(simplejson.dumps({'status': 'invalid_email'}), mimetype='application/json')
         # user_mail not in request
         else:
-            return HttpResponse('false', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -245,7 +283,7 @@ def submitResetCode(request):
 
     if (request.POST):
 
-        if 'user_email' in request.POST and 'user_reset_code' in request.POST:
+        if all(k in request.POST for k in ('user_email', 'user_reset_code')):
 
             email = request.POST.get('user_email')
             resetCode = request.POST.get('user_reset_code')
@@ -262,7 +300,7 @@ def submitResetCode(request):
                 return HttpResponse(simplejson.dumps({'status': 'incorrect_code'}), mimetype='application/json')
 
         else:
-            return HttpResponse('false', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -274,7 +312,7 @@ def updatePassword(request):
 
     if (request.POST):
 
-        if 'user_email' in request.POST and 'user_new_password' in request.POST and 'user_reset_code' in request.POST:
+        if all(k in request.POST for k in ('user_email', 'user_new_password', 'user_reset_code')):
 
             email = request.POST.get('user_email')
             newPassword = request.POST.get('user_new_password')
@@ -298,7 +336,7 @@ def updatePassword(request):
             else:
                 return HttpResponse(simplejson.dumps({'status': 'user_not_found'}), mimetype='application/json')
         else:
-            return HttpResponse('false', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -317,39 +355,44 @@ def createList(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        userID = request.POST.get('user_id')
-        secretKey = request.POST.get('uk')
-        listName = request.POST.get('tag_name').strip()
-        updateTimestamp = request.POST.get('ts')
+        if all(k in request.POST for k in ('uid', 'uk', 'tag_name', 'ts')):
 
-        # get user by userid
-        try:
-            user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            user = None
+            # collect list item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            listName = request.POST.get('tag_name').strip()
+            updateTimestamp = request.POST.get('ts')
 
-        # validate secretKey against user
-        if user:
+            # get user by userid
+            try:
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-            # set new timestamp
-            user.user_update_timestamp = updateTimestamp
-            user.save()
+            # validate secretKey against user
+            if user:
 
-            # create list
-            guid = str(uuid.uuid4())
-            newList = Tags(id=guid, user=user, list_name=listName)
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-            # prevent demo account from saving data
-            if (secretKey != '1'):
-                newList.save()
+                # create list
+                guid = str(uuid.uuid4())
+                newList = Tags(id=guid, user=user, list_name=listName)
 
-            returnData = {'listID': newList.pk, 'listName': listName}
+                # prevent demo account from saving data
+                if (secretKey != '1'):
+                    newList.save()
 
-            return HttpResponse(simplejson.dumps(returnData), mimetype='application/json')
+                returnData = {'listID': newList.pk, 'listName': listName}
+
+                return HttpResponse(simplejson.dumps(returnData), mimetype='application/json')
+
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
 
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -362,44 +405,57 @@ def getList(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('uk').strip()
+        if all(k in request.POST for k in ('uid', 'uk')) or 'user_name' in request.POST:
 
-        # get user by userid
-        try:
-            user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            user = None
+            # collect list item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
 
-        # validate secretKey against user
-        if user:
+            # get user by username
+            if 'user_name' in request.POST:
+                userName = request.POST.get('user_name')
+                try:
+                    user = Users.objects.get(user_name=userName)
+                except Users.DoesNotExist:
+                    user = None
 
-            listDictionary = {'list': []}
-
-            # get lists
-            try:
-                lists = Tags.objects.filter(user=user)
-            except Tags.DoesNotExist:
-                lists = None
-
-            # lists found
-            if lists:
-
-                usersList = []
-                # construct python dictionary
-                for item in lists:
-                    usersList.append({'listID': item.pk, 'listName': item.list_name})
-
-                listDictionary = {'list': usersList}
-
-                # serialize and return lists
-                return HttpResponse(simplejson.dumps(listDictionary), mimetype='application/json')
-
+            # get user by userid
             else:
-                return HttpResponse(simplejson.dumps(listDictionary), mimetype='application/json')
+                try:
+                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+                except Users.DoesNotExist:
+                    user = None
+
+            # user found
+            if user:
+
+                listDictionary = {'list': []}
+
+                # get lists
+                try:
+                    lists = Tags.objects.filter(user=user)
+                except Tags.DoesNotExist:
+                    lists = None
+
+                # lists found
+                if lists:
+
+                    usersList = []
+                    # construct python dictionary
+                    for item in lists:
+                        usersList.append({'listID': item.pk, 'listName': item.list_name})
+
+                    listDictionary = {'list': usersList}
+
+                    # serialize and return lists
+                    return HttpResponse(simplejson.dumps(listDictionary), mimetype='application/json')
+
+                else:
+                    return HttpResponse(simplejson.dumps(listDictionary), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -412,44 +468,52 @@ def updateList(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        userID = request.POST.get('user_id')
-        secretKey = request.POST.get('uk')
-        listName = request.POST.get('tag_name').strip()
-        listID = request.POST.get('tag_id').strip()
-        updateTimestamp = request.POST.get('ts')
+        if all(k in request.POST for k in ('uid', 'uk', 'tag_name', 'tag_id', 'ts')):
 
-        # get user by userid
-        try:
-            user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            user = None
+            # collect list item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            listName = request.POST.get('tag_name').strip()
+            listID = request.POST.get('tag_id')
+            updateTimestamp = request.POST.get('ts')
 
-        # validate secretKey against user
-        if user:
+            # prevent demo account
+            if (secretKey == '1'):
+                return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
 
-            # set new timestamp
-            user.user_update_timestamp = updateTimestamp
-            user.save()
-
-            # get list
+            # get user by userid
             try:
-                listItem = Tags.objects.get(pk=listID, user=user)
-            except Tags.DoesNotExist:
-                listItem = None
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-            # listItem found
-            if listItem:
+            # validate secretKey against user
+            if user:
 
-                listItem.list_name = listName
-                listItem.save()
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                # get list
+                try:
+                    listItem = Tags.objects.get(pk=listID, user=user)
+                except Tags.DoesNotExist:
+                    listItem = None
 
+                # listItem found
+                if listItem:
+
+                    listItem.list_name = listName
+                    listItem.save()
+
+                    return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+                else:
+                    return HttpResponse(simplejson.dumps({'status': 'not found'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'not found'}), mimetype='application/json')
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -461,55 +525,58 @@ def deleteList(request):
 
     if (request.POST):
 
-        # collect item parameters
-        userID = request.POST.get('user_id').strip()
-        secretKey = request.POST.get('uk').strip()
-        updateTimestamp = request.POST.get('ts')
+        if all(k in request.POST for k in ('uid', 'uk', 'ts', 'id')):
 
-        tagID = request.POST.get('id').strip()
+            # collect item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            updateTimestamp = request.POST.get('ts')
 
-        # prevent demo account
-        if (secretKey == '1'):
-            return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+            tagID = request.POST.get('id')
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            existingUser = None
+            # prevent demo account
+            if (secretKey == '1'):
+                return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
 
-        # validate secretKey against user
-        if existingUser:
-
-            # set new timestamp
-            existingUser.user_update_timestamp = updateTimestamp
-            existingUser.save()
-
-            # get all ItemTagUser entries in List
+            # get user by userid
             try:
-                itemTagUser = ItemTagUser.objects.filter(tag=tagID, user=existingUser)
-            except ItemTagUser.DoesNotExist:
-                itemTagUser = None
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-            # get tag entry
-            try:
-                tag = Tags.objects.get(pk=tagID, user=existingUser)
-            except Tags.DoesNotExist:
-                tag = None
+            # validate secretKey against user
+            if user:
 
-            # found record(s) > delete ItemTagUser entries
-            if itemTagUser:
-                itemTagUser.delete()
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-            if tag:
-                tag.delete()
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                # get all ItemTagUser entries in List
+                try:
+                    itemTagUser = ItemTagUser.objects.filter(tag=tagID, user=user)
+                except ItemTagUser.DoesNotExist:
+                    itemTagUser = None
 
-            return HttpResponse(simplejson.dumps({'status': 'record not found'}), mimetype='application/json')
+                # get tag entry
+                try:
+                    tag = Tags.objects.get(pk=tagID, user=user)
+                except Tags.DoesNotExist:
+                    tag = None
 
+                # found record(s) > delete ItemTagUser entries
+                if itemTagUser:
+                    itemTagUser.delete()
+
+                if tag:
+                    tag.delete()
+                    return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+                return HttpResponse(simplejson.dumps({'status': 'no_record'}), mimetype='application/json')
+
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'no_user'}), mimetype='application/json')
         else:
-            return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
-
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -525,120 +592,123 @@ def createListItem(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        initialProvider = request.POST.get('ip')
-        asin = request.POST.get('aid')
-        gbombID = request.POST.get('gid')
+        if all(k in request.POST for k in ('uid', 'uk', 'ts')):
 
-        itemName = request.POST.get('n')
-        releaseDate = request.POST.get('rd')
-        platform = request.POST.get('p')
-        smallImage = request.POST.get('si')
-        thumbnailImage = request.POST.get('ti')
-        largeImage = request.POST.get('li')
+            # collect list item parameters
+            initialProvider = request.POST.get('ip')
+            asin = request.POST.get('aid')
+            gbombID = request.POST.get('gid')
 
-        metacriticPage = request.POST.get('mp')
-        metascore = request.POST.get('ms')
+            itemName = request.POST.get('n')
+            releaseDate = request.POST.get('rd')
+            platform = request.POST.get('p')
+            smallImage = request.POST.get('si')
+            thumbnailImage = request.POST.get('ti')
+            largeImage = request.POST.get('li')
 
-        gameStatus = request.POST.get('gs')
-        playStatus = request.POST.get('ps')
-        userRating = request.POST.get('ur')
+            metacriticPage = request.POST.get('mp')
+            metascore = request.POST.get('ms')
 
-        # get tagIDs as array
-        tagIDs = request.POST.getlist('lids[]')
+            gameStatus = request.POST.get('gs')
+            playStatus = request.POST.get('ps')
+            userRating = request.POST.get('ur')
 
-        # authentication
-        userID = request.POST.get('uid')
-        secretKey = request.POST.get('uk')
-        updateTimestamp = request.POST.get('ts').strip()
+            # get tagIDs as array
+            tagIDs = request.POST.getlist('lids[]')
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            existingUser = None
+            # authentication
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            updateTimestamp = request.POST.get('ts')
 
-        # get existing item based on initial provider
-        try:
-            existingItem = None
+            # get user by userid
+            try:
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-            # amazon provider
-            if initialProvider == '0':
-                existingItem = Items.objects.get(item_asin=asin, item_initialProvider='0')
-            # giantbomb provider
-            elif initialProvider == '1':
-                existingItem = Items.objects.get(item_gbombID=gbombID, item_initialProvider='1', item_platform=platform)
+            # get existing item based on initial provider
+            try:
+                existingItem = None
 
-        except Items.DoesNotExist:
-            existingItem = None
+                # amazon provider
+                if initialProvider == '0':
+                    existingItem = Items.objects.get(item_asin=asin, item_initialProvider='0')
+                # giantbomb provider
+                elif initialProvider == '1':
+                    existingItem = Items.objects.get(item_gbombID=gbombID, item_initialProvider='1', item_platform=platform)
 
-        # validate secretKey against user
-        if existingUser:
+            except Items.DoesNotExist:
+                existingItem = None
 
-            # set new timestamp
-            existingUser.user_update_timestamp = updateTimestamp
-            existingUser.save()
+            # validate secretKey against user
+            if user:
 
-            # create new item
-            if (existingItem is None):
-                guid = str(uuid.uuid4())
-                item = Items(
-                    id=guid,
-                    item_asin=asin,
-                    item_gbombID=gbombID,
-                    item_initialProvider=initialProvider,
-                    item_name=itemName,
-                    item_releasedate=releaseDate,
-                    item_platform=platform,
-                    item_smallImage=smallImage,
-                    item_thumbnailImage=thumbnailImage,
-                    item_largeImage=largeImage,
-                    item_metacriticPage=metacriticPage,
-                    item_metascore=metascore
-                )
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-                # prevent demo account from saving data
-                if (secretKey != '1'):
-                    item.save()
-
-            # item already exists, use instead
-            else:
-                item = existingItem
-
-            # create link between Item, Tag and User for multiple tags
-            tagIDsAdded = []
-            idsAdded = []
-
-            for tagID in tagIDs:
-                guid = str(uuid.uuid4())
-
-                # prevent demo account from saving data
-                if (secretKey != '1'):
-                    # get tag
-                    tag = Tags.objects.get(pk=tagID)
-                    # create link
-                    link = ItemTagUser(
+                # create new item
+                if (existingItem is None):
+                    guid = str(uuid.uuid4())
+                    item = Items(
                         id=guid,
-                        user=existingUser,
-                        tag=tag,
-                        item=item,
-                        item_gameStatus=gameStatus,
-                        item_playStatus=playStatus,
-                        item_userRating=userRating,
+                        item_asin=asin,
+                        item_gbombID=gbombID,
+                        item_initialProvider=initialProvider,
+                        item_name=itemName,
+                        item_releasedate=releaseDate,
+                        item_platform=platform,
+                        item_smallImage=smallImage,
+                        item_thumbnailImage=thumbnailImage,
+                        item_largeImage=largeImage,
+                        item_metacriticPage=metacriticPage,
+                        item_metascore=metascore
                     )
-                    link.save()
 
-                # record item ids and tag ids that have been added
-                tagIDsAdded.append(tagID)
-                idsAdded.append(guid)
+                    # prevent demo account from saving data
+                    if (secretKey != '1'):
+                        item.save()
 
-            returnData = {'idsAdded': idsAdded, 'itemID': item.pk, 'tagIDsAdded': tagIDsAdded}
+                # item already exists, use instead
+                else:
+                    item = existingItem
 
-            return HttpResponse(simplejson.dumps(returnData), mimetype='application/json')
+                # create link between Item, Tag and User for multiple tags
+                tagIDsAdded = []
+                idsAdded = []
 
+                for tagID in tagIDs:
+                    guid = str(uuid.uuid4())
+
+                    # prevent demo account from saving data
+                    if (secretKey != '1'):
+                        # get tag
+                        tag = Tags.objects.get(pk=tagID)
+                        # create link
+                        link = ItemTagUser(
+                            id=guid,
+                            user=user,
+                            tag=tag,
+                            item=item,
+                            item_gameStatus=gameStatus,
+                            item_playStatus=playStatus,
+                            item_userRating=userRating,
+                        )
+                        link.save()
+
+                    # record item ids and tag ids that have been added
+                    tagIDsAdded.append(tagID)
+                    idsAdded.append(guid)
+
+                returnData = {'idsAdded': idsAdded, 'itemID': item.pk, 'tagIDsAdded': tagIDsAdded}
+
+                return HttpResponse(simplejson.dumps(returnData), mimetype='application/json')
+
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
-
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -650,53 +720,57 @@ def updateUserItem(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        itemID = request.POST.get('id')
+        if all(k in request.POST for k in ('uid', 'uk', 'ts')):
 
-        gameStatus = request.POST.get('gs')
-        playStatus = request.POST.get('ps')
-        userRating = request.POST.get('ur')
+            # collect list item parameters
+            itemID = request.POST.get('id')
 
-        # authentication
-        userID = request.POST.get('uid')
-        secretKey = request.POST.get('uk')
-        updateTimestamp = request.POST.get('ts')
+            gameStatus = request.POST.get('gs')
+            playStatus = request.POST.get('ps')
+            userRating = request.POST.get('ur')
 
-        # prevent demo account
-        if (secretKey == '1'):
-            return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+            # authentication
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            updateTimestamp = request.POST.get('ts')
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            existingUser = None
+            # prevent demo account
+            if (secretKey == '1'):
+                return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
 
-        # get existing link
-        try:
-            links = ItemTagUser.objects.filter(item=itemID, user=existingUser)
-        except ItemTagUser.DoesNotExist:
-            links = None
+            # get user by userid
+            try:
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-        # validate secretKey against user
-        if existingUser and links is not None:
+            # get existing link
+            try:
+                links = ItemTagUser.objects.filter(item=itemID, user=user)
+            except ItemTagUser.DoesNotExist:
+                links = None
 
-            # set new timestamp
-            existingUser.user_update_timestamp = updateTimestamp
-            existingUser.save()
+            # validate secretKey against user
+            if user and links is not None:
 
-            # iterate all links items and update attributes
-            for link in links:
-                link.item_gameStatus = gameStatus
-                link.item_playStatus = playStatus
-                link.item_userRating = userRating
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-                link.save()
+                # iterate all links items and update attributes
+                for link in links:
+                    link.item_gameStatus = gameStatus
+                    link.item_playStatus = playStatus
+                    link.item_userRating = userRating
 
-            return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                    link.save()
 
+                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -708,45 +782,49 @@ def updateMetacritic(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        itemID = request.POST.get('id')
-        metacriticPage = request.POST.get('mp')
-        metascore = request.POST.get('ms')
+        if all(k in request.POST for k in ('uid', 'uk', 'ts')):
 
-        # authentication
-        userID = request.POST.get('uid')
-        secretKey = request.POST.get('uk')
-        updateTimestamp = request.POST.get('ts')
+            # collect list item parameters
+            itemID = request.POST.get('id')
+            metacriticPage = request.POST.get('mp')
+            metascore = request.POST.get('ms')
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            existingUser = None
+            # authentication
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            updateTimestamp = request.POST.get('ts')
 
-        # get existing item
-        try:
-            item = Items.objects.get(pk=itemID)
-        except Items.DoesNotExist:
-            item = None
+            # get user by userid
+            try:
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-        # validate secretKey against user
-        if existingUser and item is not None:
+            # get existing item
+            try:
+                item = Items.objects.get(pk=itemID)
+            except Items.DoesNotExist:
+                item = None
 
-            # set new timestamp
-            existingUser.user_update_timestamp = updateTimestamp
-            existingUser.save()
+            # validate secretKey against user
+            if user and item is not None:
 
-            # update item
-            item.item_metacriticPage = metacriticPage
-            item.item_metascore = metascore
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-            item.save()
+                # update item
+                item.item_metacriticPage = metacriticPage
+                item.item_metascore = metascore
 
-            return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                item.save()
 
+                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -758,58 +836,62 @@ def updateItem(request):
 
     if (request.POST):
 
-        # authentication
-        userID = request.POST.get('uid')
-        secretKey = request.POST.get('uk')
-        updateTimestamp = request.POST.get('ts')
+        if all(k in request.POST for k in ('uid', 'uk', 'ts')):
 
-        # collect list item parameters
-        itemID = request.POST.get('id')
-        asin = request.POST.get('aid')
-        gbombID = request.POST.get('gid')
+            # authentication
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            updateTimestamp = request.POST.get('ts')
 
-        releaseDate = request.POST.get('rd')
-        smallImage = request.POST.get('si')
-        thumbnailImage = request.POST.get('ti')
-        largeImage = request.POST.get('li')
+            # collect list item parameters
+            itemID = request.POST.get('id')
+            asin = request.POST.get('aid')
+            gbombID = request.POST.get('gid')
 
-        # prevent demo account
-        if (secretKey == '1'):
-            return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+            releaseDate = request.POST.get('rd')
+            smallImage = request.POST.get('si')
+            thumbnailImage = request.POST.get('ti')
+            largeImage = request.POST.get('li')
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            existingUser = None
+            # prevent demo account
+            if (secretKey == '1'):
+                return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
 
-        # get existing item
-        try:
-            item = Items.objects.get(pk=itemID)
-        except Items.DoesNotExist:
-            item = None
+            # get user by userid
+            try:
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-        # validate secretKey against user
-        if existingUser and item is not None:
+            # get existing item
+            try:
+                item = Items.objects.get(pk=itemID)
+            except Items.DoesNotExist:
+                item = None
 
-            # set new timestamp
-            existingUser.user_update_timestamp = updateTimestamp
-            existingUser.save()
+            # validate secretKey against user
+            if user and item is not None:
 
-            # update item
-            item.item_asin = asin
-            item.item_gbombID = gbombID
-            item.item_releasedate = releaseDate
-            item.item_smallImage = smallImage
-            item.item_thumbnailImage = thumbnailImage
-            item.item_largeImage = largeImage
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-            item.save()
+                # update item
+                item.item_asin = asin
+                item.item_gbombID = gbombID
+                item.item_releasedate = releaseDate
+                item.item_smallImage = smallImage
+                item.item_thumbnailImage = thumbnailImage
+                item.item_largeImage = largeImage
 
-            return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                item.save()
 
+                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -821,80 +903,93 @@ def getListItems(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        userID = request.POST.get('user_id')
-        secretKey = request.POST.get('uk')
-        tagID = request.POST.get('list_id')
+        if all(k in request.POST for k in ('uid', 'uk')) or 'user_name' in request.POST:
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID)
-        except Users.DoesNotExist:
-            existingUser = None
+            # collect list item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            tagID = request.POST.get('list_id')
 
-        # get existing list by tagID
-        try:
-            existingTag = Tags.objects.get(pk=tagID)
-        except Tags.DoesNotExist:
-            existingTag = None
+            # get user by username
+            if 'user_name' in request.POST:
+                userName = request.POST.get('user_name')
+                try:
+                    user = Users.objects.get(user_name=userName)
+                except Users.DoesNotExist:
+                    user = None
 
-        # validate secretKey against user
-        if existingUser and (existingTag or tagID == '0') and existingUser.user_secret_key == secretKey:
-
-            itemDictionary = {'items': []}
-
-            # get tag items
-            try:
-                # items for all tags
-                if tagID == '0':
-                    itemTagUsers = ItemTagUser.objects.filter(user=existingUser)
-                # items filtered by tag
-                else:
-                    itemTagUsers = ItemTagUser.objects.filter(user=existingUser, tag=existingTag)
-
-            except ItemTagUser.DoesNotExist:
-                itemTagUsers = None
-
-            # list items found
-            if itemTagUsers:
-
-                usersListItems = []
-                addedItemIDs = []
-
-                # construct python dictionary
-                for items in itemTagUsers:
-
-                    if (items.item.pk not in addedItemIDs):
-
-                        # add item to userListItems
-                        usersListItems.append({
-                            'id': items.item.pk,
-                            'ip': items.item.item_initialProvider,
-                            'iid': items.item.pk,
-                            'aid': items.item.item_asin,
-                            'gid': items.item.item_gbombID,
-                            'n': items.item.item_name,
-                            'rd': str(items.item.item_releasedate),
-                            'p': items.item.item_platform,
-                            'si': items.item.item_smallImage,
-                            'ti': items.item.item_thumbnailImage,
-                            'li': items.item.item_largeImage,
-                            'ms': items.item.item_metascore,
-                        })
-
-                        # add to list of itemIDs added - prevent multiple distinct items (by itemID) from appearing in 'view all list'
-                        addedItemIDs.append(items.item.pk)
-
-                itemDictionary = {'items': usersListItems}
-
-                # serialize and return lists
-                return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
-
+            # get user by userid
             else:
+                try:
+                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+                except Users.DoesNotExist:
+                    user = None
 
-                return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
+            # get existing list by tagID
+            try:
+                existingTag = Tags.objects.get(pk=tagID)
+            except Tags.DoesNotExist:
+                existingTag = None
+
+            # user found
+            if user and (existingTag or tagID == '0'):
+
+                itemDictionary = {'items': []}
+
+                # get tag items
+                try:
+                    # items for all tags
+                    if tagID == '0':
+                        itemTagUsers = ItemTagUser.objects.filter(user=user)
+                    # items filtered by tag
+                    else:
+                        itemTagUsers = ItemTagUser.objects.filter(user=user, tag=existingTag)
+
+                except ItemTagUser.DoesNotExist:
+                    itemTagUsers = None
+
+                # list items found
+                if itemTagUsers:
+
+                    usersListItems = []
+                    addedItemIDs = []
+
+                    # construct python dictionary
+                    for items in itemTagUsers:
+
+                        if (items.item.pk not in addedItemIDs):
+
+                            # add item to userListItems
+                            usersListItems.append({
+                                'id': items.item.pk,
+                                'ip': items.item.item_initialProvider,
+                                'iid': items.item.pk,
+                                'aid': items.item.item_asin,
+                                'gid': items.item.item_gbombID,
+                                'n': items.item.item_name,
+                                'rd': str(items.item.item_releasedate),
+                                'p': items.item.item_platform,
+                                'si': items.item.item_smallImage,
+                                'ti': items.item.item_thumbnailImage,
+                                'li': items.item.item_largeImage,
+                                'ms': items.item.item_metascore,
+                            })
+
+                            # add to list of itemIDs added - prevent multiple distinct items (by itemID) from appearing in 'view all list'
+                            addedItemIDs.append(items.item.pk)
+
+                    itemDictionary = {'items': usersListItems}
+
+                    # serialize and return lists
+                    return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
+
+                else:
+
+                    return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -906,55 +1001,68 @@ def getDirectory(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        userID = request.POST.get('user_id')
-        secretKey = request.POST.get('uk')
+        if all(k in request.POST for k in ('uid', 'uk')) or 'user_name' in request.POST:
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID)
-        except Users.DoesNotExist:
-            existingUser = None
+            # collect list item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
 
-        # validate secretKey against user
-        if existingUser and existingUser.user_secret_key == secretKey:
+            # get user by username
+            if 'user_name' in request.POST:
+                userName = request.POST.get('user_name')
+                try:
+                    user = Users.objects.get(user_name=userName)
+                except Users.DoesNotExist:
+                    user = None
 
-            # get tag items
-            try:
-                itemTagUsers = ItemTagUser.objects.filter(user=existingUser)
-            except ItemTagUser.DoesNotExist:
-                itemTagUsers = None
-
-            # list items found
-            if itemTagUsers:
-
-                directoryItems = {}
-                # construct python dictionary
-                for items in itemTagUsers:
-
-                    # create item object
-                    if items.item.pk not in directoryItems:
-                        directoryItems[items.item.pk] = {
-                            'aid': items.item.item_asin,
-                            'gid': items.item.item_gbombID,
-                            'gs': items.item_gameStatus,
-                            'ps': items.item_playStatus,
-                            'ur': items.item_userRating,
-                            't': {},
-                            'tc': 0
-                        }
-
-                    # append tag
-                    directoryItems[items.item.pk]['t'][items.tag.pk] = items.pk
-                    directoryItems[items.item.pk]['tc'] = directoryItems[items.item.pk]['tc'] + 1
-
-                # serialize and return lists
-                return HttpResponse(simplejson.dumps({'directory': directoryItems}), mimetype='application/json')
-
+            # get user by userid
             else:
-                return HttpResponse(simplejson.dumps({'status': 'empty'}), mimetype='application/json')
+                try:
+                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+                except Users.DoesNotExist:
+                    user = None
+
+            # validate secretKey against user
+            if user:
+
+                # get tag items
+                try:
+                    itemTagUsers = ItemTagUser.objects.filter(user=user)
+                except ItemTagUser.DoesNotExist:
+                    itemTagUsers = None
+
+                # list items found
+                if itemTagUsers:
+
+                    directoryItems = {}
+                    # construct python dictionary
+                    for items in itemTagUsers:
+
+                        # create item object
+                        if items.item.pk not in directoryItems:
+                            directoryItems[items.item.pk] = {
+                                'aid': items.item.item_asin,
+                                'gid': items.item.item_gbombID,
+                                'gs': items.item_gameStatus,
+                                'ps': items.item_playStatus,
+                                'ur': items.item_userRating,
+                                't': {},
+                                'tc': 0
+                            }
+
+                        # append tag
+                        directoryItems[items.item.pk]['t'][items.tag.pk] = items.pk
+                        directoryItems[items.item.pk]['tc'] = directoryItems[items.item.pk]['tc'] + 1
+
+                    # serialize and return lists
+                    return HttpResponse(simplejson.dumps({'directory': directoryItems}), mimetype='application/json')
+
+                else:
+                    return HttpResponse(simplejson.dumps({'status': 'empty'}), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -966,43 +1074,56 @@ def getItemTags(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        userID = request.POST.get('user_id')
-        secretKey = request.POST.get('uk')
-        itemID = request.POST.get('item_id')
+        if all(k in request.POST for k in ('uid', 'uk')) or 'user_name' in request.POST:
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID)
-        except Users.DoesNotExist:
-            existingUser = None
+            # collect list item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            itemID = request.POST.get('item_id')
 
-        # validate secretKey against user
-        if existingUser and existingUser.user_secret_key == secretKey:
+            # get user by username
+            if 'user_name' in request.POST:
+                userName = request.POST.get('user_name')
+                try:
+                    user = Users.objects.get(user_name=userName)
+                except Users.DoesNotExist:
+                    user = None
 
-            # get item tags
-            try:
-                itemTagUsers = ItemTagUser.objects.filter(user=existingUser, item=itemID)
-            except ItemTagUser.DoesNotExist:
-                itemTagUsers = None
-
-            # list items found
-            if itemTagUsers:
-
-                itemTags = []
-                # construct python dictionary
-                for items in itemTagUsers:
-                    itemTags.append({'id': items.pk, 'tagID': items.tag.pk})
-
-                tagDictionary = {'itemTags': itemTags}
-
-                # serialize and return lists
-                return HttpResponse(simplejson.dumps(tagDictionary), mimetype='application/json')
-
+            # get user by userid
             else:
-                return HttpResponse('FALSE', mimetype='text/html')
+                try:
+                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+                except Users.DoesNotExist:
+                    user = None
+
+            # validate secretKey against user
+            if user:
+
+                # get item tags
+                try:
+                    itemTagUsers = ItemTagUser.objects.filter(user=user, item=itemID)
+                except ItemTagUser.DoesNotExist:
+                    itemTagUsers = None
+
+                # list items found
+                if itemTagUsers:
+
+                    itemTags = []
+                    # construct python dictionary
+                    for items in itemTagUsers:
+                        itemTags.append({'id': items.pk, 'tagID': items.tag.pk})
+
+                    tagDictionary = {'itemTags': itemTags}
+
+                    # serialize and return lists
+                    return HttpResponse(simplejson.dumps(tagDictionary), mimetype='application/json')
+
+                else:
+                    return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -1014,43 +1135,56 @@ def getItemTagsByThirdPartyID(request):
 
     if (request.POST):
 
-        # collect list item parameters
-        userID = request.POST.get('user_id')
-        secretKey = request.POST.get('uk')
-        itemID = request.POST.get('item_id')
+        if all(k in request.POST for k in ('uid', 'uk')) or 'user_name' in request.POST:
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID)
-        except Users.DoesNotExist:
-            existingUser = None
+            # collect list item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            itemID = request.POST.get('item_id')
 
-        # validate secretKey against user
-        if existingUser and existingUser.user_secret_key == secretKey:
+            # get user by username
+            if 'user_name' in request.POST:
+                userName = request.POST.get('user_name')
+                try:
+                    user = Users.objects.get(user_name=userName)
+                except Users.DoesNotExist:
+                    user = None
 
-            # get item tags
-            try:
-                itemTagUsers = ItemTagUser.objects.filter(user=existingUser, item=itemID)
-            except ItemTagUser.DoesNotExist:
-                itemTagUsers = None
-
-            # list items found
-            if itemTagUsers:
-
-                itemTags = []
-                # construct python dictionary
-                for items in itemTagUsers:
-                    itemTags.append({'id': items.pk, 'tagID': items.tag.pk})
-
-                tagDictionary = {'itemTags': itemTags}
-
-                # serialize and return lists
-                return HttpResponse(simplejson.dumps(tagDictionary), mimetype='application/json')
-
+            # get user by userid
             else:
-                return HttpResponse('FALSE', mimetype='text/html')
+                try:
+                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+                except Users.DoesNotExist:
+                    user = None
+
+            # validate secretKey against user
+            if user:
+
+                # get item tags
+                try:
+                    itemTagUsers = ItemTagUser.objects.filter(user=user, item=itemID)
+                except ItemTagUser.DoesNotExist:
+                    itemTagUsers = None
+
+                # list items found
+                if itemTagUsers:
+
+                    itemTags = []
+                    # construct python dictionary
+                    for items in itemTagUsers:
+                        itemTags.append({'id': items.pk, 'tagID': items.tag.pk})
+
+                    tagDictionary = {'itemTags': itemTags}
+
+                    # serialize and return lists
+                    return HttpResponse(simplejson.dumps(tagDictionary), mimetype='application/json')
+
+                else:
+                    return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
         else:
-            return HttpResponse('FALSE', mimetype='text/html')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -1062,47 +1196,50 @@ def deleteListItem(request):
 
     if (request.POST):
 
-        # collect item parameters
-        userID = request.POST.get('user_id')
-        secretKey = request.POST.get('uk')
-        updateTimestamp = request.POST.get('ts')
+        if all(k in request.POST for k in ('uid', 'uk', 'ts')):
 
-        id = request.POST.get('id')
+            # collect item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            updateTimestamp = request.POST.get('ts')
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            existingUser = None
+            id = request.POST.get('id')
 
-        # validate secretKey against user
-        if existingUser:
-
-            # set new timestamp
-            existingUser.user_update_timestamp = updateTimestamp
-            existingUser.save()
-
-            # get element to delete from ItemTagUser
+            # get user by userid
             try:
-                itemTagUser = ItemTagUser.objects.get(pk=id, user=existingUser)
-            except ItemTagUser.DoesNotExist:
-                itemTagUser = None
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-            # found record > delete
-            if itemTagUser:
-                tagID = itemTagUser.tag.pk
+            # validate secretKey against user
+            if user:
 
-                # prevent demo account from saving data
-                if (secretKey != '1'):
-                    itemTagUser.delete()
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-                return HttpResponse(simplejson.dumps({'tagID': tagID}), mimetype='application/json')
+                # get element to delete from ItemTagUser
+                try:
+                    itemTagUser = ItemTagUser.objects.get(pk=id, user=user)
+                except ItemTagUser.DoesNotExist:
+                    itemTagUser = None
 
-            return HttpResponse(simplejson.dumps({'status': 'record not found'}), mimetype='application/json')
+                # found record > delete
+                if itemTagUser:
+                    tagID = itemTagUser.tag.pk
 
+                    # prevent demo account from saving data
+                    if (secretKey != '1'):
+                        itemTagUser.delete()
+
+                    return HttpResponse(simplejson.dumps({'tagID': tagID}), mimetype='application/json')
+
+                return HttpResponse(simplejson.dumps({'status': 'record not found'}), mimetype='application/json')
+
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
         else:
-            return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
-
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
@@ -1114,46 +1251,50 @@ def deleteListItemsInBatch(request):
 
     if (request.POST):
 
-        # collect item parameters
-        userID = request.POST.get('user_id')
-        secretKey = request.POST.get('uk')
-        updateTimestamp = request.POST.get('ts')
+        if all(k in request.POST for k in ('uid', 'uk', 'ts')):
 
-        ids = request.POST.getlist('ids[]')
+            # collect item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            updateTimestamp = request.POST.get('ts')
 
-        # get user by userid
-        try:
-            existingUser = Users.objects.get(pk=userID, user_secret_key=secretKey)
-        except Users.DoesNotExist:
-            existingUser = None
+            ids = request.POST.getlist('ids[]')
 
-        # validate secretKey against user
-        if existingUser:
+            # get user by userid
+            try:
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
 
-            # set new timestamp
-            existingUser.user_update_timestamp = updateTimestamp
-            existingUser.save()
+            # validate secretKey against user
+            if user:
 
-            itemsDeleted = []
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
 
-            for id in ids:
-                # get element to delete from ItemTagUser
-                try:
-                    itemTagUser = ItemTagUser.objects.get(pk=id, user=existingUser)
-                except ItemTagUser.DoesNotExist:
-                    itemTagUser = None
+                itemsDeleted = []
 
-                # found record > delete
-                if itemTagUser:
-                    # add to list of items deleted
-                    itemsDeleted.append({'id': itemTagUser.pk, 'tagID': itemTagUser.tag.pk})
+                for id in ids:
+                    # get element to delete from ItemTagUser
+                    try:
+                        itemTagUser = ItemTagUser.objects.get(pk=id, user=user)
+                    except ItemTagUser.DoesNotExist:
+                        itemTagUser = None
 
-                    # prevent demo account from saving data
-                    if (secretKey != '1'):
-                        itemTagUser.delete()
+                    # found record > delete
+                    if itemTagUser:
+                        # add to list of items deleted
+                        itemsDeleted.append({'id': itemTagUser.pk, 'tagID': itemTagUser.tag.pk})
 
-            return HttpResponse(simplejson.dumps({'itemsDeleted': itemsDeleted}), mimetype='application/json')
+                        # prevent demo account from saving data
+                        if (secretKey != '1'):
+                            itemTagUser.delete()
+
+                return HttpResponse(simplejson.dumps({'itemsDeleted': itemsDeleted}), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
         else:
-            return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
