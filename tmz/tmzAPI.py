@@ -44,17 +44,14 @@ def login(request):
 
             if user:
 
-                if userEmail == 'demo2@gamedex.net':
-                    secretKey = '1'
+                # generate secret key
+                secretKey = hashlib.md5(userEmail)
+                secretKey.update(str(time.time()))
+                secretKey = secretKey.hexdigest()
 
-                else:
-                    # generate secret key
-                    secretKey = hashlib.md5(userEmail)
-                    secretKey.update(str(time.time()))
-                    secretKey = secretKey.hexdigest()
-                    # save secret key
-                    user.user_secret_key = secretKey
-                    user.save()
+                # save secret key
+                user.user_secret_key = secretKey
+                user.save()
 
                 # construct json return object
                 data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey, 'timestamp': user.user_update_timestamp, 'userName': user.user_name}
@@ -68,6 +65,46 @@ def login(request):
         return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
 
 
+# LOGOUT
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@csrf_exempt
+def logout(request):
+
+    if (request.POST):
+
+        if all(k in request.POST for k in ('uid', 'uk')):
+
+            # collect list item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+
+            # get user by userid
+            try:
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
+
+            if user:
+
+                # generate secret key
+                secretKey = hashlib.md5(userID)
+                secretKey.update(str(time.time()))
+                secretKey = secretKey.hexdigest()
+                # save secret key
+                user.user_secret_key = secretKey
+                user.save()
+
+                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+            else:
+                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+        else:
+            return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
+    else:
+        return HttpResponse(simplejson.dumps({'status': 'not_post'}), mimetype='application/json')
+
+
+# GET USER
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @csrf_exempt
 def user(request):
 
@@ -122,7 +159,11 @@ def createUser(request):
                 userPassword = hashlib.md5(userPassword).hexdigest()
 
                 # create user
-                guid = str(uuid.uuid4())
+                if userEmail == 'demo@gamedex.net':
+                    guid = '1'
+                else:
+                    guid = str(uuid.uuid4())
+
                 user = Users(id=guid, user_email=userEmail, user_password=userPassword, user_secret_key='', user_name='')
                 user.save()
 
@@ -931,10 +972,11 @@ def getListItems(request):
             except Tags.DoesNotExist:
                 existingTag = None
 
+            # empty dictionary
+            itemDictionary = {'items': []}
+
             # user found
             if user and (existingTag or tagID == '0'):
-
-                itemDictionary = {'items': []}
 
                 # get tag items
                 try:
@@ -987,7 +1029,7 @@ def getListItems(request):
 
                     return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
         else:
             return HttpResponse(simplejson.dumps({'status': 'missing_param'}), mimetype='application/json')
     else:

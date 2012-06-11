@@ -32,6 +32,7 @@ urlpatterns = patterns('',
 
     # user
     (r'^login/$', 'tmz.tmzAPI.login'),
+    (r'^logout/$', 'tmz.tmzAPI.logout'),
     (r'^user/$', 'tmz.tmzAPI.user'),
     (r'^createuser/$', 'tmz.tmzAPI.createUser'),
     (r'^updateuser/$', 'tmz.tmzAPI.updateUser'),

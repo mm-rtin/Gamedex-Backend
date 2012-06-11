@@ -14,10 +14,6 @@
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="http://static.t-minuszero.com/css/bootstrap.css">
 		<link rel="stylesheet" media="screen" href="http://static.t-minuszero.com/css/tmz.css">
-		<link rel="stylesheet" href="http://static.t-minuszero.com/css/chosen.css">
-		<link rel="stylesheet" href="http://static.t-minuszero.com/css/nanoscroller.css">
-		<link rel="stylesheet" href="http://static.t-minuszero.com/css/jquery.ui.stars.min.css">
-		<link rel="stylesheet" href="http://static.t-minuszero.com/css/isotope.css">
 
 		<link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
 
@@ -132,7 +128,7 @@
 			</div>
 
 			<div class="modal-footer">
-				<a href="#" class="btn btn-dark" data-dismiss="modal">Close</a>
+				<a href="#" class="btn btn-inverse" data-dismiss="modal">Close</a>
 			</div>
 		</div>
 
@@ -217,7 +213,7 @@
 		<div id="filters-modal" class="modal hide">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal">×</a>
-				<h3>List Filters</h3>
+				<h3>Filters</h3>
 			</div>
 			<div class="modal-body">
 
@@ -229,41 +225,32 @@
 							<label class="control-label">Platform Filter</label>
 							<div class="controls">
 								<div id="platform_filter">
-									<select id="platformFilterList" data-placeholder="Select Platform:" class="chzn-select" multiple style="width:250px;" tabindex="2">
-										<optgroup label="Computer">
-											<option value="pc">PC</option>
-											<option value="mac">Mac</option>
-										</optgroup>
-										<optgroup label="Microsoft">
-											<option value="x360">Xbox 360</option>
-										</optgroup>
-										<optgroup label="Sony">
-											<option value="ps3">PS3</option>
-											<option value="vita">Vita</option>
-											<option value="psp">PSP</option>
-										</optgroup>
-										<optgroup label="Nintendo">
-											<option value="ds">DS</option>
-											<option value="3ds">3DS</option>
-											<option value="wii">Wii</option>
-										</optgroup>
-										<optgroup label="Legacy">
-											<option value="ps">Playstation</option>
-											<option value="ps2">PlayStation 2</option>
-											<option value="xbox">Xbox</option>
-											<option value="gc">Gamecube</option>
-											<option value="n64">N64</option>
-											<option value="snes">SNES</option>
-											<option value="nes">NES</option>
-											<option value="gba">GBA</option>
-											<option value="gbc">Gameboy Color</option>
-											<option value="gb">Gameboy</option>
-											<option value="dc">Sega Dreamcast</option>
-											<option value="saturn">Sega Saturn</option>
-											<option value="genesis">Sega Genesis</option>
-											<option value="gamegear">Sega GameGear</option>
-											<option value="cd">Sega CD</option>
-										</optgroup>
+									<select id="platformFilterList">
+										<option value=""></option>
+										<option value="pc">PC</option>
+										<option value="mac">Mac</option>
+										<option value="x360">Xbox 360</option>
+										<option value="ps3">PS3</option>
+										<option value="vita">Vita</option>
+										<option value="psp">PSP</option>
+										<option value="ds">DS</option>
+										<option value="3ds">3DS</option>
+										<option value="wii">Wii</option>
+										<option value="ps">Playstation</option>
+										<option value="ps2">PlayStation 2</option>
+										<option value="xbox">Xbox</option>
+										<option value="gc">Gamecube</option>
+										<option value="n64">N64</option>
+										<option value="snes">SNES</option>
+										<option value="nes">NES</option>
+										<option value="gba">GBA</option>
+										<option value="gbc">Gameboy Color</option>
+										<option value="gb">Gameboy</option>
+										<option value="dc">Sega Dreamcast</option>
+										<option value="saturn">Sega Saturn</option>
+										<option value="genesis">Sega Genesis</option>
+										<option value="gamegear">Sega GameGear</option>
+										<option value="cd">Sega CD</option>
 									</select>
 								</div>
 							</div>
@@ -638,9 +625,7 @@
 
 								<!-- TAG LIST -->
 								<div id="addListContainer">
-									<select id="addList" data-placeholder="Type a tag name" class="chzn-select list" multiple tabindex="2">
-										<option></option>
-									</select>
+									<input id="addList">
 								</div>
 								<div id="addListButtons">
 									<div id="saveItem_btn" class="button"></div>
@@ -672,7 +657,7 @@
 
 										<a href="#" class="itemDetailThumbnail thumbnail">
 											<div class="itemDetailInfo">
-												<button class="showVideo_btn btn btn-primary"><i class="icon-film icon-white"></i> <span>Show Videos</span></button>
+												<div class="showVideo_btn"></div>
 											</div>
 											<img src="http://static.t-minuszero.com/images/no_selection_placeholder.png" alt="">
 										</a>
@@ -689,7 +674,7 @@
 
 										<a href="#" class="itemDetailThumbnail thumbnail">
 											<div class="itemDetailInfo">
-												<button class="showVideo_btn btn btn-primary"><i class="icon-film icon-white"></i> <span>Show Videos</span></button>
+												<div class="showVideo_btn"></div>
 											</div>
 											<img src="http://static.t-minuszero.com/images/no_selection_placeholder.png" alt="">
 										</a>
@@ -873,17 +858,6 @@
 												</ul>
 											</li>
 										</ul>
-
-										<!-- edit menu -->
-										<ul id="editMenu" class="nav pull-right">
-											<li id="fat-menu" class="dropdown">
-											<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog icon-white"></i> Edit <b class="caret"></b></a>
-												<ul class="dropdown-menu">
-													<li id="deleteList_btn"><a href="#">Delete List: <span class="listName"></span></a></li>
-													<li id="editList_btn"><a href="#">Edit List Name</a></li>
-												</ul>
-											</li>
-										</ul>
 									</div>
 								</div>
 								<span class="rightCap"></span>
@@ -900,6 +874,16 @@
 								</div>
 
 								<div id="gridView_btn" class="button"></div>
+
+
+								<!-- edit menu -->
+								<div id="editMenu" class="btn-group open">
+						          <div class="edit_btn button" data-toggle="dropdown"></div>
+									<ul class="dropdown-menu">
+										<li id="deleteList_btn"><a href="#">Delete Tag: <span class="listName"></span></a></li>
+										<li id="editList_btn"><a href="#">Edit Tag Name</a></li>
+									</ul>
+						        </div>
 
 								<div class="clear"></div>
 							</div>
@@ -1109,7 +1093,7 @@
 
 	   	<!-- add list dropdown -->
 	   	<script type="text/template" id="add-list-template">
-   			<optgroup label="User Lists">
+   			<optgroup label="User Tags">
 	   		<% _.each(orderedList, function(item) { %>
 	   			<option value="<%= item.id %>"><%= item.name %></option>
 	      	<% }); %>
