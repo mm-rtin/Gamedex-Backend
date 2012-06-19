@@ -1,16 +1,21 @@
-from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils import simplejson
 from google.appengine.api import mail
+from disqusapi import DisqusAPI
 
 import hashlib
 import time
 import uuid
 import random
 
+import logging
+
 # database models
 from tmz.models import Users, Items, Tags, ItemTagUser
 
+DISQUS_CREATE_CATEGORY_URL = 'https://disqus.com/api/3.0/categories/create.json'
+DISQUS_SECRET_KEY = 'VaCyWoo6FEpsn1AicXniaGzjc2Y1lCTRaikeDcRGxm42AYIeDOv0PGov7dqXlo5f'
+DISQUS_PUBLIC_KEY = '9NlMygCuXmsAg6dSr9HDudAQFpJ6IjCYxG3SmQBjHBdPK4YvxX3WxleXXfzDXM8k'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # T_MINUS ZERO REST API
@@ -20,9 +25,9 @@ from tmz.models import Users, Items, Tags, ItemTagUser
 # USER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 # LOGIN
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def login(request):
 
     if (request.POST):
@@ -67,7 +72,6 @@ def login(request):
 
 # LOGOUT
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def logout(request):
 
     if (request.POST):
@@ -111,7 +115,6 @@ def logout(request):
 
 # GET USER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def user(request):
 
     if (request.POST):
@@ -142,7 +145,6 @@ def user(request):
 
 # CREATE USER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def createUser(request):
 
     if (request.POST):
@@ -203,7 +205,6 @@ def createUser(request):
 
 # UPDATE USER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def updateUser(request):
 
     if (request.POST):
@@ -252,7 +253,6 @@ def updateUser(request):
 
 # SEND PASSWORD RESET CODE
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def sendResetCode(request):
 
     if (request.POST):
@@ -320,7 +320,6 @@ Please return to Gamedex.net and enter the 3-digit number above into the "Passwo
 
 # SUBMIT PASSWORD RESET CODE
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def submitResetCode(request):
 
     if (request.POST):
@@ -349,7 +348,6 @@ def submitResetCode(request):
 
 # UPDATE PASSWORD
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def updatePassword(request):
 
     if (request.POST):
@@ -382,8 +380,11 @@ def updatePassword(request):
     else:
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
+
 # DELETE USER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -393,7 +394,6 @@ def updatePassword(request):
 
 # CREATE TAG
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def createList(request):
 
     if (request.POST):
@@ -443,7 +443,6 @@ def createList(request):
 # READ TAGS
 # return a list of tags
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def getList(request):
 
     if (request.POST):
@@ -506,7 +505,6 @@ def getList(request):
 # UPDATE TAG
 # update tag name
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def updateList(request):
 
     if (request.POST):
@@ -563,7 +561,6 @@ def updateList(request):
 
 # DELETE TAG
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def deleteList(request):
 
     if (request.POST):
@@ -630,7 +627,6 @@ def deleteList(request):
 
 # CREATE ITEM
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def createListItem(request):
 
     if (request.POST):
@@ -693,6 +689,10 @@ def createListItem(request):
 
                 # create new item
                 if (existingItem is None):
+
+                    # create disqus category
+                    disqusID = createDisqusCategory(itemName)
+
                     guid = str(uuid.uuid4())
                     item = Items(
                         id=guid,
@@ -706,7 +706,8 @@ def createListItem(request):
                         item_thumbnailImage=thumbnailImage,
                         item_largeImage=largeImage,
                         item_metacriticPage=metacriticPage,
-                        item_metascore=metascore
+                        item_metascore=metascore,
+                        item_disqusID=disqusID
                     )
 
                     # prevent demo account from saving data
@@ -756,9 +757,19 @@ def createListItem(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
+# CREATE DISQUS CATEGORY
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def createDisqusCategory(categoryName):
+
+    disqus = DisqusAPI(DISQUS_SECRET_KEY, format='json', version='3.0')
+
+    response = disqus.categories.create(forum='gamedex', title='peanuts', version='3.0')
+
+    logging.info(response)
+
+
 # UPDATE USER ITEM
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def updateUserItem(request):
 
     if (request.POST):
@@ -820,7 +831,6 @@ def updateUserItem(request):
 
 # UPDATE METACRITIC INFO
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def updateMetacritic(request):
 
     if (request.POST):
@@ -874,7 +884,6 @@ def updateMetacritic(request):
 
 # UPDATE SHARED ITEM DATA
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def updateSharedItem(request):
 
     if (request.POST):
@@ -941,7 +950,6 @@ def updateSharedItem(request):
 
 # READ ITEMS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def getListItems(request):
 
     if (request.POST):
@@ -1040,7 +1048,6 @@ def getListItems(request):
 
 # GET DIRECTORY OF ID/3RD PARTY IDs
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def getDirectory(request):
 
     if (request.POST):
@@ -1111,7 +1118,6 @@ def getDirectory(request):
 
 # GET TAGS FOR ITEM
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def getItemTags(request):
 
     if (request.POST):
@@ -1172,7 +1178,6 @@ def getItemTags(request):
 
 # GET ITEM TAGS BY 3RD PARTY ID
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def getItemTagsByThirdPartyID(request):
 
     if (request.POST):
@@ -1233,7 +1238,6 @@ def getItemTagsByThirdPartyID(request):
 
 # DELETE ITEM
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def deleteListItem(request):
 
     if (request.POST):
@@ -1288,7 +1292,6 @@ def deleteListItem(request):
 
 # DELETE ITEMS IN BATCH
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@csrf_exempt
 def deleteListItemsInBatch(request):
 
     if (request.POST):

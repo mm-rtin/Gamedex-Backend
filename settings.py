@@ -15,6 +15,8 @@ AUTOLOAD_SITECONF = 'indexes'
 
 SECRET_KEY = '=r-$b*8hglm+858&9t043hlm6-&6-3d3vfc4((7yd0dbrakhvi'
 
+CACHE_MIDDLEWARE_SECONDS = 172800
+
 INSTALLED_APPS = (
 #    'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -35,7 +37,8 @@ MIDDLEWARE_CLASSES = (
     # This loads the index definitions, so it has to come first
     'autoload.middleware.AutoloadMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+#    'django.middleware.cache.CacheMiddleware',
+#    'django.middleware.csrf.CsrfViewMiddleware',
 #    'django.contrib.sessions.middleware.SessionMiddleware',
 #    'django.contrib.auth.middleware.AuthenticationMiddleware',
 #    'django.contrib.messages.middleware.MessageMiddleware',

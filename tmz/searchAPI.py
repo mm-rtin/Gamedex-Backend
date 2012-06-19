@@ -11,13 +11,12 @@ import bottlenose
 import logging
 
 # amazon api properties
-accessKey = '0JVZGYMSKN59DPNKRGR2'
-secretKey = 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL'
-associate_tag = 'codeco06-20'
-xml2JSON = 'http://xml2json-xslt.googlecode.com/svn/trunk/xml2json.xslt'
+AMAZON_ACCESS_KEY = '0JVZGYMSKN59DPNKRGR2'
+AMAZON_SECRET_KEY = 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL'
+AMAZON_ASSOCIATE_TAG = 'codeco06-20'
 
 # giantbomb api properties
-giantBombAPIKey = 'e89927b08203137d0252fbf1f611a38489edb208'
+GIANTBOMB_API_KEY = 'e89927b08203137d0252fbf1f611a38489edb208'
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,7 +101,7 @@ def cacheMetacritic(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def searchAmazon(request):
 
-    amazon = bottlenose.Amazon(accessKey, secretKey, associate_tag)
+    amazon = bottlenose.Amazon(AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_ASSOCIATE_TAG)
 
     if 'keywords' in request.GET:
         keywords = request.GET.get('keywords')
@@ -181,7 +180,7 @@ def detailAmazon(request):
 
     # get detail from source
     else:
-        amazon = bottlenose.Amazon(accessKey, secretKey, associate_tag)
+        amazon = bottlenose.Amazon(AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_ASSOCIATE_TAG)
         response = amazon.ItemLookup(ItemId=asin, IdType='ASIN', ResponseGroup=responseGroup)
 
         logging.info('')
@@ -271,7 +270,7 @@ def giantBombAPICall(resource, queryParameters):
         logging.info('')
 
         # http://api.giantbomb.com/search/?api_key=e89927b08203137d0252fbf1f611a38489edb208&format=xml&query=killzone
-        api_string = 'http://api.giantbomb.com/' + resource + '/?api_key=' + giantBombAPIKey + '&format=json&' + urllib.urlencode(queryParameters)
+        api_string = 'http://api.giantbomb.com/' + resource + '/?api_key=' + GIANTBOMB_API_KEY + '&format=json&' + urllib.urlencode(queryParameters)
         req = urllib2.Request(api_string, headers={'Accept-Encoding': 'gzip'})
 
         opener = urllib2.build_opener()

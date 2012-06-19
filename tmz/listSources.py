@@ -16,11 +16,11 @@ import re
 # base url
 S3_URL = 'https://s3.amazonaws.com/'
 # site bucket
-UPCOMING_LIST_BUCKET = 's3.t-minuszero.com-upcominglist'
+UPCOMING_LIST_BUCKET = 's3.gamedex.net-upcominglist'
 
 # S3 Properties
 AWS_HEADERS = {
-    'Cache-Control': 'max-age=86400,public'
+    'Cache-Control': 'max-age=2592000,public'
 }
 AWS_ACL = 'public-read'
 
@@ -236,88 +236,3 @@ def copyImageToS3(url, s3conn):
 
     # s3 url
     return S3_URL + UPCOMING_LIST_BUCKET + '/' + fileName
-
-
-def gamewallpapers(request):
-
-    page = 0
-    if 'page' in request.GET:
-        page = request.GET.get('page')
-
-    offset = 14 * int(page)
-
-    url = 'http://www.gamewallpapers.com/index.php?start=%s&filterplatform=' % offset
-
-    # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-    # allow 30 seconds for response
-    pageResponse = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
-
-    if pageResponse.status_code == 200:
-
-        html = etree.HTML(pageResponse.content)
-
-        pageSel = CSSSelector('a.tooltip')
-        pageLinks = []
-
-        # mine page links to game pages
-        for pageLink in pageSel(html):
-
-            try:
-                url = pageLink.get('href').strip()
-                pageLinks.append(url)
-
-            except IndexError:
-                logging.error('IndexError')
-
-        # find max res wallpaper links
-        linksSel = CSSSelector('a')
-
-        wallpaperLinks = []
-
-        # iterate game page links
-        for link in pageLinks:
-
-            if link.find('cgwallpapers') == -1:
-
-                # fetch game page
-                gamepageResponse = urlfetch.fetch(link, None, 'GET', {}, False, False, 30)
-                html = etree.HTML(gamepageResponse.content)
-
-                # for each wallpaper link in linksContainer
-                for wallpaperLink in linksSel(html):
-
-                    if wallpaperLink.text != None:
-
-                        linkText = wallpaperLink.text.encode('utf-8')
-
-                        if (linkText.find('1920x1200') != -1):
-                            linkURL = wallpaperLink.get('href').strip()
-                            wallpaperLinks.append(linkURL)
-
-        # construct final links
-        outputLinks = []
-        # http://www.gamewallpapers.com/members/getwallpaper.php?wallpaper=wallpaper_dirt_showdown_02_2560x1600.jpg
-        for link in wallpaperLinks:
-
-            nameMatches = re.search('wallpaper[a-z|_|.|0-9]*', link, flags=0)
-
-            if nameMatches:
-                wallpaperName = nameMatches.group()
-                wallpaperName = wallpaperName.replace('1920x1200', '2560x1600')
-
-                # create output link
-                outputLink = '<a href="http://www.gamewallpapers.com/members/getwallpaper.php?wallpaper=%s">%s</a>' % (wallpaperName, wallpaperName)
-                outputLinks.append(outputLink)
-
-    # join list to html doc string
-    html = '<br>'.join(outputLinks)
-
-    return HttpResponse(html, mimetype='text/html')
-
-
-#
-# http://wallbase.cc/toplist/0/213/eqeq/0x0/0/100/60/3d
-#                            start index
-#                              #categories (general/highres/manga)
-#                                             sfw/sketchy/nsfw
-#                                                 thumbs per requests (60 max)

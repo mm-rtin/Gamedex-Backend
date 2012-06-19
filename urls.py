@@ -58,9 +58,14 @@ urlpatterns = patterns('',
     (r'^item/delete/$', 'tmz.tmzAPI.deleteListItem'),
     (r'^item/delete/batch/$', 'tmz.tmzAPI.deleteListItemsInBatch'),
 
+    # management
+    (r'^copy/assets/$', 'tmz.management.copyAssetsToS3'),
+    (r'^gamewallpapers/$', 'tmz.management.gamewallpapers'),
 
-    (r'^gamewallpapers/$', 'tmz.listSources.gamewallpapers'),
+    (r'^createDisqusCategory/$', 'tmz.tmzAPI.createDisqusCategory'),
 
     # catch all
     (r'^.*/$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
+
+
 )

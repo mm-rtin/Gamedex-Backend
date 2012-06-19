@@ -51,6 +51,7 @@ class Items(models.Model):
     item_smallImage = models.CharField(max_length=512, blank=True, null=True)
     item_thumbnailImage = models.CharField(max_length=512, blank=True, null=True)
     item_largeImage = models.CharField(max_length=512, blank=True, null=True)
+    item_disqusID = models.SmallIntegerField(max_length=10, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'ListItems'
