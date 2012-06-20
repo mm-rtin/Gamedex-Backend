@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.utils import simplejson
 from google.appengine.api import mail
 from disqusapi import DisqusAPI
 
@@ -7,6 +6,7 @@ import hashlib
 import time
 import uuid
 import random
+import json
 
 import logging
 
@@ -61,9 +61,9 @@ def login(request):
                 # construct json return object
                 data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey, 'timestamp': user.user_update_timestamp, 'userName': user.user_name}
 
-                return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+                return HttpResponse(json.dumps(data), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'invalid_login'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'invalid_login'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -104,9 +104,9 @@ def logout(request):
                 user.user_secret_key = secretKey
                 user.save()
 
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -134,9 +134,9 @@ def user(request):
                 # construct json return object
                 data = {'status': 'success', 'userName': user.user_name}
 
-                return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+                return HttpResponse(json.dumps(data), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'invalid_user'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'invalid_user'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -192,11 +192,11 @@ def createUser(request):
                 # construct json return object
                 data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey}
 
-                return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+                return HttpResponse(json.dumps(data), mimetype='application/json')
 
             # user exists
             else:
-                return HttpResponse(simplejson.dumps({'status': 'user_exists'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'user_exists'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -242,9 +242,9 @@ def updateUser(request):
                 if (save):
                     user.save()
 
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'incorrect_password'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'incorrect_password'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -308,9 +308,9 @@ Please return to Gamedex.net and enter the 3-digit number above into the "Passwo
 """ % (email, resetCode)
                     message.send()
 
-                    return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                    return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
-            return HttpResponse(simplejson.dumps({'status': 'invalid_email'}), mimetype='application/json')
+            return HttpResponse(json.dumps({'status': 'invalid_email'}), mimetype='application/json')
         # user_mail not in request
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
@@ -336,9 +336,9 @@ def submitResetCode(request):
                 user = None
 
             if user:
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'incorrect_code'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'incorrect_code'}), mimetype='application/json')
 
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
@@ -372,9 +372,9 @@ def updatePassword(request):
                 user.user_password = hashlib.md5(newPassword).hexdigest()
                 user.save()
 
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'user_not_found'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'user_not_found'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -429,10 +429,10 @@ def createList(request):
 
                 returnData = {'tagID': newList.pk, 'tagName': tagName}
 
-                return HttpResponse(simplejson.dumps(returnData), mimetype='application/json')
+                return HttpResponse(json.dumps(returnData), mimetype='application/json')
 
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
 
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
@@ -490,12 +490,12 @@ def getList(request):
                     listDictionary = {'list': usersList}
 
                     # serialize and return lists
-                    return HttpResponse(simplejson.dumps(listDictionary), mimetype='application/json')
+                    return HttpResponse(json.dumps(listDictionary), mimetype='application/json')
 
                 else:
-                    return HttpResponse(simplejson.dumps(listDictionary), mimetype='application/json')
+                    return HttpResponse(json.dumps(listDictionary), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -520,7 +520,7 @@ def updateList(request):
 
             # prevent demo account
             if (secretKey == '1'):
-                return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'demo'}), mimetype='application/json')
 
             # get user by userid
             try:
@@ -547,12 +547,12 @@ def updateList(request):
                     listItem.list_name = tagName
                     listItem.save()
 
-                    return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                    return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
                 else:
-                    return HttpResponse(simplejson.dumps({'status': 'not found'}), mimetype='application/json')
+                    return HttpResponse(json.dumps({'status': 'not found'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -576,7 +576,7 @@ def deleteList(request):
 
             # prevent demo account
             if (secretKey == '1'):
-                return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'demo'}), mimetype='application/json')
 
             # get user by userid
             try:
@@ -609,12 +609,12 @@ def deleteList(request):
 
                 if tag:
                     tag.delete()
-                    return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                    return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
-                return HttpResponse(simplejson.dumps({'status': 'no_record'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'no_record'}), mimetype='application/json')
 
             else:
-                return HttpResponse(simplejson.dumps({'status': 'no_user'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'no_user'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -747,10 +747,10 @@ def createListItem(request):
 
                 returnData = {'idsAdded': idsAdded, 'itemID': item.pk, 'tagIDsAdded': tagIDsAdded}
 
-                return HttpResponse(simplejson.dumps(returnData), mimetype='application/json')
+                return HttpResponse(json.dumps(returnData), mimetype='application/json')
 
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -790,7 +790,7 @@ def updateUserItem(request):
 
             # prevent demo account
             if (secretKey == '1'):
-                return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'demo'}), mimetype='application/json')
 
             # get user by userid
             try:
@@ -819,10 +819,10 @@ def updateUserItem(request):
 
                     link.save()
 
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -872,10 +872,10 @@ def updateMetacritic(request):
 
                 item.save()
 
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -907,7 +907,7 @@ def updateSharedItem(request):
 
             # prevent demo account
             if (secretKey == '1'):
-                return HttpResponse(simplejson.dumps({'status': 'demo'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'demo'}), mimetype='application/json')
 
             # get user by userid
             try:
@@ -938,10 +938,10 @@ def updateSharedItem(request):
 
                 item.save()
 
-                return HttpResponse(simplejson.dumps({'status': 'success'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -1033,13 +1033,13 @@ def getListItems(request):
                     itemDictionary = {'items': usersListItems}
 
                     # serialize and return lists
-                    return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
+                    return HttpResponse(json.dumps(itemDictionary), mimetype='application/json')
 
                 else:
 
-                    return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
+                    return HttpResponse(json.dumps(itemDictionary), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps(itemDictionary), mimetype='application/json')
+                return HttpResponse(json.dumps(itemDictionary), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -1107,7 +1107,7 @@ def getDirectory(request):
                         directoryItems[items.item.pk]['tc'] = directoryItems[items.item.pk]['tc'] + 1
 
                 # serialize and return directory
-                return HttpResponse(simplejson.dumps({'directory': directoryItems}), mimetype='application/json')
+                return HttpResponse(json.dumps({'directory': directoryItems}), mimetype='application/json')
             else:
                 return HttpResponse('failed', mimetype='application/json', status='500')
         else:
@@ -1164,12 +1164,12 @@ def getItemTags(request):
                     tagDictionary = {'itemTags': itemTags}
 
                     # serialize and return lists
-                    return HttpResponse(simplejson.dumps(tagDictionary), mimetype='application/json')
+                    return HttpResponse(json.dumps(tagDictionary), mimetype='application/json')
 
                 else:
-                    return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                    return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -1224,12 +1224,12 @@ def getItemTagsByThirdPartyID(request):
                     tagDictionary = {'itemTags': itemTags}
 
                     # serialize and return lists
-                    return HttpResponse(simplejson.dumps(tagDictionary), mimetype='application/json')
+                    return HttpResponse(json.dumps(tagDictionary), mimetype='application/json')
 
                 else:
-                    return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                    return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'failed'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -1278,12 +1278,12 @@ def deleteListItem(request):
                     if (secretKey != '1'):
                         itemTagUser.delete()
 
-                    return HttpResponse(simplejson.dumps({'tagID': tagID}), mimetype='application/json')
+                    return HttpResponse(json.dumps({'tagID': tagID}), mimetype='application/json')
 
-                return HttpResponse(simplejson.dumps({'status': 'record not found'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'record not found'}), mimetype='application/json')
 
             else:
-                return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'user not found'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -1336,9 +1336,9 @@ def deleteListItemsInBatch(request):
                         if (secretKey != '1'):
                             itemTagUser.delete()
 
-                return HttpResponse(simplejson.dumps({'itemsDeleted': itemsDeleted}), mimetype='application/json')
+                return HttpResponse(json.dumps({'itemsDeleted': itemsDeleted}), mimetype='application/json')
             else:
-                return HttpResponse(simplejson.dumps({'status': 'user not found'}), mimetype='application/json')
+                return HttpResponse(json.dumps({'status': 'user not found'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
