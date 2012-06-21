@@ -2,12 +2,12 @@ from google.appengine.api import urlfetch
 from google.appengine.api import memcache
 
 from django.http import HttpResponse
-from django.utils import simplejson
 
 import urllib
 import urllib2
 import bottlenose
 
+import json
 import logging
 
 # amazon api properties
@@ -44,7 +44,7 @@ def searchMetacritic(request):
         logging.info('')
 
         # return json
-        return HttpResponse(simplejson.dumps(metacriticSearch), mimetype='application/json')
+        return HttpResponse(json.dumps(metacriticSearch), mimetype='application/json')
 
     else:
 
@@ -219,7 +219,7 @@ def searchGiantBomb(request):
 
     response = giantBombAPICall('search', queryParameters)
 
-    return HttpResponse(simplejson.dumps(response), mimetype='application/json')
+    return HttpResponse(json.dumps(response), mimetype='application/json')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -238,7 +238,7 @@ def detailGiantBomb(request):
 
         response = giantBombAPICall('game/' + id, queryParameters)
 
-        return HttpResponse(simplejson.dumps(response), mimetype='application/json')
+        return HttpResponse(json.dumps(response), mimetype='application/json')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -275,7 +275,7 @@ def giantBombAPICall(resource, queryParameters):
 
         opener = urllib2.build_opener()
         f = opener.open(req)
-        jsonResponse = simplejson.load(f)
+        jsonResponse = json.load(f)
 
         # cache giantbomb detail for 1 day
         if not memcache.add(memcacheKey, jsonResponse, 86400):

@@ -1,6 +1,5 @@
 from django.http import HttpResponse
 from google.appengine.api import mail
-from disqusapi import DisqusAPI
 
 import hashlib
 import time
@@ -12,10 +11,6 @@ import logging
 
 # database models
 from tmz.models import Users, Items, Tags, ItemTagUser
-
-DISQUS_CREATE_CATEGORY_URL = 'https://disqus.com/api/3.0/categories/create.json'
-DISQUS_SECRET_KEY = 'VaCyWoo6FEpsn1AicXniaGzjc2Y1lCTRaikeDcRGxm42AYIeDOv0PGov7dqXlo5f'
-DISQUS_PUBLIC_KEY = '9NlMygCuXmsAg6dSr9HDudAQFpJ6IjCYxG3SmQBjHBdPK4YvxX3WxleXXfzDXM8k'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # T_MINUS ZERO REST API
@@ -690,9 +685,6 @@ def createListItem(request):
                 # create new item
                 if (existingItem is None):
 
-                    # create disqus category
-                    disqusID = createDisqusCategory(itemName)
-
                     guid = str(uuid.uuid4())
                     item = Items(
                         id=guid,
@@ -706,8 +698,7 @@ def createListItem(request):
                         item_thumbnailImage=thumbnailImage,
                         item_largeImage=largeImage,
                         item_metacriticPage=metacriticPage,
-                        item_metascore=metascore,
-                        item_disqusID=disqusID
+                        item_metascore=metascore
                     )
 
                     # prevent demo account from saving data
@@ -755,17 +746,6 @@ def createListItem(request):
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
         return HttpResponse('not_post', mimetype='text/plain', status='500')
-
-
-# CREATE DISQUS CATEGORY
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def createDisqusCategory(categoryName):
-
-    disqus = DisqusAPI(DISQUS_SECRET_KEY, format='json', version='3.0')
-
-    response = disqus.categories.create(forum='gamedex', title='peanuts', version='3.0')
-
-    logging.info(response)
 
 
 # UPDATE USER ITEM

@@ -2,7 +2,6 @@ from google.appengine.api import urlfetch
 from google.appengine.api import memcache
 
 from django.http import HttpResponse
-from django.utils import simplejson
 
 from lxml.cssselect import CSSSelector
 from lxml import etree
@@ -10,6 +9,7 @@ from lxml import etree
 from boto.s3.connection import S3Connection
 
 import logging
+import json
 import re
 
 # constants
@@ -40,7 +40,7 @@ def popularList(request):
     # return memcached list if available
     gameStatsByGPM = memcache.get('gameStatsListByGPM_' + platform)
     if gameStatsByGPM is not None:
-        return HttpResponse(simplejson.dumps(gameStatsByGPM), mimetype='application/json')
+        return HttpResponse(json.dumps(gameStatsByGPM), mimetype='application/json')
 
     # load list from source
     else:
@@ -61,7 +61,7 @@ def popularList(request):
             if not memcache.add('gameStatsListByGPM_' + platform, gameStatsList, 86400):
                 logging.error('gameStatsListByGPM: Memcache set failed')
 
-            return HttpResponse(simplejson.dumps(gameStatsList), mimetype='application/json')
+            return HttpResponse(json.dumps(gameStatsList), mimetype='application/json')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -118,7 +118,7 @@ def upcomingList(request):
     # return memcached list if available
     result = memcache.get(memcacheKey)
     if result is not None:
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json')
+        return HttpResponse(json.dumps(result), mimetype='application/json')
 
     # load list from source
     else:
@@ -161,7 +161,7 @@ def upcomingList(request):
             if not memcache.add(memcacheKey, result, 86400):
                 logging.error('ignUpcomingList: Memcache set failed')
 
-            return HttpResponse(simplejson.dumps(result), mimetype='application/json')
+            return HttpResponse(json.dumps(result), mimetype='application/json')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
