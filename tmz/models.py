@@ -48,6 +48,7 @@ class Items(models.Model):
     item_metascore = models.SmallIntegerField(max_length=3, blank=True, null=True)
     item_releasedate = models.DateField(blank=True, null=True)
     item_platform = models.CharField(max_length=32, blank=True, null=True)
+    item_imageBaseURL = models.CharField(max_length=512, blank=True, null=True)
     item_smallImage = models.CharField(max_length=512, blank=True, null=True)
     item_thumbnailImage = models.CharField(max_length=512, blank=True, null=True)
     item_largeImage = models.CharField(max_length=512, blank=True, null=True)

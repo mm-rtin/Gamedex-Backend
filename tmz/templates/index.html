@@ -13,6 +13,14 @@
 
 		<link rel="shortcut icon" href="http://static.gamedex.net/images/favicon.ico">
 
+		<script>
+		    var _errs=["4fe79b91c24386695b000318"];(function(a,b){a.onerror=function(){_errs.push(arguments)};
+		    var d=function(){var a=b.createElement("script"),c=b.getElementsByTagName("script")[0];
+		    a.src="//d15qhc0lu1ghnk.cloudfront.net/beacon.js";a.async=!0;
+		    c.parentNode.insertBefore(a,c)};a.addEventListener?a.addEventListener("load",d,!1):
+		    a.attachEvent("onload",d)})(window,document);
+		</script>
+
 	</head>
 	<body class="infoHeader">
 
@@ -114,7 +122,7 @@
 
 				<div id="videoPlayerContainer">
 					<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" width="870" height="490" poster="" data-setup="{}">
-						<source src="" type='video/mp4'>
+						<source type='video/mp4'>
 					</video>
 				</div>
 
@@ -337,8 +345,10 @@
 					<div id="buttonContainer">
 						<div id="loginHitArea"></div>
 						<div id="signupHitArea"></div>
+						<div id="guideHitArea"></div>
 						<div id="signupButton"></div>
 						<div id="loginButton"></div>
+						<div id="guideButton"></div>
 					</div>
 
 					<div id="loginForm">
@@ -409,13 +419,13 @@
 							</li>
 
 							<!-- display menu -->
-							<li class="displayOptions dropdown">
+							<li class="grid_displayOptions dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th icon-white"></i> Display: <span class="displayType">Medium</span><b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><a href="#" data-content="0">Small</a></li>
-									<li><a href="#" data-content="1">Medium</a></li>
-									<li><a href="#" data-content="2">Large</a></li>
-									<li><a href="#" data-content="3">Info</a></li>
+									<li><a href="#" data-content="0"><i class="icon-th"></i> Small</a></li>
+									<li><a href="#" data-content="1"><i class="icon-th-large"></i> Medium</a></li>
+									<li><a href="#" data-content="2"><i class="icon-stop"></i> Large</a></li>
+									<li><a href="#" data-content="3"><i class="icon-th-list"></i> Info</a></li>
 								</ul>
 							</li>
 
@@ -441,11 +451,20 @@
 			<!-- CONTENT -->
 			<div id="content">
 
+				<!-- SITE GUIDE -->
+				<div id="siteGuide">
+					<div id="siteGuideContainer">
+						<div id="guide1" class="guide"></div>
+						<div id="guide2" class="guide"></div>
+						<div id="guide3" class="guide"></div>
+					</div>
+					<div id="siteGuideBackdrop"></div>
+				</div>
+
 				<!-- SEARCH PANEL -->
 				<div id="panel1">
 					<div class="header"></div>
 					<div class="panel">
-
 
 						<!-- SEARCH CONTAINER -->
 						<div id="searchContainer">
@@ -548,21 +567,21 @@
 									<input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-remove icon-black"></i></span>
 								</div>
 
-								<div id="search_btn" class="button"></div>
+								<a id="search_btn" href="#" class="button"></a>
 							</div>
 
 							<!--- SEARCH DISPLAY OPTIONS -->
 							<div class="searchDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
-								<div class="button display1" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></div>
-								<div class="button display2 active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></div>
-								<div class="button display3" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></div>
+								<a class="display1 button" href="#" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></a>
+								<a class="display2 button active" href="#" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></a>
+								<a class="display3 button" href="#" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></a>
 							</div>
 
 							<!--- LIST DISPLAY OPTIONS -->
 							<div class="listDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
-								<div class="button display1" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></div>
-								<div class="button display2 active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></div>
-								<div class="button display3" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></div>
+								<a class="display1 button" href="#" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></a>
+								<a class="display2 button active" href="#" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></a>
+								<a class="display3 button" href="#" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></a>
 							</div>
 
 							<!-- SEARCH / LIST TABS -->
@@ -600,9 +619,9 @@
 									<!-- SEARCH RESULTS -->
 									<div id="listResultsContainer" class="nano">
 										<div class="content">
+											<div class="loadingStatus"></div>
 											<table id="listResults" class="table table-striped">
-												<tbody class="list display-1">
-												</tbody>
+												<tbody class="list display-1"></tbody>
 											</table>
 										</div>
 									</div>
@@ -631,8 +650,8 @@
 									<input id="addList">
 								</div>
 								<div id="addListButtons">
-									<div id="saveItem_btn" class="button"></div>
-									<div id="addItem_btn" class="button"></div>
+									<a id="saveItem_btn" href="#" class="button"></a>
+									<a id="addItem_btn" href="#"  class="button"></a>
 								</div>
 
 								<div class="clear"></div>
@@ -660,10 +679,10 @@
 											</div>
 										</div>
 
-										<div href="#" class="itemDetailThumbnail thumbnail">
+										<div class="itemDetailThumbnail thumbnail">
 											<div class="itemDetailInfo">
-												<div class="showVideo_btn button"></div>
-												<div class="showDiscussion_btn button"></div>
+												<a class="showVideo_btn button" href="#"></a>
+												<a class="showDiscussion_btn button" href="#"></a>
 
 												<!-- DETAIL CONTAINER -->
 												<div id="detailContainer">
@@ -775,10 +794,10 @@
 											</div>
 										</div>
 
-										<div href="#" class="itemDetailThumbnail thumbnail">
+										<div class="itemDetailThumbnail thumbnail">
 											<div class="itemDetailInfo">
-												<div class="showVideo_btn button"></div>
-												<div class="showDiscussion_btn button"></div>
+												<a class="showVideo_btn button" href="#"></a>
+												<a class="showDiscussion_btn button" href="#"></a>
 											</div>
 											<img src="http://static.gamedex.net/images/no_selection_placeholder.png" alt="">
 										</div>
@@ -874,17 +893,17 @@
 
 								<!-- display options -->
 								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<div class="button display1" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></div>
-									<div class="button display2 active" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></div>
-									<div class="button display3" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></div>
+									<a class="display1 button" href="#" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></a>
+									<a class="display2 button active" href="#" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></a>
+									<a class="display3 button" href="#" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></a>
 								</div>
 
-								<div id="gridView_btn" class="button"></div>
+								<a id="gridView_btn" href="#" class="button"></a>
 
 
 								<!-- edit menu -->
 								<div id="editMenu" class="btn-group open">
-						          <div class="edit_btn button" data-toggle="dropdown"></div>
+						          <a class="edit_btn button" href="#" data-toggle="dropdown"></a>
 									<ul class="dropdown-menu">
 										<li id="deleteList_btn"><a href="#">Delete Tag: <span class="listName"></span></a></li>
 										<li id="editList_btn"><a href="#">Edit Tag Name</a></li>
@@ -894,7 +913,7 @@
 								<div class="clear"></div>
 							</div>
 
-							<div id="showCollection_btn" class="button"></div>
+							<a id="showCollection_btn" href="#" class="button"></a>
 
 							<!-- ITEM RESULTS -->
 							<div id="itemResultsContainer" class="nano">

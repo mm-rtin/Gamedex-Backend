@@ -636,6 +636,7 @@ def createListItem(request):
             itemName = request.POST.get('n')
             releaseDate = request.POST.get('rd')
             platform = request.POST.get('p')
+            imageBaseURL = request.POST.get('ib')
             smallImage = request.POST.get('si')
             thumbnailImage = request.POST.get('ti')
             largeImage = request.POST.get('li')
@@ -694,6 +695,7 @@ def createListItem(request):
                         item_name=itemName,
                         item_releasedate=releaseDate,
                         item_platform=platform,
+                        item_imageBaseURL=imageBaseURL,
                         item_smallImage=smallImage,
                         item_thumbnailImage=thumbnailImage,
                         item_largeImage=largeImage,
@@ -993,7 +995,6 @@ def getListItems(request):
 
                             # add item to userListItems
                             usersListItems.append({
-                                'id': items.item.pk,
                                 'ip': items.item.item_initialProvider,
                                 'iid': items.item.pk,
                                 'aid': items.item.item_asin,
@@ -1001,10 +1002,12 @@ def getListItems(request):
                                 'n': items.item.item_name,
                                 'rd': str(items.item.item_releasedate),
                                 'p': items.item.item_platform,
+                                'ib': items.item.item_imageBaseURL,
                                 'si': items.item.item_smallImage,
                                 'ti': items.item.item_thumbnailImage,
                                 'li': items.item.item_largeImage,
                                 'ms': items.item.item_metascore,
+                                'mp': items.item.item_metacriticPage
                             })
 
                             # add to list of itemIDs added - prevent multiple distinct items (by itemID) from appearing in 'view all list'
