@@ -21,11 +21,14 @@ urlpatterns = patterns('',
     (r'^metacritic/search/$', 'tmz.searchAPI.searchMetacritic'),
     (r'^metacritic/cache/$', 'tmz.searchAPI.cacheMetacritic'),
 
-    # gamestats datasource
-    (r'^popularlist/$', 'tmz.listSources.popularList'),
+    # gametrailers datasource
+    (r'^gametrailers/search/$', 'tmz.searchAPI.searchGametrailers'),
+    (r'^gametrailers/cache/$', 'tmz.searchAPI.cacheGametrailers'),
 
-    # ign datasource
-    (r'^upcominglist/$', 'tmz.listSources.upcomingList'),
+    # lists
+    (r'^list/popular/$', 'tmz.listSources.popularList'),
+    (r'^list/released/$', 'tmz.listSources.releasedList'),
+    (r'^list/upcoming/$', 'tmz.listSources.upcomingList'),
 
 
     # gamedex rest api
@@ -57,6 +60,9 @@ urlpatterns = patterns('',
     (r'^item/add/$', 'tmz.tmzAPI.createListItem'),
     (r'^item/delete/$', 'tmz.tmzAPI.deleteListItem'),
     (r'^item/delete/batch/$', 'tmz.tmzAPI.deleteListItemsInBatch'),
+
+    # data management
+    (r'^manage/metascore/update$', 'tmz.dataManager.updateMetascore'),
 
     # management
     (r'^copy/assets/$', 'tmz.management.copyAssetsToS3'),

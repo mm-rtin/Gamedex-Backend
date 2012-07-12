@@ -122,7 +122,7 @@
 
 				<div id="videoPlayerContainer">
 					<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" width="870" height="490" poster="" data-setup="{}">
-						<source type='video/mp4'>
+						<source type='video/mp4' src="">
 					</video>
 				</div>
 
@@ -139,7 +139,8 @@
 			</div>
 
 			<div class="modal-footer">
-				<a href="#" class="btn btn-inverse" data-dismiss="modal">Close</a>
+				<h3 id="videoModalTitle"></h3>
+				<a id="videoModalClose_btn" href="#" class="btn btn-inverse" data-dismiss="modal">Close</a>
 			</div>
 		</div>
 
@@ -391,7 +392,7 @@
 								<ul class="dropdown-menu">
 									<li><a href="#" data-content="0">Custom</a></li>
 									<li class="divider"></li>
-									<li class="clearFilters_btn"><a href="#"><i class="icon-remove"></i> Clear Filters</a></li>
+									<li class="clearFilters_btn"><a href="#"><i class="icon-remove icon-white"></i> Clear Filters</a></li>
 									<li class="divider"></li>
 									<li><a href="#" data-content="1">Upcoming</a></li>
 									<li><a href="#" data-content="2">New Releases</a></li>
@@ -422,10 +423,10 @@
 							<li class="grid_displayOptions dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th icon-white"></i> Display: <span class="displayType">Medium</span><b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><a href="#" data-content="0"><i class="icon-th"></i> Small</a></li>
-									<li><a href="#" data-content="1"><i class="icon-th-large"></i> Medium</a></li>
-									<li><a href="#" data-content="2"><i class="icon-stop"></i> Large</a></li>
-									<li><a href="#" data-content="3"><i class="icon-th-list"></i> Info</a></li>
+									<li><a href="#" data-content="0"><i class="icon-th icon-white"></i> Small</a></li>
+									<li><a href="#" data-content="1"><i class="icon-th-large icon-white"></i> Medium</a></li>
+									<li><a href="#" data-content="2"><i class="icon-stop icon-white"></i> Large</a></li>
+									<li><a href="#" data-content="3"><i class="icon-th-list icon-white"></i> Info</a></li>
 								</ul>
 							</li>
 
@@ -485,12 +486,13 @@
 												</ul>
 											</li>
 
-											<!-- list provider menu -->
-											<li id="listProvider" class="dropdown" data-content="1">
-												<a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-time icon-white"></i> <span class="providerName">Popular</span><b class="caret"></b></a>
+											<!-- list type menu -->
+											<li id="listType" class="dropdown" data-content="1">
+												<a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-time icon-white"></i> <span class="listTypeName">Popular</span><b class="caret"></b></a>
 												<ul class="dropdown-menu">
-													<li><a href="#" data-content="1"><i class="icon-time"></i> Upcoming</a></li>
-													<li><a href="#" data-content="0"><i class="icon-fire"></i> Popular</a></li>
+													<li><a href="#" data-content="1"><i class="icon-time icon-white"></i> Upcoming</a></li>
+													<li><a href="#" data-content="2"><i class="icon-leaf icon-white"></i> Released</a></li>
+													<li><a href="#" data-content="0"><i class="icon-fire icon-white"></i> Popular</a></li>
 												</ul>
 											</li>
 
@@ -500,7 +502,7 @@
 												<ul class="dropdown-menu">
 													<li><a href="#" data-content="all">All Platforms</a></li>
 													<li id="legacySubNav" class="dropdown-sub">
-														<a href="#">Legacy Platforms <i class="subMenuIcon icon-chevron-right"></i></a>
+														<a href="#">Legacy Platforms <i class="subMenuIcon icon-chevron-right icon-white"></i></a>
 														<ul class="dropdown-menu">
 															<li><a href="#" data-content="ps">Playstation</a></li>
 															<li><a href="#" data-content="ps2">Playstation 2</a></li>
@@ -703,9 +705,10 @@
 																<ul class="nav nav-list">
 																	<li id="platform"><a href="#"><i class="icon-tag"></i> <span class="data"></span></a></li>
 																	<li id="releaseDate"><a href="#"><i class="icon-time"></i> <span class="data"></span></a></li>
-																	<li id="wikipediaPage"><a href="#" target="_blank"><i class="icon-book"></i> Wikipedia Entry</a></li>
 																	<li id="giantBombPage"><a href="#" target="_blank"><i class="icon-list-alt"></i> GiantBomb Page</a></li>
+																	<li id="gametrailersPage"><a href="#" target="_blank"><i class="icon-film"></i> Gametrailers Page</a></li>
 																	<li id="metacriticPage"><a href="#" target="_blank"><i class="icon-eye-open"></i> Metacritic Page</a></li>
+																	<li id="wikipediaPage"><a href="#" target="_blank"><i class="icon-book"></i> Wikipedia Entry</a></li>
 																	<li id="amazonPriceHeader" class="nav-header">Amazon.com</li>
 																	<li id="amazonPriceNew"><a href="#" target="_blank"><i class="icon-shopping-cart"></i> New: <span class="data"></span></a></li>
 																	<li id="amazonPriceUsed"><a href="#" target="_blank"><i class="icon-shopping-cart"></i> Used <span class="data"></span></a></li>
@@ -779,7 +782,7 @@
 													</div>
 												</div>
 											</div>
-											<img src="http://static.gamedex.net/images/no_selection_placeholder.png" alt="">
+											<img src="http://d2sifwlm28j6up.cloudfront.net/no_selection_placeholder.png" alt="">
 										</div>
 									</div>
 
@@ -799,7 +802,7 @@
 												<a class="showVideo_btn button" href="#"></a>
 												<a class="showDiscussion_btn button" href="#"></a>
 											</div>
-											<img src="http://static.gamedex.net/images/no_selection_placeholder.png" alt="">
+											<img src="http://d2sifwlm28j6up.cloudfront.net/no_selection_placeholder.png" alt="">
 										</div>
 									</div>
 								</div>
@@ -838,10 +841,10 @@
 												<ul class="dropdown-menu">
 													<li><a href="#" data-content="0">Custom</a></li>
 													<li class="divider"></li>
-													<li class="clearFilters_btn"><a href="#"><i class="icon-remove"></i> Clear Filters</a></li>
+													<li class="clearFilters_btn"><a href="#"><i class="icon-remove icon-white"></i> Clear Filters</a></li>
 													<li class="divider"></li>
 													<li id="platformFilterSubNav" class="dropdown-sub">
-														<a href="#">Platforms <i class="subMenuIcon icon-chevron-right"></i></a>
+														<a href="#">Platforms <i class="subMenuIcon icon-chevron-right icon-white"></i></a>
 														<ul class="dropdown-menu">
 															<li><a href="#" data-content="pc">PC</a></li>
 															<li><a href="#" data-content="mac">Mac</a></li>
@@ -1010,6 +1013,8 @@
 		   			<td class="title">
 						<div class="itemName"><%= item.name %></div>
 						<div class="calendarDate"><%= item.calendarDate %></div>
+						<div class="releaseDate"><%= item.releaseDate %></div>
+						<div class="platform"><%= item.platforms %></div>
 			   		</td>
 		   		</tr>
 	      	<% }); %>
@@ -1072,7 +1077,7 @@
 							<ul class="nav nav-list">
 								<li class="platform"><i class="icon-tag"></i> <span class="data"><%= item.platform %></span></li>
 								<li class="calendarDate"><i class="icon-time"></i> <span class="data"><%= item.calendarDate %></span></li>
-								<li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i>Metascore: <%= item.displayMetascore %></a></li>
+								<li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i> Metascore: <%= item.displayMetascore %></a></li>
 								<% if (typeof item.offers.buyNowPrice !== 'undefined' && item.offers.buyNowPrice !== '') { %>
 								<li class="price"><a href="<%= item.offers.productURL %>" target="_blank"><i class="icon-shopping-cart"></i> <span class="data">$<%= item.offers.buyNowPrice %></span></a></li>
 								<% } %>
@@ -1173,9 +1178,8 @@
 		</script>
 
 		<!-- JAVASCRIPT LIBRARIES -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script src="http://static.gamedex.net/lib/lib.js"></script>
-
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" defer></script>
+		<script src="http://static.gamedex.net/dist/scripts.min.js" defer></script>
 
         <script type="text/javascript">
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
@@ -1188,39 +1192,6 @@
                 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
             })();
         </script>
-
-		<!--<script src="http://static.gamedex.net/js/full.js"></script>-->
-
-		<script src="http://static.gamedex.net/js/jquery.bootstrap-dropdown-sub-menu.js"></script>
-
-		<script src="http://static.gamedex.net/js/tmz.js"></script>
-
-		<script src="http://static.gamedex.net/js/tmz_util.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_user.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_storage.js"></script>
-
-		<script src="http://static.gamedex.net/js/tmz_itemData.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_tagData.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_itemCache.js"></script>
-
-		<script src="http://static.gamedex.net/js/tmz_siteView.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_searchView.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_detailView.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_itemView.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_gridView.js"></script>
-
-		<script src="http://static.gamedex.net/js/tmz_tagView.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_filterPanel.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_videoPanel.js"></script>
-
-		<script src="http://static.gamedex.net/js/tmz_amazon.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_giantbomb.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_metacritic.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_wikipedia.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_gamestats.js"></script>
-		<script src="http://static.gamedex.net/js/tmz_ign.js"></script>
-
-		<script src="http://static.gamedex.net/js/tmz_itemLinker.js"></script>
 
 		<script type="text/javascript">
 		  var uvOptions = {};

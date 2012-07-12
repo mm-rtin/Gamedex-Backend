@@ -84,9 +84,74 @@ def cacheMetacritic(request):
     # memcache key
     memcacheKey = 'searchMetacritic_' + keywords + '_' + platform
 
-    # cache for 2 days
-    if not memcache.add(memcacheKey, cachedObject, 127800):
+    # cache for 7 days
+    if not memcache.add(memcacheKey, cachedObject, 604800):
         logging.error('searchMetacritic: Memcache set failed')
+        logging.error(memcacheKey)
+        return HttpResponse('FALSE', mimetype='text/html')
+
+    return HttpResponse('TRUE', mimetype='text/html')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# SEARCH GAMETRAILERS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def searchGametrailers(request):
+
+    if 'keywords' in request.GET:
+        keywords = request.GET.get('keywords')
+
+    # memcache key
+    memcacheKey = 'searchGametrailers_' + keywords
+
+    # return memcached search if available
+    gametrailersSearch = memcache.get(memcacheKey)
+
+    if gametrailersSearch is not None:
+        logging.info('')
+        logging.info('-------------- searchGametrailers CACHE HIT --------------')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
+        # return json
+        return HttpResponse(json.dumps(gametrailersSearch), mimetype='application/json')
+
+    else:
+
+        logging.info('')
+        logging.info('-------------- searchGametrailers MISS --------------')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
+        url = 'http://www.gametrailers.com/search?keywords=' + keywords
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+
+    # return raw response html
+    return HttpResponse(response.content, mimetype='text/html')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# CACHE GAMETRAILERS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def cacheGametrailers(request):
+
+    if 'keywords' in request.GET:
+        keywords = request.GET.get('keywords')
+
+    if 'gametrailersPage' in request.GET:
+        gametrailersPage = request.GET.get('gametrailersPage')
+
+    # construct object to cache
+    cachedObject = {'gametrailersPage': gametrailersPage}
+
+    # memcache key
+    memcacheKey = 'searchGametrailers_' + keywords
+
+    # cache for 30 days
+    if not memcache.add(memcacheKey, cachedObject, 2592000):
+        logging.error('searchGametrailers: Memcache set failed')
         logging.error(memcacheKey)
         return HttpResponse('FALSE', mimetype='text/html')
 

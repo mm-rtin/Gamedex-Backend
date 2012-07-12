@@ -6,17 +6,23 @@ from django.http import HttpResponse
 from lxml.cssselect import CSSSelector
 from lxml import etree
 
+import datetime
+import time
+
 from boto.s3.connection import S3Connection
 
 import logging
 import json
-import re
 
 # constants
 # base url
 S3_URL = 'https://s3.amazonaws.com/'
+S3_ACCESS_KEY = '0JVZGYMSKN59DPNKRGR2'
+S3_SECRET_KEY = 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL'
+
 # site bucket
 UPCOMING_LIST_BUCKET = 's3.gamedex.net-upcominglist'
+RELEASED_LIST_BUCKET = 's3.gamedex.net-releasedlist'
 
 # S3 Properties
 AWS_HEADERS = {
@@ -28,9 +34,16 @@ AWS_ACL = 'public-read'
 IGN_BASE_URL = 'http://www.ign.com/_views/ign/ign_tinc_reviewed_games.ftl?indexType=upcoming&locale=us'
 IGN_ITEMS_PER_PAGE = 25
 
+# gamestats base url
+GAMESTATS_BASE_URL = 'http://www.gamestats.com/index/gpm/'
+
+# gametrailers base URL
+GT_BASE_URL = 'http://www.gametrailers.com/release_calendar_ajax/'
+GT_PROMOTION_ID = 'ae8bcc1b-d7f8-4b5b-8854-fd2700a56990'
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# GAMESTATS
+# POPULAR LIST (GAMESTATS)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def popularList(request):
 
@@ -46,7 +59,7 @@ def popularList(request):
     else:
 
         # http://www.gamestats.com/index/gpm/xbox-360.html
-        url = 'http://www.gamestats.com/index/gpm/' + platform + '.html'
+        url = GAMESTATS_BASE_URL + platform + '.html'
 
         # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
         # allow 30 seconds for response
@@ -65,7 +78,7 @@ def popularList(request):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# PARSE GAME STATS
+# PARSE POPULAR LIST (GAMESTATS)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def parsePopularList(response):
 
@@ -103,7 +116,7 @@ def parsePopularList(response):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# IGN
+# UPCOMING LIST (IGN)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def upcomingList(request):
 
@@ -150,8 +163,6 @@ def upcomingList(request):
         # allow 30 seconds for response
         response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
-        logging.error(response)
-
         if response.status_code == 200:
 
             # parse game stats list result
@@ -165,14 +176,14 @@ def upcomingList(request):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# PARSE UPCOMING LIST
+# PARSE UPCOMING LIST (IGN)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def parseUpcomingList(response):
 
     list = []
 
     # s3 connection
-    s3conn = S3Connection('0JVZGYMSKN59DPNKRGR2', 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL', is_secure=False)
+    s3conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY, is_secure=False)
 
     html = etree.HTML(response)
 
@@ -190,15 +201,22 @@ def parseUpcomingList(response):
 
             name = nameElement[0].text.strip()
             url = nameElement[0].get('href').strip()
-            image = imageElement[0].get('src').strip()
+            imageURL = imageElement[0].get('src').strip()
             date = dateElement[0].text.strip()
+            displayDate = dateElement[0].text.strip()
 
             # copy IGN image to S3 bucket
-            image = copyImageToS3(image, s3conn)
+            # get filename and extension
+            filename = imageURL.split('/')[-1]
+            extension = filename.split('.')[-1]
+            image = copyImageToS3(UPCOMING_LIST_BUCKET, imageURL, filename, extension, s3conn)
 
-            logging.error(image)
+            # detect Dec 31, 20XX - signifies unknown date > change to TBA 20XX
+            dateParts = date.split(',')
+            if (dateParts[0] == 'Dec 31'):
+                displayDate = 'TBA' + dateParts[1]
 
-            listObj = {'name': name, 'IGNPage': url, 'calendarDate': date, 'mediumImage': image}
+            listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'releaseDate': date, 'mediumImage': image}
             list.append(listObj)
 
         except IndexError:
@@ -209,24 +227,143 @@ def parseUpcomingList(response):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# RELEASED LIST (GT)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def releasedList(request):
+
+    if all(k in request.GET for k in ('year', 'month', 'day')):
+
+        # get parameters
+        year = request.GET.get('year')
+        month = request.GET.get('month')
+        day = request.GET.get('day')
+
+        memcacheKey = 'getReleasedList_' + year + '_' + month + '_' + day
+
+        # return memcached list if available
+        result = memcache.get(memcacheKey)
+        if result is not None:
+            return HttpResponse(json.dumps(result), mimetype='application/json')
+
+        # load list from source
+        else:
+
+            # 1341091189076 datetime.datetime.now() * 1000 - now timestamp in milliseconds
+            # promotionID
+            # 1339300800 - unix time (Sun, 10 Jun 2012 04:00:00 GMT) - week to fetch
+
+            # /1341091189076/ae8bcc1b-d7f8-4b5b-8854-fd2700a56990/1339300800/game
+            # now stamp
+            nowDate = datetime.datetime.now()
+            nowStamp = int(time.mktime(nowDate.utctimetuple())) * 1000
+
+            # week stamp
+            displayDate = datetime.datetime(int(year), int(month), int(day), 6, 0, 0)
+            # unix timestamp
+            displayStamp = int(time.mktime(displayDate.utctimetuple()))
+
+            url = GT_BASE_URL + str(nowStamp) + '/' + GT_PROMOTION_ID + '/' + str(displayStamp) + '/game'
+
+            logging.info('------------------------')
+            logging.info('------------------------')
+            logging.info(url)
+            logging.info('------------------------')
+            logging.info('------------------------')
+
+            # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+            # allow 30 seconds for response
+            response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+
+            if response.status_code == 200:
+
+                # parse game stats list result
+                result = parseReleasedList(response.content)
+
+                # cache game stats list for 30 days
+                if not memcache.add(memcacheKey, result, 2592000):
+                    logging.error('gtReleasedList: Memcache set failed')
+
+                return HttpResponse(json.dumps(result), mimetype='application/json')
+
+    else:
+        return HttpResponse('missing_param', mimetype='text/plain', status='500')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PARSE RELEASED LIST (GT)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def parseReleasedList(response):
+
+    list = []
+
+    # s3 connection
+    s3conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY, is_secure=False)
+
+    html = etree.HTML(response)
+
+    rowSel = CSSSelector('.week li')
+    urlSel = CSSSelector('h3 a')
+    imageSel = CSSSelector('h3 a img')
+    dateSel = CSSSelector('p span')
+    platformsSel = CSSSelector('.platforms span')
+
+    for row in rowSel(html):
+
+        try:
+            urlElement = urlSel(row)
+            imageElement = imageSel(row)
+            dateElement = dateSel(row)
+            platformsElement = platformsSel(row)
+
+            url = urlElement[0].get('href').strip()
+            imageURL = imageElement[0].get('src').strip()
+            name = imageElement[0].get('alt').strip()
+            date = dateElement[0].text.strip()
+            platforms = platformsElement[0].text.strip()
+
+            # update imageURL width
+            imageURL = imageURL.split('?')[0] + '?width=120'
+
+            #image = copyImageToS3(image, s3conn)
+            if (name != None and name != ''):
+
+                # get filename and extension
+                filename = imageURL.split('/')[-1].split('?')[0]
+                extension = filename.split('.')[-1].split('?')[0]
+
+                # copy GT image to S3 bucket
+                image = copyImageToS3(RELEASED_LIST_BUCKET, imageURL, filename, extension, s3conn)
+                listObj = {'name': name, 'GTPage': url, 'calendarDate': date, 'releaseDate': date, 'mediumImage': image, 'platforms': platforms}
+
+                # append to output list
+                list.append(listObj)
+
+        except IndexError:
+            logging.error('parseReleasedList: IndexError')
+
+    # return list
+    return list
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # COPY LIST IMAGE
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def copyImageToS3(url, s3conn):
+def copyImageToS3(S3bucket, url, filename, extension, s3conn):
 
     # get s3 bucket
-    bucket = s3conn.get_bucket(UPCOMING_LIST_BUCKET, validate=False)
-
-    # get filename and extension
-    fileName = url.split('/')[-1]
-    extension = fileName.split('.')[-1]
+    bucket = s3conn.get_bucket(S3bucket, validate=False)
 
     # load url
     response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
     # create new S3 key, set mimetype and Expires header
-    k = bucket.new_key(fileName)
+    k = bucket.new_key(filename)
     if (extension == 'jpg'):
         mimeType = 'jpeg'
+    elif (extension == 'png'):
+        mimeType = 'png'
+    elif (extension == 'gif'):
+        mimeType = 'gif'
 
     k.content_type = 'image/' + mimeType
 
@@ -235,4 +372,4 @@ def copyImageToS3(url, s3conn):
     k.set_acl('public-read')
 
     # s3 url
-    return S3_URL + UPCOMING_LIST_BUCKET + '/' + fileName
+    return S3_URL + S3bucket + '/' + filename

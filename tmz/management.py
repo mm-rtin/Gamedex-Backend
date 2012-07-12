@@ -12,6 +12,9 @@ import re
 
 # base url
 S3_URL = 'https://s3.amazonaws.com/'
+S3_ACCESS_KEY = '0JVZGYMSKN59DPNKRGR2'
+S3_SECRET_KEY = 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL'
+
 # site bucket
 ASSET_BUCKET = 's3.gamedex.net'
 
@@ -27,16 +30,24 @@ AWS_ACL = 'public-read'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def copyAssetsToS3(s3conn):
 
-    s3conn = S3Connection('0JVZGYMSKN59DPNKRGR2', 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL', is_secure=False)
+    s3conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY, is_secure=False)
 
     # assets
     assetList = [
+
+        # sprite
+        'http://static.gamedex.net/images/sprites.png',
+
+        # images
         'http://static.gamedex.net/images/bg_tile.png',
         'http://static.gamedex.net/images/bg_tile_light.png',
         'http://static.gamedex.net/images/bg_tile_light2.png',
         'http://static.gamedex.net/images/chosen-sprite.png',
         'http://static.gamedex.net/images/glyphicons-halflings-white.png',
         'http://static.gamedex.net/images/glyphicons-halflings.png',
+        'http://static.gamedex.net/images/guide1.png',
+        'http://static.gamedex.net/images/guide2.png',
+        'http://static.gamedex.net/images/guide3.png',
         'http://static.gamedex.net/images/header_tile.png',
         'http://static.gamedex.net/images/jquery.ui.stars.gif',
         'http://static.gamedex.net/images/loading_bar.gif',
@@ -47,7 +58,6 @@ def copyAssetsToS3(s3conn):
         'http://static.gamedex.net/images/site_description.png',
         'http://static.gamedex.net/images/site_features.png',
         'http://static.gamedex.net/images/site_features_detail.png',
-        'http://static.gamedex.net/images/sprites.png',
         'http://static.gamedex.net/images/title_bar_center.png',
         'http://static.gamedex.net/images/title_bar_dark_center.png',
         'http://static.gamedex.net/images/title_bar_dark_left.png',
@@ -55,9 +65,14 @@ def copyAssetsToS3(s3conn):
         'http://static.gamedex.net/images/title_bar_left.png',
         'http://static.gamedex.net/images/title_bar_right.png',
         'http://static.gamedex.net/images/video-js.png',
+
+        # css
         'http://static.gamedex.net/css/bootstrap.css',
         'http://static.gamedex.net/css/tmz.css',
-        'http://static.gamedex.net/js/full.js'
+
+        # scripts
+        'http://static.gamedex.net/dist/scripts.min.js',
+
     ]
 
     # iterate urls and copy to s3

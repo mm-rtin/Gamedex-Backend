@@ -1,1 +1,4 @@
 cron:
+- description: daily metascore update
+  url: /manage/metascore/update
+  schedule: every 24 hours
