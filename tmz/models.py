@@ -1,6 +1,15 @@
 from django.db import models
 
 
+# API KEYS
+class ApiKeys(models.Model):
+    keyName = models.CharField(max_length=1024)
+    keyValue = models.CharField(max_length=1024)
+
+    class Meta:
+        verbose_name_plural = 'ApiKeys'
+
+
 # USERS
 class Users(models.Model):
     id = models.CharField(max_length=36, primary_key=True)

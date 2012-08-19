@@ -10,10 +10,13 @@ from boto.s3.connection import S3Connection
 import logging
 import re
 
+from tmz.keys import Keys
+from tmz.authentication import Authentication
+
 # base url
 S3_URL = 'https://s3.amazonaws.com/'
-S3_ACCESS_KEY = '0JVZGYMSKN59DPNKRGR2'
-S3_SECRET_KEY = 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL'
+S3_ACCESS_KEY = 'AMAZON_ACCESS_KEY'
+S3_SECRET_KEY = 'AMAZON_SECRET_KEY'
 
 # site bucket
 ASSET_BUCKET = 's3.gamedex.net'
@@ -26,11 +29,28 @@ AWS_ACL = 'public-read'
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# setAPIKey
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@Authentication.authenticate_admin
+def setAPIKey(request):
+
+    if all(k in request.GET for k in ('key_name', 'key_value')):
+
+        # get user parameters
+        keyName = request.GET.get('key_name')
+        keyValue = request.GET.get('key_value')
+
+    # set key
+    Keys.setKey(keyName, keyValue)
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # COPY ASSETS TO S3
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@Authentication.authenticate_admin
 def copyAssetsToS3(s3conn):
 
-    s3conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY, is_secure=False)
+    s3conn = S3Connection(Keys.getKey(S3_ACCESS_KEY), Keys.getKey(S3_SECRET_KEY), is_secure=False)
 
     # assets
     assetList = [
@@ -85,6 +105,7 @@ def copyAssetsToS3(s3conn):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # COPY URL TO S3
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@Authentication.authenticate_admin
 def copyUrlToS3(url, s3conn):
 
     # get s3 bucket
@@ -123,6 +144,7 @@ def copyUrlToS3(url, s3conn):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # gamewallpapers
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@Authentication.authenticate_admin
 def gamewallpapers(request):
 
     page = 0

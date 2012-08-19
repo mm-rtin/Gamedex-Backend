@@ -11,14 +11,16 @@ import time
 
 from boto.s3.connection import S3Connection
 
+from tmz.keys import Keys
+
 import logging
 import json
 
 # constants
 # base url
 S3_URL = 'https://s3.amazonaws.com/'
-S3_ACCESS_KEY = '0JVZGYMSKN59DPNKRGR2'
-S3_SECRET_KEY = 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL'
+S3_ACCESS_KEY = 'AMAZON_ACCESS_KEY'
+S3_SECRET_KEY = 'AMAZON_SECRET_KEY'
 
 # site bucket
 UPCOMING_LIST_BUCKET = 's3.gamedex.net-upcominglist'
@@ -183,7 +185,7 @@ def parseUpcomingList(response):
     list = []
 
     # s3 connection
-    s3conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY, is_secure=False)
+    s3conn = S3Connection(Keys.getKey(S3_ACCESS_KEY), Keys.getKey(S3_SECRET_KEY), is_secure=False)
 
     html = etree.HTML(response)
 
@@ -297,7 +299,7 @@ def parseReleasedList(response):
     list = []
 
     # s3 connection
-    s3conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY, is_secure=False)
+    s3conn = S3Connection(Keys.getKey(S3_ACCESS_KEY), Keys.getKey(S3_SECRET_KEY), is_secure=False)
 
     html = etree.HTML(response)
 

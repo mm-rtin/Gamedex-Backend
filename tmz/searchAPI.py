@@ -10,13 +10,15 @@ import bottlenose
 import json
 import logging
 
+from tmz.keys import Keys
+
 # amazon api properties
-AMAZON_ACCESS_KEY = '0JVZGYMSKN59DPNKRGR2'
-AMAZON_SECRET_KEY = 'AImptXlEmeKcQREmkl6qCEomGnm7aoueigTOJlmL'
+AMAZON_ACCESS_KEY = 'AMAZON_ACCESS_KEY'
+AMAZON_SECRET_KEY = 'AMAZON_SECRET_KEY'
 AMAZON_ASSOCIATE_TAG = 'codeco06-20'
 
 # giantbomb api properties
-GIANTBOMB_API_KEY = 'e89927b08203137d0252fbf1f611a38489edb208'
+GIANTBOMB_API_KEY = 'GIANTBOMB_API_KEY'
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,7 +168,7 @@ def cacheGametrailers(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def searchAmazon(request):
 
-    amazon = bottlenose.Amazon(AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_ASSOCIATE_TAG)
+    amazon = bottlenose.Amazon(Keys.getKey(AMAZON_ACCESS_KEY), Keys.getKey(AMAZON_SECRET_KEY), AMAZON_ASSOCIATE_TAG)
 
     if 'keywords' in request.GET:
         keywords = request.GET.get('keywords')
@@ -245,7 +247,7 @@ def detailAmazon(request):
 
     # get detail from source
     else:
-        amazon = bottlenose.Amazon(AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_ASSOCIATE_TAG)
+        amazon = bottlenose.Amazon(Keys.getKey(AMAZON_ACCESS_KEY), Keys.getKey(AMAZON_SECRET_KEY), AMAZON_ASSOCIATE_TAG)
         response = amazon.ItemLookup(ItemId=asin, IdType='ASIN', ResponseGroup=responseGroup)
 
         logging.info('')
@@ -335,7 +337,7 @@ def giantBombAPICall(resource, queryParameters):
         logging.info('')
 
         # http://api.giantbomb.com/search/?api_key=e89927b08203137d0252fbf1f611a38489edb208&format=xml&query=killzone
-        api_string = 'http://api.giantbomb.com/' + resource + '/?api_key=' + GIANTBOMB_API_KEY + '&format=json&' + urllib.urlencode(queryParameters)
+        api_string = 'http://api.giantbomb.com/' + resource + '/?api_key=' + Keys.getKey(GIANTBOMB_API_KEY) + '&format=json&' + urllib.urlencode(queryParameters)
         req = urllib2.Request(api_string, headers={'Accept-Encoding': 'gzip'})
 
         opener = urllib2.build_opener()

@@ -65,6 +65,7 @@ urlpatterns = patterns('',
     (r'^manage/metascore/update$', 'tmz.dataManager.updateMetascore'),
 
     # management
+    (r'^key/create$', 'tmz.management.setAPIKey'),
     (r'^copy/assets/$', 'tmz.management.copyAssetsToS3'),
     (r'^gamewallpapers/$', 'tmz.management.gamewallpapers'),
 
