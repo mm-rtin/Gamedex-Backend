@@ -12,6 +12,8 @@ import logging
 # database models
 from tmz.models import Users, Items, Tags, ItemTagUser
 
+import gameSources
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # T_MINUS ZERO REST API
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1320,6 +1322,63 @@ def deleteListItemsInBatch(request):
                             itemTagUser.delete()
 
                 return HttpResponse(json.dumps({'itemsDeleted': itemsDeleted}), mimetype='application/json')
+            else:
+                return HttpResponse(json.dumps({'status': 'user not found'}), mimetype='application/json')
+        else:
+            return HttpResponse('missing_param', mimetype='text/plain', status='500')
+    else:
+        return HttpResponse('not_post', mimetype='text/plain', status='500')
+
+
+# IMPORT GAMES
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def importGames(request):
+
+    if (request.POST):
+
+        if all(k in request.POST for k in ('uid', 'uk', 'ts', 'source', 'source_id')):
+
+            # collect item parameters
+            userID = request.POST.get('uid')
+            secretKey = request.POST.get('uk')
+            updateTimestamp = request.POST.get('ts')
+            source = request.POST.get('source')
+            sourceID = request.POST.get('source_id')
+
+            # get user by userid
+            try:
+                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
+            except Users.DoesNotExist:
+                user = None
+
+            # validate secretKey against user
+            if user:
+
+                # set new timestamp
+                user.user_update_timestamp = updateTimestamp
+                user.save()
+
+                importedGames = []
+                failedToImport = []
+
+                # get user games from source
+
+                # import PSN games
+                if (source == 'PSN'):
+                    logging.info('PSN')
+
+                    # get linked game information
+                    importedGames = gameSources.getPSNGames(sourceID)
+
+                # import Xbox Live Games
+                elif (source == 'XBL'):
+                    logging.info('XBL')
+
+                # import Steam games
+                elif (source == 'STEAM'):
+                    logging.info('steam')
+
+                return HttpResponse(json.dumps({'importedGames': importedGames}), mimetype='application/json')
             else:
                 return HttpResponse(json.dumps({'status': 'user not found'}), mimetype='application/json')
         else:

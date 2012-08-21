@@ -10,6 +10,9 @@ from boto.s3.connection import S3Connection
 import logging
 import re
 
+import StringIO
+import gzip
+
 from tmz.keys import Keys
 from tmz.authentication import Authentication
 
@@ -26,6 +29,62 @@ AWS_HEADERS = {
     'Cache-Control': 'max-age=2592000,public'
 }
 AWS_ACL = 'public-read'
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# getPSN
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def getPSN(request):
+
+    if 'psn_id' in request.GET:
+
+    # GET /playstation/psn/profile/Michu/get_ordered_trophies_data HTTP/1.1
+    # Host    us.playstation.com
+    # X-Requested-With    XMLHttpRequest
+    # User-Agent  Mozilla
+    # Accept  text/html
+    # Accept-Encoding gzip,deflate,sdch
+
+        url = 'http://us.playstation.com/playstation/psn/profile/%s/get_ordered_trophies_data' % (request.GET.get('psn_id'))
+
+        # headers required for response
+        headers = {'Host': 'us.playstation.com', 'X-Requested-With': 'XMLHttpRequest', 'User-Agent': 'Mozilla', 'Accept': 'text/html', 'Accept-Encoding': 'gzip'}
+
+        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+        # allow 30 seconds for response
+        response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30)
+
+        # decompress
+        f = StringIO.StringIO(response.content)
+        c = gzip.GzipFile(fileobj=f)
+        content = c.read()
+
+        if response.status_code == 200:
+            return HttpResponse(json.dumps(content), mimetype='application/json')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# getXBL
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def getXBL(request):
+
+    if 'gamertag' in request.GET:
+
+        url = 'https://xboxapi.com/games/%s' % (request.GET.get('gamertag'))
+
+        headers = {'Accept-Encoding': 'gzip'}
+
+        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+        # allow 30 seconds for response
+        response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30)
+
+        # decompress
+        f = StringIO.StringIO(response.content)
+        c = gzip.GzipFile(fileobj=f)
+        content = c.read()
+
+        if response.status_code == 200:
+            return HttpResponse(content, mimetype='application/json')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -61,8 +61,16 @@ urlpatterns = patterns('',
     (r'^item/delete/$', 'tmz.tmzAPI.deleteListItem'),
     (r'^item/delete/batch/$', 'tmz.tmzAPI.deleteListItemsInBatch'),
 
+    # import games
+    (r'^import/$', 'tmz.tmzAPI.importGames'),
+
     # data management
     (r'^manage/metascore/update$', 'tmz.dataManager.updateMetascore'),
+
+    # game sources
+    (r'^steam/games/$', 'tmz.gameSources.getSteamGames'),
+    (r'^psn/games/$', 'tmz.gameSources.getPSNGames_endpoint'),
+    (r'^xbl/games/$', 'tmz.gameSources.getXBLGames'),
 
     # management
     (r'^key/create$', 'tmz.management.setAPIKey'),
