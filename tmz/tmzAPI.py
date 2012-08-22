@@ -400,7 +400,7 @@ def createList(request):
             # collect list item parameters
             userID = request.POST.get('uid')
             secretKey = request.POST.get('uk')
-            tagName = request.POST.get('tag_name').strip()
+            tagName = request.POST.get('tag_name').strip().lower()
             updateTimestamp = request.POST.get('ts')
 
             # get user by userid
@@ -412,19 +412,25 @@ def createList(request):
             # validate secretKey against user
             if user:
 
-                # set new timestamp
-                user.user_update_timestamp = updateTimestamp
-                user.save()
+                # get list
+                try:
+                    listItem = Tags.objects.get(list_name=tagName, user=user)
 
-                # create list
-                guid = str(uuid.uuid4())
-                newList = Tags(id=guid, user=user, list_name=tagName)
+                except Tags.DoesNotExist:
 
-                # prevent demo account from saving data
-                if (secretKey != '1'):
-                    newList.save()
+                    # set new timestamp
+                    user.user_update_timestamp = updateTimestamp
+                    user.save()
 
-                returnData = {'tagID': newList.pk, 'tagName': tagName}
+                    # create list
+                    guid = str(uuid.uuid4())
+                    listItem = Tags(id=guid, user=user, list_name=tagName)
+
+                    # prevent demo account from saving data
+                    if (secretKey != '1'):
+                        listItem.save()
+
+                returnData = {'tagID': listItem.pk, 'tagName': tagName}
 
                 return HttpResponse(json.dumps(returnData), mimetype='application/json')
 
@@ -646,9 +652,15 @@ def createListItem(request):
             metacriticPage = request.POST.get('mp')
             metascore = request.POST.get('ms')
 
-            gameStatus = request.POST.get('gs')
-            playStatus = request.POST.get('ps')
-            userRating = request.POST.get('ur')
+            # optional game properties
+            if all(k in request.POST for k in ('gs', 'ps', 'ur')):
+                gameStatus = request.POST.get('gs')
+                playStatus = request.POST.get('ps')
+                userRating = request.POST.get('ur')
+            else:
+                gameStatus = '0'
+                playStatus = '0'
+                userRating = '0'
 
             # get tagIDs as array
             tagIDs = request.POST.getlist('lids[]')
@@ -722,23 +734,31 @@ def createListItem(request):
 
                     # prevent demo account from saving data
                     if (secretKey != '1'):
+
                         # get tag
                         tag = Tags.objects.get(pk=tagID)
-                        # create link
-                        link = ItemTagUser(
-                            id=guid,
-                            user=user,
-                            tag=tag,
-                            item=item,
-                            item_gameStatus=gameStatus,
-                            item_playStatus=playStatus,
-                            item_userRating=userRating,
-                        )
-                        link.save()
 
-                    # record item ids and tag ids that have been added
-                    tagIDsAdded.append(tagID)
-                    idsAdded.append(guid)
+                        # get existing ItemTagUser
+                        try:
+                            ItemTagUser.objects.get(item=item, tag=tag, user=user)
+
+                        except ItemTagUser.DoesNotExist:
+
+                            # create link
+                            link = ItemTagUser(
+                                id=guid,
+                                user=user,
+                                tag=tag,
+                                item=item,
+                                item_gameStatus=gameStatus,
+                                item_playStatus=playStatus,
+                                item_userRating=userRating,
+                            )
+                            link.save()
+
+                            # record item ids and tag ids that have been added
+                            tagIDsAdded.append(tagID)
+                            idsAdded.append(guid)
 
                 returnData = {'idsAdded': idsAdded, 'itemID': item.pk, 'tagIDsAdded': tagIDsAdded}
 
@@ -1336,14 +1356,14 @@ def importGames(request):
 
     if (request.POST):
 
-        if all(k in request.POST for k in ('uid', 'uk', 'ts', 'source', 'source_id')):
+        if all(k in request.POST for k in ('uid', 'uk', 'ts', 'source', 'source_user')):
 
             # collect item parameters
             userID = request.POST.get('uid')
             secretKey = request.POST.get('uk')
             updateTimestamp = request.POST.get('ts')
-            source = request.POST.get('source')
-            sourceID = request.POST.get('source_id')
+            source = int(request.POST.get('source'))
+            sourceUser = request.POST.get('source_user')
 
             # get user by userid
             try:
@@ -1358,27 +1378,26 @@ def importGames(request):
                 user.user_update_timestamp = updateTimestamp
                 user.save()
 
-                importedGames = []
-                failedToImport = []
+                importedTitles = []
 
                 # get user games from source
 
+                # import Steam games
+                if (source == 0):
+                    logging.info('steam')
+
                 # import PSN games
-                if (source == 'PSN'):
+                elif (source == 1):
                     logging.info('PSN')
 
                     # get linked game information
-                    importedGames = gameSources.getPSNGames(sourceID)
+                    importedTitles = gameSources.getPSNGames(sourceUser)
 
                 # import Xbox Live Games
-                elif (source == 'XBL'):
+                elif (source == 2):
                     logging.info('XBL')
 
-                # import Steam games
-                elif (source == 'STEAM'):
-                    logging.info('steam')
-
-                return HttpResponse(json.dumps({'importedGames': importedGames}), mimetype='application/json')
+                return HttpResponse(json.dumps(importedTitles), mimetype='application/json')
             else:
                 return HttpResponse(json.dumps({'status': 'user not found'}), mimetype='application/json')
         else:

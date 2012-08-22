@@ -27,7 +27,6 @@
 		<!-- ACCOUNT MANAGEMENT MODAL -->
 		<div id="accountManagement-modal" class="modal hide">
 			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
 				<h3>Account Management</h3>
 			</div>
 			<div class="modal-body">
@@ -81,7 +80,6 @@
 		<!-- DELETE TAG CONFIRM MODAL -->
 		<div id="deleteListConfirm-modal" class="modal hide">
 			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
 				<h3>Confirm Tag Deletion</h3>
 			</div>
 			<div class="modal-body">
@@ -95,15 +93,51 @@
 			</div>
 		</div>
 
-		<!-- DISQUS MODAL -->
-		<div id="disqus-modal" class="modal hide">
+		<!-- IMPORT CONFIG MODAL -->
+		<div id="importConfig-modal" class="modal hide">
+			<div class="modal-header">
+				<h3><span id="importSourceName"></span> Import</h3>
+			</div>
+			<div class="modal-body">
+				<div class="form-horizontal">
+					<fieldset>
+						<div class="control-group">
+							<label class="control-label"><span id="importSourceID"></span></label>
+							<div class="controls">
+								<input type="text" id="sourceUser" class="span5">
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+				<a id="startImport_btn" href="#" class="btn btn-primary">Start Import</a>
+			</div>
+		</div>
 
+		<!-- IMPORT MODAL -->
+		<div id="import-modal" class="modal hide">
+			<div class="modal-header">
+				<h3>Importing Games</h3>
+			</div>
+			<div class="modal-body">
+				<div id="importContainer">
+					<div class="loadingStatus"></div>
+					<table id="importResults" class="table table-striped">
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a id="cancelImport_btn" href="#" class="btn">Cancel</a>
+				<a id="confirmImport_btn" href="#" class="btn btn-primary">Import Games</a>
+			</div>
 		</div>
 
 		<!-- ALERT DIALOG -->
 		<div id="error-modal" class="modal hide">
 			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
 				<h3 class="alertTitle"></h3>
 			</div>
 			<div class="modal-body">
@@ -147,7 +181,6 @@
 		<!-- UPDATE LIST MODAL -->
 		<div id="updateList-modal" class="modal hide">
 			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
 				<h3>Edit Tag</h3>
 			</div>
 			<div class="modal-body">
@@ -172,7 +205,6 @@
 		<!-- RESET PASSWORD MODAL -->
 		<div id="resetpassword-modal" class="modal hide">
 			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
 				<h3>Reset Password</h3>
 			</div>
 			<div class="modal-body">
@@ -224,7 +256,6 @@
 		<!-- FILTERS MODAL -->
 		<div id="filters-modal" class="modal hide">
 			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
 				<h3>Filters</h3>
 			</div>
 			<div class="modal-body">
@@ -917,9 +948,9 @@
 								<div id="importMenu" class="btn-group">
 						          <a class="import_btn button" href="#" data-toggle="dropdown"></a>
 									<ul class="dropdown-menu">
-										<li id="importSteam_btn"><a href="#">Import Steam</a></li>
-										<li id="importPSN_btn"><a href="#">Import PSN</a></li>
-										<li id="importXBL_btn"><a href="#">Import XBox Live</a></li>
+										<li data-importSource="0"><a href="#">Import Steam</a></li>
+										<li data-importSource="1"><a href="#">Import PSN</a></li>
+										<li data-importSource="2"><a href="#">Import XBox Live</a></li>
 									</ul>
 						        </div>
 
@@ -997,6 +1028,18 @@
 			      	<% }); %>
 				<% } %>
 	      	</tbody>
+	    </script>
+
+		<!-- import results -->
+		<script type="text/template" id="import-results-template">
+	   		<tr>
+	   			<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
+	   			<td class="title">
+					<div class="itemName"><%= item.name %></div>
+					<div class="calendarDate"><%= item.calendarDate %></div>
+					<div class="platform"><%= item.platform %></div>
+		   		</td>
+	   		</tr>
 	    </script>
 
 		<!-- video results -->
@@ -1163,7 +1206,6 @@
 	   	<!-- description modal -->
 	   	<script type="text/template" id="description-modal-template">
 			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
 				<h3><%= itemData.name %></h3>
 			</div>
 			<div class="modal-body">
@@ -1190,7 +1232,7 @@
 		<!-- JAVASCRIPT LIBRARIES -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script src="http://static.gamedex.net/dist/lib.min.js"></script>
-		<script src="http://static.gamedex.net/dist/scripts.min.js"></script>
+		<script src="http://static.gamedex.net/dist/scripts.js"></script>
 
         <script type="text/javascript">
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */

@@ -77,8 +77,8 @@ def getPSNGames(id):
     # valid response - begin parse
     if response.status_code == 200:
 
-        # games found by giantbomb search
-        linkedGames = []
+        # game titles imported
+        importedTitles = []
 
         # iterate game list
         html = etree.HTML(content)
@@ -95,68 +95,13 @@ def getPSNGames(id):
                 # get game title as plain ascii and remove non-ascii characters
                 gameTitle = titleElement[0].text.encode('ascii', 'ignore').strip()
 
-                # search titles using giantbomb search
-                linkedGames.append(searchGiantBomb(gameTitle))
+                # add title
+                importedTitles.append(gameTitle)
 
             except IndexError:
                 logging.error('PSN Import: IndexError')
 
-        return linkedGames
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# searchGiantBomb
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def searchGiantBomb(title):
-
-    # giantbomb game search
-    queryParameters = {'resources': 'game', 'resource_type': 'game'}
-
-    queryParameters['field_list'] = ','.join(['id', 'name', 'original_release_date', 'image'])
-    queryParameters['query'] = title
-    queryParameters['page'] = 0
-
-    # search title
-    searchResponse = searchAPI.giantBombAPICall('search', queryParameters)
-
-    # game properties
-    giantbombID = str(searchResponse['results'][0]['id'])
-    gameTitle = str(searchResponse['results'][0]['name'])
-    releaseDate = str(searchResponse['results'][0]['original_release_date'])
-    smallImage = str(searchResponse['results'][0]['image']['small_url'])
-    thumbImage = str(searchResponse['results'][0]['image']['thumb_url'])
-    largeImage = str(searchResponse['results'][0]['image']['super_url'])
-
-    logging.info('********************************')
-    logging.info('********************************')
-    logging.info(releaseDate)
-    logging.info(smallImage)
-    logging.info(thumbImage)
-    logging.info(largeImage)
-    logging.info('********************************')
-    logging.info('********************************')
-
-    platformName = 'Unknown'
-
-    # find platform
-    queryParameters = {'field_list': 'platforms'}
-    platformResponse = searchAPI.giantBombAPICall('game/' + giantbombID, queryParameters)
-
-    # iterate each platform - determine if title is PS3 or PSN platform
-    for platform in platformResponse['results']['platforms']:
-
-        # PSN Title
-        if (platform['id'] == 88):
-            platformName = 'PSN'
-            break
-
-        # PS3 Title
-        elif (platform['id'] == 35):
-            platformName = 'PS3'
-            break
-
-    # return linked title information
-    return {'giantbombID': giantbombID, 'title': gameTitle, 'platform': platformName, 'releaseDate': releaseDate}
+        return importedTitles
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
