@@ -254,17 +254,15 @@ def releasedList(request):
             # promotionID
             # 1339300800 - unix time (Sun, 10 Jun 2012 04:00:00 GMT) - week to fetch
 
-            # /1341091189076/ae8bcc1b-d7f8-4b5b-8854-fd2700a56990/1339300800/game
+            # /ae8bcc1b-d7f8-4b5b-8854-fd2700a56990/1339300800/
             # now stamp
-            nowDate = datetime.datetime.now()
-            nowStamp = int(time.mktime(nowDate.utctimetuple())) * 1000
 
             # week stamp
             displayDate = datetime.datetime(int(year), int(month), int(day), 6, 0, 0)
             # unix timestamp
             displayStamp = int(time.mktime(displayDate.utctimetuple()))
 
-            url = GT_BASE_URL + str(nowStamp) + '/' + GT_PROMOTION_ID + '/' + str(displayStamp) + '/game'
+            url = GT_BASE_URL + GT_PROMOTION_ID + '/' + str(displayStamp)
 
             logging.info('------------------------')
             logging.info('------------------------')

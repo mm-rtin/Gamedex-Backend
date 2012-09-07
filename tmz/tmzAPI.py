@@ -756,9 +756,9 @@ def createListItem(request):
                             )
                             link.save()
 
-                            # record item ids and tag ids that have been added
-                            tagIDsAdded.append(tagID)
-                            idsAdded.append(guid)
+                    # record item ids and tag ids that have been added
+                    tagIDsAdded.append(tagID)
+                    idsAdded.append(guid)
 
                 returnData = {'idsAdded': idsAdded, 'itemID': item.pk, 'tagIDsAdded': tagIDsAdded}
 
