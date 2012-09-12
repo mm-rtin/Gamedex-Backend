@@ -358,12 +358,14 @@ def copyImageToS3(S3bucket, url, filename, extension, s3conn):
 
     # create new S3 key, set mimetype and Expires header
     k = bucket.new_key(filename)
-    if (extension == 'jpg'):
+    if (extension.lower() == 'jpg' or extension.lower() == 'jpeg'):
         mimeType = 'jpeg'
-    elif (extension == 'png'):
+    elif (extension.lower() == 'png'):
         mimeType = 'png'
-    elif (extension == 'gif'):
+    elif (extension.lower() == 'gif'):
         mimeType = 'gif'
+    else:
+        mimeType = 'jpeg'
 
     k.content_type = 'image/' + mimeType
 

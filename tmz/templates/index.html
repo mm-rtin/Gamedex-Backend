@@ -3,35 +3,27 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Gamedex</title>
-		<meta name="description" content="video game collection">
+		<meta name="description" content="Create your game collection and stay updated with the latest games with videos, review scores, price information and release date notifications">
 		<meta name="author" content="Michael Martin">
 
 		<!-- styles -->
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/bootstrap.css">
+		<link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/bootstrap.min.css">
 		<link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/tmz.css">
 
 		<link rel="shortcut icon" href="http://static.gamedex.net/images/favicon.ico">
-
-		<script>
-		    var _errs=["4fe79b91c24386695b000318"];(function(a,b){a.onerror=function(){_errs.push(arguments)};
-		    var d=function(){var a=b.createElement("script"),c=b.getElementsByTagName("script")[0];
-		    a.src="//d15qhc0lu1ghnk.cloudfront.net/beacon.js";a.async=!0;
-		    c.parentNode.insertBefore(a,c)};a.addEventListener?a.addEventListener("load",d,!1):
-		    a.attachEvent("onload",d)})(window,document);
-		</script>
 
 	</head>
 	<body class="infoHeader">
 
 		<!-- ACCOUNT MANAGEMENT MODAL -->
-		<div id="accountManagement-modal" class="modal hide">
+		<div id="accountManagement-modal" class="modal hide fade">
 			<div class="modal-header">
 				<h3>Account Management</h3>
 			</div>
 			<div class="modal-body">
 
-				<form class="form-horizontal" action="#">
+				<div class="form-horizontal">
 					<fieldset>
 						<div class="control-group">
 							<label class="control-label">User Name</label>
@@ -58,7 +50,7 @@
 							</div>
 						</div>
 					</fieldset>
-				</form>
+				</div>
 
 				<div class="alert alert-success">
 					<strong>Success: </strong> <span class="alertText"></span>
@@ -78,7 +70,7 @@
 		</div>
 
 		<!-- DELETE TAG CONFIRM MODAL -->
-		<div id="deleteListConfirm-modal" class="modal hide">
+		<div id="deleteListConfirm-modal" class="modal hide fade">
 			<div class="modal-header">
 				<h3>Confirm Tag Deletion</h3>
 			</div>
@@ -94,18 +86,21 @@
 		</div>
 
 		<!-- IMPORT CONFIG MODAL -->
-		<div id="importConfig-modal" class="modal hide">
+		<div id="importConfig-modal" class="modal hide fade">
 			<div class="modal-header">
-				<h3><span id="importSourceName"></span> Import</h3>
+				<h3><span class="importSourceName"></span> Import</h3>
 			</div>
 			<div class="modal-body">
 				<div class="form-horizontal">
 					<fieldset>
 						<div class="control-group">
-							<label class="control-label"><span id="importSourceID"></span></label>
+							<label class="control-label"><span class="importSourceID"></span></label>
 							<div class="controls">
-								<input type="text" id="sourceUser" class="span5">
+								<input type="text" id="sourceUser" class="span3">
 							</div>
+						</div>
+						<div class="alert alert-info" style="display: block; ">
+							<strong>Games imported from:</strong> <span class="alertText"><span class="importSourceURL"></span></span>
 						</div>
 					</fieldset>
 				</div>
@@ -117,7 +112,7 @@
 		</div>
 
 		<!-- IMPORT MODAL -->
-		<div id="import-modal" class="modal hide">
+		<div id="import-modal" class="modal hide fade">
 			<div class="modal-header">
 				<h3>Importing Games</h3>
 			</div>
@@ -130,13 +125,20 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<a id="cancelImport_btn" href="#" class="btn">Cancel</a>
+				<div id="importProgress" class="progress">
+					<div class="bar" style="width: 0%;"></div>
+				</div>
+				<div id="importStatus" class="progress">
+					<div class="status"><span class="statusTitle">Loading Data:</span> <span class="statusText"></div>
+				</div>
+				<a id="cancelImport_btn" href="#" class="btn btn-danger">Cancel</a>
+				<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
 				<a id="confirmImport_btn" href="#" class="btn btn-primary">Import Games</a>
 			</div>
 		</div>
 
 		<!-- ALERT DIALOG -->
-		<div id="error-modal" class="modal hide">
+		<div id="error-modal" class="modal hide fade">
 			<div class="modal-header">
 				<h3 class="alertTitle"></h3>
 			</div>
@@ -151,7 +153,7 @@
 		</div>
 
 		<!-- VIDEO MODAL -->
-		<div id="video-modal" class="modal hide">
+		<div id="video-modal" class="modal hide fade">
 			<div class="modal-body">
 
 				<div id="videoPlayerContainer">
@@ -174,18 +176,18 @@
 
 			<div class="modal-footer">
 				<h3 id="videoModalTitle"></h3>
-				<a id="videoModalClose_btn" href="#" class="btn btn-primary" data-dismiss="modal">Exit</a>
+				<a id="videoModalClose_btn" href="#" class="btn" data-dismiss="modal">Close</a>
 			</div>
 		</div>
 
 		<!-- UPDATE LIST MODAL -->
-		<div id="updateList-modal" class="modal hide">
+		<div id="updateList-modal" class="modal hide fade">
 			<div class="modal-header">
 				<h3>Edit Tag</h3>
 			</div>
 			<div class="modal-body">
 
-				<form class="form-horizontal" action="#">
+				<div class="form-horizontal">
 					<fieldset>
 						<div class="control-group">
 							<label class="control-label">Tag Name</label>
@@ -194,7 +196,7 @@
 							</div>
 						</div>
 					</fieldset>
-				</form>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
@@ -203,13 +205,13 @@
 		</div>
 
 		<!-- RESET PASSWORD MODAL -->
-		<div id="resetpassword-modal" class="modal hide">
+		<div id="resetpassword-modal" class="modal hide fade">
 			<div class="modal-header">
 				<h3>Reset Password</h3>
 			</div>
 			<div class="modal-body">
 
-				<form class="resetCodeForm form-horizontal" action="#">
+				<div class="resetCodeForm form-horizontal">
 					<fieldset>
 						<div class="passwordResetEmailContainer control-group">
 							<label class="control-label">E-mail Address</label>
@@ -224,9 +226,9 @@
 							</div>
 						</div>
 					</fieldset>
-				</form>
+				</div>
 
-				<form class="updatePasswordForm form-horizontal" action="#">
+				<div class="updatePasswordForm form-horizontal">
 					<fieldset>
 						<div class="control-group">
 							<label class="control-label">New Password</label>
@@ -235,7 +237,7 @@
 							</div>
 						</div>
 					</fieldset>
-				</form>
+				</div>
 
 				<div class="alert alert-success">
 					<strong class="alertTitle"></strong> <span class="alertText"></span>
@@ -254,13 +256,13 @@
 		</div>
 
 		<!-- FILTERS MODAL -->
-		<div id="filters-modal" class="modal hide">
+		<div id="filters-modal" class="modal hide fade">
 			<div class="modal-header">
 				<h3>Filters</h3>
 			</div>
 			<div class="modal-body">
 
-				<form class="form-horizontal">
+				<div class="form-horizontal">
 				    <fieldset>
 
 						<!-- platform filter -->
@@ -353,12 +355,12 @@
 						</div>
 
 					</fieldset>
-				</form>
+				</div>
 
 			</div>
 			<div class="modal-footer">
-				<button id="applyFilters_btn" class="btn btn-primary" data-dismiss="modal">Apply Filters</button>
 				<button id="cancelFilters_btn" class="btn" data-dismiss="modal">Cancel</button>
+				<button id="applyFilters_btn" class="btn btn-primary" data-dismiss="modal">Apply Filters</button>
 			</div>
 		</div>
 
@@ -541,7 +543,7 @@
 												<ul class="dropdown-menu">
 													<li><a href="#" data-content="all">All Platforms</a></li>
 													<li id="legacySubNav" class="dropdown-sub">
-														<a href="#">Legacy Platforms <i class="subMenuIcon icon-chevron-right icon-white"></i></a>
+														<a href="#">Legacy <i class="subMenuIcon icon-chevron-right icon-white"></i></a>
 														<ul class="dropdown-menu">
 															<li><a href="#" data-content="ps">Playstation</a></li>
 															<li><a href="#" data-content="ps2">Playstation 2</a></li>
@@ -674,7 +676,6 @@
 					</div>
 				</div>
 
-
 				<!-- ITEM DETAIL PANEL -->
 				<div id="panel2">
 					<div class="header"></div>
@@ -758,7 +759,7 @@
 
 														<div id="customTab" class="tab-pane">
 															<!-- USER ATTRIBUTES -->
-															<form class="form-horizontal">
+															<div class="form-horizontal">
 																<fieldset>
 
 																	<div class="control-group">
@@ -766,8 +767,8 @@
 																		<div class="controls">
 																			<!-- play status -->
 																			<div id="playStatus" class="btn-group">
-																				<a class="currentSelection btn" href="#" data-initial="0" data-toggle="dropdown">Not Started</a>
-																				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+																				<a class="currentSelection btn btn-primary btn-small" href="#" data-initial="0" data-toggle="dropdown">Not Started</a>
+																				<a class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
 																				<ul class="dropdown-menu">
 																					<li><a href="#" data-content="0">Not Started</a></li>
 																					<li><a href="#" data-content="1">Playing</a></li>
@@ -783,8 +784,8 @@
 																		<div class="controls">
 																			<!-- game status -->
 																			<div id="gameStatus" class="btn-group">
-																				<a class="currentSelection btn" href="#" data-initial="0" data-toggle="dropdown">None</a>
-																				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+																				<a class="currentSelection btn btn-primary btn-small" href="#" data-initial="0" data-toggle="dropdown">None</a>
+																				<a class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
 																				<ul class="dropdown-menu">
 																					<li><a href="#" data-content="0">None</a></li>
 																					<li><a href="#" data-content="1">Own</a></li>
@@ -815,7 +816,7 @@
 																		</div>
 																	</div>
 																</fieldset>
-															</form>
+															</div>
 
 														</div>
 													</div>
@@ -1040,7 +1041,7 @@
 
 		<!-- import results -->
 		<script type="text/template" id="import-results-template">
-	   		<tr>
+	   		<tr class="<%= item.importClass %>">
 	   			<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
 	   			<td class="title">
 					<div class="itemName"><%= item.name %></div>
@@ -1198,7 +1199,7 @@
 
 	   	<!-- price menu -->
 	   	<script type="text/template" id="price-menu-template">
-			<div class="priceMenu">
+			<div class="priceMenu nav">
 				<a class="priceButton lowestNew" href="<%= productURL %>" data-price="<%= buyNowPrice %>" target="_blank"><span class="priceSource">Amazon:</span> <span class="priceValue"><%= buyNowPrice %></span></a>
 				<a class="priceToggle" data-toggle="dropdown" href="#"></a>
 				<ul class="dropdown-menu">

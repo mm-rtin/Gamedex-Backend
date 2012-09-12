@@ -51,7 +51,7 @@ def getPSNGames_endpoint(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getPSNGames(id):
 
-    # GET /playstation/psn/profile/Michu/get_ordered_trophies_data HTTP/1.1
+    # GET /playstation/psn/profile/[psn_id]/get_ordered_trophies_data HTTP/1.1
     # Host    us.playstation.com
     # X-Requested-With    XMLHttpRequest
     # User-Agent  Mozilla
