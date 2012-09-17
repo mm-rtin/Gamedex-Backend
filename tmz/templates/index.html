@@ -63,9 +63,9 @@
 			</div>
 			<div class="modal-footer">
 				<a id="deleteAccount_btn" href="#" class="btn btn-danger">Delete Account</a>
-				<a id="clearLocalStorage_btn" href="#" class="btn btn-warning">Clear Storage</a>
+				<a id="clearLocalStorage_btn" href="#" class="btn btn-primary">Clear Storage</a>
 				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-				<a id="updateAccount_btn" href="#" class="btn btn-primary">Update Account</a>
+				<a id="updateAccount_btn" href="#" class="btn btn-success">Update Account</a>
 			</div>
 		</div>
 
@@ -125,15 +125,17 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<div id="importProgress" class="progress">
-					<div class="bar" style="width: 0%;"></div>
+				<div id="importProgressContainer">
+					<div id="importProgress" class="progress">
+						<div class="bar" style="width: 0%;"></div>
+					</div>
+					<div id="importStatus" class="progress">
+						<div class="status"><span class="statusTitle"></span> <span class="statusText"></div>
+					</div>
 				</div>
-				<div id="importStatus" class="progress">
-					<div class="status"><span class="statusTitle">Loading Data:</span> <span class="statusText"></div>
-				</div>
-				<a id="cancelImport_btn" href="#" class="btn btn-danger">Cancel</a>
+				<a href="#" id="cancelImport_btn" class="btn btn-danger">Cancel</a>
 				<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
-				<a id="confirmImport_btn" href="#" class="btn btn-primary">Import Games</a>
+				<a href="#"id="confirmImport_btn" class="btn btn-success">Import Games</a>
 			</div>
 		</div>
 
