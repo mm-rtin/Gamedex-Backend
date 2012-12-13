@@ -308,8 +308,8 @@
 							<label class="control-label">Release Date Filter</label>
 							<div class="controls">
 								<div id="releaseDate_filter" data-toggle="buttons-checkbox" class="btn-group">
-									<button class="btn" data-content="0">Unreleased</button>
-									<button class="btn" data-content="1">Released</button>
+									<button type="button" class="btn" data-content="0">Unreleased</button>
+									<button type="button" class="btn" data-content="1">Released</button>
 								</div>
 							</div>
 						</div>
@@ -319,10 +319,10 @@
 							<label class="control-label">Game Status Filter</label>
 							<div class="controls">
 								<div id="gameStatus_filter" data-toggle="buttons-checkbox" class="btn-group">
-									<button class="btn" data-content="0">None</button>
-									<button class="btn" data-content="1">Own</button>
-									<button class="btn" data-content="2">Sold</button>
-									<button class="btn" data-content="3">Wanted</button>
+									<button type="button" class="btn" data-content="0">None</button>
+									<button type="button" class="btn" data-content="1">Own</button>
+									<button type="button" class="btn" data-content="2">Sold</button>
+									<button type="button" class="btn" data-content="3">Wanted</button>
 								</div>
 							</div>
 						</div>
@@ -332,10 +332,10 @@
 							<label class="control-label">Play Status Filter</label>
 							<div class="controls">
 								<div id="playStatus_filter" data-toggle="buttons-checkbox" class="btn-group">
-									<button class="btn" data-content="0">Not Started</button>
-									<button class="btn" data-content="1">Playing</button>
-									<button class="btn" data-content="2">Played</button>
-									<button class="btn" data-content="3">Finished</button>
+									<button type="button" class="btn" data-content="0">Not Started</button>
+									<button type="button" class="btn" data-content="1">Playing</button>
+									<button type="button" class="btn" data-content="2">Played</button>
+									<button type="button" class="btn" data-content="3">Finished</button>
 								</div>
 							</div>
 						</div>
@@ -345,13 +345,13 @@
 							<label class="control-label">Metascore Filter</label>
 							<div class="controls">
 								<div id="metascore_filter" data-toggle="buttons-checkbox" class="btn-group">
-									<button class="btn" data-content="0">90s</button>
-									<button class="btn" data-content="1">80s</button>
-									<button class="btn" data-content="2">70s</button>
-									<button class="btn" data-content="3">60s</button>
-									<button class="btn" data-content="4">50s</button>
-									<button class="btn" data-content="5">49-25</button>
-									<button class="btn" data-content="6">24-0</button>
+									<button type="button" class="btn" data-content="0">90s</button>
+									<button type="button" class="btn" data-content="1">80s</button>
+									<button type="button" class="btn" data-content="2">70s</button>
+									<button type="button" class="btn" data-content="3">60s</button>
+									<button type="button" class="btn" data-content="4">50s</button>
+									<button type="button" class="btn" data-content="5">49-25</button>
+									<button type="button" class="btn" data-content="6">24-0</button>
 								</div>
 							</div>
 						</div>
@@ -361,8 +361,8 @@
 
 			</div>
 			<div class="modal-footer">
-				<button id="cancelFilters_btn" class="btn" data-dismiss="modal">Cancel</button>
-				<button id="applyFilters_btn" class="btn btn-primary" data-dismiss="modal">Apply Filters</button>
+				<button type="button" id="cancelFilters_btn" class="btn" data-dismiss="modal">Cancel</button>
+				<button type="button" id="applyFilters_btn" class="btn btn-primary" data-dismiss="modal">Apply Filters</button>
 			</div>
 		</div>
 
@@ -612,21 +612,21 @@
 									<input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-remove icon-black"></i></span>
 								</div>
 
-								<a id="search_btn" href="#" class="button"></a>
+								<button type="button" id="search_btn"></button>
 							</div>
 
 							<!--- SEARCH DISPLAY OPTIONS -->
 							<div class="searchDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
-								<a class="display1 button" href="#" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></a>
-								<a class="display2 button active" href="#" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></a>
-								<a class="display3 button" href="#" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></a>
+								<button type="button" class="display1" data-content="0" rel="tooltip" data-original-title="List View"></button>
+								<button type="button" class="display2 active" data-content="1" rel="tooltip" data-original-title="Icon View"></button>
+								<button type="button" class="display3" data-content="2" rel="tooltip" data-original-title="Cover View"></button>
 							</div>
 
 							<!--- LIST DISPLAY OPTIONS -->
 							<div class="listDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
-								<a class="display1 button" href="#" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></a>
-								<a class="display2 button active" href="#" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></a>
-								<a class="display3 button" href="#" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></a>
+								<button type="button" class="display1" data-content="0" rel="tooltip" data-original-title="List View"></button>
+								<button type="button" class="display2 active" data-content="1" rel="tooltip" data-original-title="Icon View"></button>
+								<button type="button" class="display3" data-content="2" rel="tooltip" data-original-title="Cover View"></button>
 							</div>
 
 							<!-- SEARCH / LIST TABS -->
@@ -694,8 +694,8 @@
 									<input id="addList">
 								</div>
 								<div id="addListButtons">
-									<a id="saveItem_btn" href="#" class="button"></a>
-									<a id="addItem_btn" href="#"  class="button"></a>
+									<button type="button" id="saveItem_btn"></button>
+									<button type="button" id="addItem_btn"></button>
 								</div>
 
 								<div class="clear"></div>
@@ -725,8 +725,8 @@
 
 										<div class="itemDetailThumbnail thumbnail">
 											<div class="itemDetailInfo">
-												<a class="showVideo_btn button" href="#"></a>
-												<a class="showDiscussion_btn button" href="#"></a>
+												<button type="button" class="showVideo_btn"></button>
+												<button type="button" class="showDiscussion_btn"></button>
 
 												<!-- DETAIL CONTAINER -->
 												<div id="detailContainer">
@@ -841,8 +841,8 @@
 
 										<div class="itemDetailThumbnail thumbnail">
 											<div class="itemDetailInfo">
-												<a class="showVideo_btn button" href="#"></a>
-												<a class="showDiscussion_btn button" href="#"></a>
+												<button type="button" class="showVideo_btn"></button>
+												<button type="button" class="showDiscussion_btn"></button>
 											</div>
 											<img src="http://d2sifwlm28j6up.cloudfront.net/no_selection_placeholder.png" alt="">
 										</div>
@@ -938,17 +938,17 @@
 
 								<!-- display options -->
 								<div class="displayOptions btn-group" data-toggle="buttons-radio" >
-									<a class="display1 button" href="#" data-content="0" data-toggle="button" rel="tooltip" data-original-title="List View"></a>
-									<a class="display2 button active" href="#" data-content="1" data-toggle="button" rel="tooltip" data-original-title="Icon View"></a>
-									<a class="display3 button" href="#" data-content="2" data-toggle="button" rel="tooltip" data-original-title="Cover View"></a>
+									<button type="button" class="display1" data-content="0" rel="tooltip" data-original-title="List View"></button>
+									<button type="button" class="display2 active" data-content="1" rel="tooltip" data-original-title="Icon View"></button>
+									<button type="button" class="display3" data-content="2" rel="tooltip" data-original-title="Cover View"></button>
 								</div>
 
-								<a id="gridView_btn" href="#" class="button"></a>
+								<button type="button" id="gridView_btn"></button>
 
 
 								<!-- edit menu -->
 								<div id="editMenu" class="btn-group">
-						          <a class="edit_btn button" href="#" data-toggle="dropdown"></a>
+						          <button type="button" class="edit_btn" data-toggle="dropdown"></button>
 									<ul class="dropdown-menu">
 										<li id="deleteList_btn"><a href="#">Delete Tag: <span class="listName"></span></a></li>
 										<li id="editList_btn"><a href="#">Edit Tag Name</a></li>
@@ -957,7 +957,7 @@
 
 								<!-- import menu -->
 								<div id="importMenu" class="btn-group">
-						          <a class="import_btn button" href="#" data-toggle="dropdown"></a>
+						          <button type="button" class="import_btn" data-toggle="dropdown"></button>
 									<ul class="dropdown-menu">
 										<li data-importSource="0"><a href="#">Import Steam</a></li>
 										<li data-importSource="1"><a href="#">Import PSN</a></li>
@@ -968,7 +968,7 @@
 								<div class="clear"></div>
 							</div>
 
-							<a id="showCollection_btn" href="#" class="button"></a>
+							<button type="button" id="showCollection_btn"></button>
 
 							<!-- ITEM RESULTS -->
 							<div id="itemResultsContainer" class="nano">

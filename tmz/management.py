@@ -243,6 +243,7 @@ def gamewallpapers(request):
         # iterate game page links
         for link in pageLinks:
 
+            # ignore cgwallpapers
             if link.find('cgwallpapers') == -1:
 
                 # fetch game page
@@ -256,20 +257,26 @@ def gamewallpapers(request):
 
                         linkText = wallpaperLink.text.encode('utf-8')
 
-                        if (linkText.find('1920x1200') != -1):
+                        # find link from 1280x768 resolution which is available to public
+                        if (linkText.find('1280x768') != -1):
                             linkURL = wallpaperLink.get('href').strip()
                             wallpaperLinks.append(linkURL)
 
         # construct final links
         outputLinks = []
+
         # http://www.gamewallpapers.com/members/getwallpaper.php?wallpaper=wallpaper_dirt_showdown_02_2560x1600.jpg
         for link in wallpaperLinks:
 
-            nameMatches = re.search('wallpaper[a-z|_|.|0-9]*', link, flags=0)
+            # pull out wallpaper name from javascript link
+            nameMatches = re.search('wallpaper.*jpg', link, flags=0)
 
+            # got a wallpaper name
             if nameMatches:
                 wallpaperName = nameMatches.group()
-                wallpaperName = wallpaperName.replace('1920x1200', '2560x1600')
+
+                # replace 1280x768 with higher resolution wallpaper (will not work if 2560x1600 not available)
+                wallpaperName = wallpaperName.replace('1280x768', '2560x1600')
 
                 # create output link
                 outputLink = '<a href="http://www.gamewallpapers.com/members/getwallpaper.php?wallpaper=%s">%s</a>' % (wallpaperName, wallpaperName)
