@@ -11,39 +11,55 @@ import StringIO
 import gzip
 import json
 
-import searchAPI
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# getSteamGames
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def getSteamGames(request):
-
-    if 'id' in request.GET:
-
-        url = 'http://steamcommunity.com/id/%s/games?tab=all' % (request.GET.get('id'))
-
-        headers = {'Accept-Encoding': 'gzip'}
-
-        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-        # allow 30 seconds for response
-        response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30)
-
-        # decompress
-        f = StringIO.StringIO(response.content)
-        c = gzip.GzipFile(fileobj=f)
-        content = c.read()
-
-        if response.status_code == 200:
-            return HttpResponse(content, mimetype='text/html')
-
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # getPSNGames_endpoint
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getPSNGames_endpoint(request):
 
     getPSNGames(request.GET.get('id'))
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# getSteamGames
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def getSteamGames(id):
+
+    url = 'http://steamcommunity.com/id/%s/games?tab=all' % id
+
+    headers = {'Accept-Encoding': 'gzip'}
+
+    # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+    # allow 30 seconds for response
+    response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30)
+
+    # decompress
+    f = StringIO.StringIO(response.content)
+    c = gzip.GzipFile(fileobj=f)
+    content = c.read()
+
+    if response.status_code == 200:
+
+        html = etree.HTML(content)
+        scriptSel = CSSSelector('script')
+
+        gamesScript = ''
+
+        # iterate all script tags and find rgGames in script
+        for row in scriptSel(html):
+            if (row.text is not None and 'rgGames' in row.text):
+                gamesScript = row.text
+
+        # parse json in gamesScript
+        jsonString = gamesScript[gamesScript.find('['):gamesScript.find(']') + 1]
+        jsonObj = json.loads(jsonString)
+
+        # clean json
+        gameList = []
+        for game in jsonObj:
+            gameList.append(game['name'])
+
+        return gameList
+
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1386,6 +1386,9 @@ def importGames(request):
                 if (source == 0):
                     logging.info('steam')
 
+                    # get linked game information
+                    importedTitles = gameSources.getSteamGames(sourceUser)
+
                 # import PSN games
                 elif (source == 1):
                     logging.info('PSN')
