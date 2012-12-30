@@ -1,166 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Gamedex</title>
-		<meta name="description" content="Create your game collection and stay updated with the latest games with videos, review scores, price information and release date notifications">
-		<meta name="author" content="Michael Martin">
+<head>
+	<meta charset="utf-8">
+	<title>Gamedex</title>
+	<meta name="description" content="Create your game collection and stay updated with the latest games with videos, review scores, price information and release date notifications">
+	<meta name="author" content="Michael Martin">
 
-		<!-- styles -->
-		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/bootstrap.min.css">
-		<link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/tmz.css">
+	<!-- styles -->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/bootstrap.min.css">
+	<link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/iconfont.css">
+	<link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/tmz.css">
 
-		<link rel="shortcut icon" href="http://static.gamedex.net/images/favicon.ico">
+	<link rel="shortcut icon" href="http://static.gamedex.net/images/favicon.ico">
 
-	</head>
-	<body class="infoHeader">
+</head>
+<body class="infoHeader">
 
-		<!-- ACCOUNT MANAGEMENT MODAL -->
-		<div id="accountManagement-modal" class="modal hide fade">
-			<div class="modal-header">
-				<h3>Account Management</h3>
-			</div>
-			<div class="modal-body">
-
-				<div class="form-horizontal">
-					<fieldset>
-						<div class="control-group">
-							<label class="control-label">User Name</label>
-							<div class="controls">
-								<input class="input" id="userNameUpdateField" type="text" value="">
-							</div>
-						</div>
-						<div class="emailGroup control-group">
-							<label class="control-label">E-mail</label>
-							<div class="controls">
-								<input class="input" id="emailUpdateField" type="text" value="">
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label">New Password</label>
-							<div class="controls">
-								<input class="input" id="passwordUpdateField" type="password" value="">
-							</div>
-						</div>
-						<div class="existingPasswordGroup control-group">
-							<label class="control-label">Existing Password</label>
-							<div class="controls">
-								<input class="input" id="passwordField" type="password" value="">
-							</div>
-						</div>
-					</fieldset>
-				</div>
-
-				<div class="alert alert-success">
-					<strong>Success: </strong> <span class="alertText"></span>
-				</div>
-
-				<div class="alert alert-error">
-					<strong>Error: </strong> <span class="alertText"></span>
-				</div>
-
-			</div>
-			<div class="modal-footer">
-				<a id="deleteAccount_btn" href="#" class="btn btn-danger">Delete Account</a>
-				<a id="clearLocalStorage_btn" href="#" class="btn btn-primary">Clear Storage</a>
-				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-				<a id="updateAccount_btn" href="#" class="btn btn-success">Update Account</a>
-			</div>
+	<!-- ACCOUNT MANAGEMENT MODAL -->
+	<div id="accountManagement-modal" class="modal hide fade">
+		<div class="modal-header">
+			<h3>Account Management</h3>
 		</div>
+		<div class="modal-body">
 
-		<!-- DELETE TAG CONFIRM MODAL -->
-		<div id="deleteListConfirm-modal" class="modal hide fade">
-			<div class="modal-header">
-				<h3>Confirm Tag Deletion</h3>
-			</div>
-			<div class="modal-body">
-				<div class="alert alert-error" style="display: block; ">
-					<strong>Warning: </strong> <span class="alertText">All items will be removed from tag.</span>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-				<a id="deleteListConfirm_btn" href="#" class="btn btn-danger"><i class="icon-trash icon-white"></i> Delete Tag</a>
-			</div>
-		</div>
-
-		<!-- IMPORT CONFIG MODAL -->
-		<div id="importConfig-modal" class="modal hide fade">
-			<div class="modal-header">
-				<h3><span class="importSourceName"></span> Import</h3>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal">
-					<fieldset>
-						<div class="control-group">
-							<label class="control-label"><span class="importSourceID"></span></label>
-							<div class="controls">
-								<input type="text" id="sourceUser" class="span3">
-							</div>
+			<div class="form-horizontal">
+				<fieldset>
+					<div class="control-group">
+						<label class="control-label">User Name</label>
+						<div class="controls">
+							<input class="input" id="userNameUpdateField" type="text" value="">
 						</div>
-						<div class="alert alert-info" style="display: block; ">
-							<strong>Games imported from:</strong> <span class="alertText"><span class="importSourceURL"></span></span>
-						</div>
-					</fieldset>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-				<a id="startImport_btn" href="#" class="btn btn-primary">Start Import</a>
-			</div>
-		</div>
-
-		<!-- IMPORT MODAL -->
-		<div id="import-modal" class="modal hide fade">
-			<div class="modal-header">
-				<h3>Importing Games</h3>
-			</div>
-			<div class="modal-body">
-				<div id="importContainer">
-					<div class="loadingStatus"></div>
-					<table id="importResults" class="table table-striped">
-						<tbody></tbody>
-					</table>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<div id="importProgressContainer">
-					<div id="importProgress" class="progress">
-						<div class="bar" style="width: 0%;"></div>
 					</div>
-					<div id="importStatus" class="progress">
-						<div class="status"><span class="statusTitle"></span> <span class="statusText"></div>
+					<div class="emailGroup control-group">
+						<label class="control-label">E-mail</label>
+						<div class="controls">
+							<input class="input" id="emailUpdateField" type="text" value="">
+						</div>
 					</div>
-				</div>
-				<a href="#" id="cancelImport_btn" class="btn btn-danger">Cancel</a>
-				<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
-				<a href="#"id="confirmImport_btn" class="btn btn-success">Import Games</a>
+					<div class="control-group">
+						<label class="control-label">New Password</label>
+						<div class="controls">
+							<input class="input" id="passwordUpdateField" type="password" value="">
+						</div>
+					</div>
+					<div class="existingPasswordGroup control-group">
+						<label class="control-label">Existing Password</label>
+						<div class="controls">
+							<input class="input" id="passwordField" type="password" value="">
+						</div>
+					</div>
+				</fieldset>
+			</div>
+
+			<div class="alert alert-success">
+				<strong>Success: </strong> <span class="alertText"></span>
+			</div>
+
+			<div class="alert alert-error">
+				<strong>Error: </strong> <span class="alertText"></span>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<a id="deleteAccount_btn" href="#" class="btn">Delete Account</a>
+			<a id="clearLocalStorage_btn" href="#" class="btn btn-primary">Clear Storage</a>
+			<a href="#" class="btn" data-dismiss="modal">Close</a>
+			<a id="updateAccount_btn" href="#" class="btn btn-success">Update Account</a>
+		</div>
+	</div>
+
+	<!-- DELETE TAG CONFIRM MODAL -->
+	<div id="deleteListConfirm-modal" class="modal hide fade">
+		<div class="modal-header">
+			<h3>Confirm Tag Deletion</h3>
+		</div>
+		<div class="modal-body">
+			<div class="alert alert-error" style="display: block; ">
+				<strong>Warning: </strong> <span class="alertText">All items will be removed from tag.</span>
 			</div>
 		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+			<a id="deleteListConfirm_btn" href="#" class="btn btn-danger"><i class="icon-trash"></i> Delete Tag</a>
+		</div>
+	</div>
 
-		<!-- ALERT DIALOG -->
-		<div id="error-modal" class="modal hide fade">
-			<div class="modal-header">
-				<h3 class="alertTitle"></h3>
-			</div>
-			<div class="modal-body">
-				<div class="alert alert-error" style="display: block; ">
-					<strong>Error: </strong> <span class="alertText"></span>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<a href="#" class="btn btn-primary" data-dismiss="modal">Continue</a>
+	<!-- IMPORT CONFIG MODAL -->
+	<div id="importConfig-modal" class="modal hide fade">
+		<div class="modal-header">
+			<h3><span class="importSourceName"></span> Import</h3>
+		</div>
+		<div class="modal-body">
+			<div class="form-horizontal">
+				<fieldset>
+					<div class="control-group">
+						<label class="control-label"><span class="importSourceID"></span></label>
+						<div class="controls">
+							<input type="text" id="sourceUser" class="span3">
+						</div>
+					</div>
+					<div class="alert alert-info" style="display: block; ">
+						<strong>Games imported from:</strong> <span class="alertText"><span class="importSourceURL"></span></span>
+					</div>
+				</fieldset>
 			</div>
 		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+			<a id="startImport_btn" href="#" class="btn btn-primary">Start Import</a>
+		</div>
+	</div>
 
-		<!-- VIDEO MODAL -->
-		<div id="video-modal" class="modal hide fade">
-			<div class="modal-body">
+	<!-- IMPORT MODAL -->
+	<div id="import-modal" class="modal hide fade">
+		<div class="modal-header">
+			<h3>Importing Games</h3>
+		</div>
+		<div class="modal-body">
+			<div id="importContainer">
+				<div class="loadingStatus"></div>
+				<table id="importResults" class="table table-striped">
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div id="importProgressContainer">
+				<div id="importProgress" class="progress">
+					<div class="bar" style="width: 0%;"></div>
+				</div>
+				<div id="importStatus" class="progress">
+					<div class="status"><span class="statusTitle"></span> <span class="statusText"></div>
+				</div>
+			</div>
+			<a href="#" id="cancelImport_btn" class="btn btn-danger">Cancel</a>
+			<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
+			<a href="#"id="confirmImport_btn" class="btn btn-success">Import Games</a>
+		</div>
+	</div>
 
-				<div id="videoPlayerContainer">
-					<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" width="870" height="490" poster="" data-setup="{}">
-						<source type='video/mp4' src="">
+	<!-- ALERT DIALOG -->
+	<div id="error-modal" class="modal hide fade">
+		<div class="modal-header">
+			<h3 class="alertTitle"></h3>
+		</div>
+		<div class="modal-body">
+			<div class="alert alert-error" style="display: block; ">
+				<strong>Error: </strong> <span class="alertText"></span>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary" data-dismiss="modal">Continue</a>
+		</div>
+	</div>
+
+	<!-- VIDEO MODAL -->
+	<div id="video-modal" class="modal hide fade">
+		<div class="modal-body">
+
+			<div id="videoPlayerContainer">
+				<video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" width="870" height="490" poster="" data-setup="{}">
+					<source type='video/mp4' src="">
 					</video>
 				</div>
 
@@ -265,7 +266,7 @@
 			<div class="modal-body">
 
 				<div class="form-horizontal">
-				    <fieldset>
+					<fieldset>
 
 						<!-- platform filter -->
 						<div class="control-group">
@@ -303,7 +304,7 @@
 							</div>
 						</div>
 
-				    	<!-- release date filter -->
+						<!-- release date filter -->
 						<div class="control-group">
 							<label class="control-label">Release Date Filter</label>
 							<div class="controls">
@@ -415,7 +416,7 @@
 
 							<!-- view list menu -->
 							<li id="gridList" class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tag icon-white"></i> <span class="viewName">View All</span> <b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tag"></i> <span class="viewName">View All</span> <b class="caret"></b></a>
 								<ul class="dropdown-menu">
 
 								</ul>
@@ -423,11 +424,11 @@
 
 							<!-- filter menu -->
 							<li class="filterOptions dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-adjust icon-white"></i> Filter: <Span class="filterType">None</span><b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-filter"></i> Filter: <Span class="filterType">None</span><b class="caret"></b></a>
 								<ul class="dropdown-menu">
 									<li><a href="#" data-content="0">Custom</a></li>
 									<li class="divider"></li>
-									<li class="clearFilters_btn"><a href="#"><i class="icon-remove icon-white"></i> Clear Filters</a></li>
+									<li class="clearFilters_btn"><a href="#"><i class="icon-close"></i> Clear Filters</a></li>
 									<li class="divider"></li>
 									<li><a href="#" data-content="1">Upcoming</a></li>
 									<li><a href="#" data-content="2">New Releases</a></li>
@@ -444,7 +445,7 @@
 
 							<!-- sort menu -->
 							<li class="sortOptions dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-random icon-white"></i> Sort: <span class="sortType">Alphabetical</span><b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-random"></i> Sort: <span class="sortType">Alphabetical</span><b class="caret"></b></a>
 								<ul class="dropdown-menu">
 									<li><a href="#" data-content="0">Alphabetical</a></li>
 									<li><a href="#" data-content="1">Review Score</a></li>
@@ -456,26 +457,26 @@
 
 							<!-- display menu -->
 							<li class="grid_displayOptions dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th icon-white"></i> Display: <span class="displayType">Medium</span><b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th"></i> Display: <span class="displayType">Medium</span><b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><a href="#" data-content="0"><i class="icon-th icon-white"></i> Small</a></li>
-									<li><a href="#" data-content="1"><i class="icon-th-large icon-white"></i> Medium</a></li>
-									<li><a href="#" data-content="2"><i class="icon-stop icon-white"></i> Large</a></li>
-									<li><a href="#" data-content="3"><i class="icon-th-list icon-white"></i> Info</a></li>
+									<li><a href="#" data-content="0"><i class="icon-th"></i> Small</a></li>
+									<li><a href="#" data-content="1"><i class="icon-th-large"></i> Medium</a></li>
+									<li><a href="#" data-content="2"><i class="icon-stop"></i> Large</a></li>
+									<li><a href="#" data-content="3"><i class="icon-th-list"></i> Info</a></li>
 								</ul>
 							</li>
 
 							<!-- exit button -->
-							<li id="exitGridView_btn"><a href="#"><i class="icon-remove icon-white"></i> Exit Grid View</a></li>
+							<li id="exitGridView_btn"><a href="#"><i class="icon-close"></i> Exit Grid View</a></li>
 						</ul>
 
 						<!-- RIGHT HEADER -->
 						<ul id="userMenu" class="nav pull-right">
 							<li class="dropdown">
-								<a href="#" id="loggedInButton" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user icon-white"></i> <span class="userEmail"></span> <b class="caret"></b></a>
+								<a href="#" id="loggedInButton" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <span class="userEmail"></span> <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><a href="#" id="managementButton"><i class="icon-list-alt icon-white"></i> Account Management</a></li>
-									<li><a href="#" id="logoutButton"><i class="icon-off icon-white"></i> Logout</a></li>
+									<li><a href="#" id="managementButton"><i class="icon-list-alt"></i> Account Management</a></li>
+									<li><a href="#" id="logoutButton"><i class="icon-off"></i> Logout</a></li>
 								</ul>
 							</li>
 						</ul>
@@ -497,9 +498,9 @@
 						<div id="step5" class="step"></div>
 
 						<div id="siteGuideNavigation">
-							<a class="siteGuideExit_btn" href="#">Exit <i class="icon-remove"></i></a>
-							<a class="siteGuidePrevious_btn" href="#"> <i class="icon-chevron-left"></i></a>
-							<a class="siteGuideNext_btn" href="#">Next <i class="icon-chevron-right"></i></a>
+							<a class="siteGuideExit_btn" href="#">Exit <i class="icon-close"></i></a>
+							<a class="siteGuidePrevious_btn" href="#"> <i class="icon-caret-left"></i></a>
+							<a class="siteGuideNext_btn" href="#">Next <i class="icon-caret-right"></i></a>
 						</div>
 					</div>
 					<div id="siteGuideBackdrop"></div>
@@ -522,30 +523,30 @@
 
 											<!-- search provider menu -->
 											<li id="searchProvider" class="dropdown" data-content="0">
-												<a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-search icon-white"></i> <span class="providerName">Amazon</span><b class="caret"></b></a>
+												<a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-search"></i> <span class="providerName">Amazon</span><b class="caret"></b></a>
 												<ul class="dropdown-menu">
-													<li><a href="#" data-content="0">Amazon</a></li>
-													<li><a href="#" data-content="1">GiantBomb</a></li>
+													<li><a href="#" data-content="0"><i class="icon-amazon"></i> Amazon</a></li>
+													<li><a href="#" data-content="1"><i class="icon-gamepad"></i> GiantBomb</a></li>
 												</ul>
 											</li>
 
 											<!-- list type menu -->
 											<li id="listType" class="dropdown" data-content="1">
-												<a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-time icon-white"></i> <span class="listTypeName">Popular</span><b class="caret"></b></a>
+												<a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-time"></i> <span class="listTypeName">Popular</span><b class="caret"></b></a>
 												<ul class="dropdown-menu">
-													<li><a href="#" data-content="1"><i class="icon-time icon-white"></i> Upcoming</a></li>
-													<li><a href="#" data-content="2"><i class="icon-leaf icon-white"></i> Released</a></li>
-													<li><a href="#" data-content="0"><i class="icon-fire icon-white"></i> Popular</a></li>
+													<li><a href="#" data-content="1"><i class="icon-time"></i> Upcoming</a></li>
+													<li><a href="#" data-content="2"><i class="icon-leaf"></i> Released</a></li>
+													<li><a href="#" data-content="0"><i class="icon-fire"></i> Popular</a></li>
 												</ul>
 											</li>
 
 											<!-- search platforms -->
 											<li id="searchPlatforms" class="dropdown" data-content="1">
-												<a href="#" id="platformSelect_btn" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tag icon-white"></i> <span class="platformName">All Platforms</span><b class="caret"></b></a>
+												<a href="#" id="platformSelect_btn" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tag"></i> <span class="platformName">All Platforms</span><b class="caret"></b></a>
 												<ul class="dropdown-menu">
 													<li><a href="#" data-content="all">All Platforms</a></li>
 													<li id="legacySubNav" class="dropdown-sub">
-														<a href="#">Legacy <i class="subMenuIcon icon-chevron-right icon-white"></i></a>
+														<a href="#">Legacy <i class="subMenuIcon icon-caret-right"></i></a>
 														<ul class="dropdown-menu">
 															<li><a href="#" data-content="ps">Playstation</a></li>
 															<li><a href="#" data-content="ps2">Playstation 2</a></li>
@@ -581,7 +582,7 @@
 
 											<!-- list platforms -->
 											<li id="listPlatforms" class="dropdown" data-content="1">
-												<a href="#" class="platformSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tag icon-white"></i> <span class="platformName">All Platforms</span><b class="caret"></b></a>
+												<a href="#" class="platformSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tag"></i> <span class="platformName">All Platforms</span><b class="caret"></b></a>
 												<ul class="dropdown-menu">
 													<li><a href="#" data-content="all">All Platforms</a></li>
 													<li class="divider"></li>
@@ -609,7 +610,7 @@
 							<!-- SEARCH FIELD -->
 							<div id="searchFieldContainer" class="clearfix">
 								<div id="searchField" class="input-append">
-									<input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-remove icon-black"></i></span>
+									<input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-close icon-black"></i></span>
 								</div>
 
 								<button type="button" id="search_btn"></button>
@@ -749,11 +750,11 @@
 																	<li id="releaseDate"><a href="#"><i class="icon-time"></i> <span class="data"></span></a></li>
 																	<li id="giantBombPage"><a href="#" target="_blank"><i class="icon-list-alt"></i> GiantBomb Page</a></li>
 																	<li id="gametrailersPage"><a href="#" target="_blank"><i class="icon-film"></i> Gametrailers Page</a></li>
-																	<li id="metacriticPage"><a href="#" target="_blank"><i class="icon-eye-open"></i> Metacritic Page</a></li>
+																	<li id="metacriticPage"><a href="#" target="_blank"><i class="icon-eye"></i> Metacritic Page</a></li>
 																	<li id="wikipediaPage"><a href="#" target="_blank"><i class="icon-book"></i> Wikipedia Entry</a></li>
 																	<li id="amazonPriceHeader" class="nav-header">Amazon.com</li>
-																	<li id="amazonPriceNew"><a href="#" target="_blank"><i class="icon-shopping-cart"></i> New: <span class="data"></span></a></li>
-																	<li id="amazonPriceUsed"><a href="#" target="_blank"><i class="icon-shopping-cart"></i> Used <span class="data"></span></a></li>
+																	<li id="amazonPriceNew"><a href="#" target="_blank"><i class="icon-amazon"></i> New: <span class="data"></span></a></li>
+																	<li id="amazonPriceUsed"><a href="#" target="_blank"><i class="icon-amazon"></i> Used <span class="data"></span></a></li>
 																</ul>
 															</div>
 
@@ -871,7 +872,7 @@
 
 											<!-- view list menu -->
 											<li id="viewList" class="dropdown">
-												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tag icon-white"></i> <span class="viewName">View All</span> <b class="caret"></b></a>
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tag"></i> <span class="viewName">View All</span> <b class="caret"></b></a>
 												<ul class="dropdown-menu">
 													<li><a href="#">Empty</a></li>
 												</ul>
@@ -879,14 +880,14 @@
 
 											<!-- filter menu -->
 											<li class="filterOptions dropdown">
-												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-adjust icon-white"></i> Filter: <Span class="filterType">None</span><b class="caret"></b></a>
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-filter"></i> Filter: <Span class="filterType">None</span><b class="caret"></b></a>
 												<ul class="dropdown-menu">
 													<li><a href="#" data-content="0">Custom</a></li>
 													<li class="divider"></li>
-													<li class="clearFilters_btn"><a href="#"><i class="icon-remove icon-white"></i> Clear Filters</a></li>
+													<li class="clearFilters_btn"><a href="#"><i class="icon-close"></i> Clear Filters</a></li>
 													<li class="divider"></li>
 													<li id="platformFilterSubNav" class="dropdown-sub">
-														<a href="#">Platforms <i class="subMenuIcon icon-chevron-right icon-white"></i></a>
+														<a href="#">Platforms <i class="subMenuIcon icon-caret-right"></i></a>
 														<ul class="dropdown-menu">
 															<li><a href="#" data-content="pc">PC</a></li>
 															<li><a href="#" data-content="mac">Mac</a></li>
@@ -918,7 +919,7 @@
 
 											<!-- sort menu -->
 											<li class="sortOptions dropdown">
-												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-random icon-white"></i> Sort: <span class="sortType">Alphabetical</span><b class="caret"></b></a>
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-random"></i> Sort: <span class="sortType">Alphabetical</span><b class="caret"></b></a>
 												<ul class="dropdown-menu">
 													<li><a href="#" data-content="0">Alphabetical</a></li>
 													<li><a href="#" data-content="1">Review Score</a></li>
@@ -948,22 +949,22 @@
 
 								<!-- edit menu -->
 								<div id="editMenu" class="btn-group">
-						          <button type="button" class="edit_btn" data-toggle="dropdown"></button>
+									<button type="button" class="edit_btn" data-toggle="dropdown"></button>
 									<ul class="dropdown-menu">
 										<li id="deleteList_btn"><a href="#">Delete Tag: <span class="listName"></span></a></li>
 										<li id="editList_btn"><a href="#">Edit Tag Name</a></li>
 									</ul>
-						        </div>
+								</div>
 
 								<!-- import menu -->
 								<div id="importMenu" class="btn-group">
-						          <button type="button" class="import_btn" data-toggle="dropdown"></button>
+									<button type="button" class="import_btn" data-toggle="dropdown"></button>
 									<ul class="dropdown-menu">
 										<li data-importSource="0"><a href="#">Import Steam</a></li>
 										<li data-importSource="1"><a href="#">Import PSN</a></li>
 										<li data-importSource="2"><a href="#">Import XBox Live</a></li>
 									</ul>
-						        </div>
+								</div>
 
 								<div class="clear"></div>
 							</div>
@@ -999,272 +1000,272 @@
 			</div>
 		</div>
 
-	    <!-- Templates -->
+		<!-- Templates -->
 
 		<!-- search results -->
 		<script type="text/template" id="search-results-template">
-			<tbody class="list display-<%= displayType %>">
-				<% if(sortedSearchResults.length === 0) { %>
-					<tr>
-						<td class="title">
-							<div class="noResults">No Results</div>
-						</td>
-					</tr>
-				<% } else { %>
-					<% _.each(sortedSearchResults, function(item) { %>
-						<tr id="<%= item.id %>" data-temp="<%= item.releaseDate %>">
-							<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
-							<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
-							<td class="title">
-								<div class="itemName"><%= item.name %></div>
-								<div class="calendarDate"><%= item.calendarDate %></div>
-								<% if (item.platform !== 'n/a') { %>
-									<div class="platform"><%= item.platform %></div>
-								<% } %>
-								<div class="platformDropdown">
-									<% if (item.platformList) { %>
-									<ul class="nav nav-pills">
-										<li class="dropdown">
-										<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= item.platformList[0] %><b class="caret"></b></a>
-										<ul class="dropdown-menu">
-										<% _.each(item.platformList, function(platform, index) { %>
-										<li data-content="<%= item.id %>"><a href="#"><%= platform %></a></li>
-										<% }); %>
-										</ul>
-									</ul>
-									<% } %>
-					   			</div>
-					   		</td>
-				   		</tr>
-			      	<% }); %>
-				<% } %>
-	      	</tbody>
-	    </script>
-
-		<!-- import results -->
-		<script type="text/template" id="import-results-template">
-	   		<tr class="<%= item.importClass %>">
-	   			<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
-	   			<td class="title">
+		<tbody class="list display-<%= displayType %>">
+		<% if(sortedSearchResults.length === 0) { %>
+			<tr>
+			<td class="title">
+			<div class="noResults">No Results</div>
+			</td>
+			</tr>
+			<% } else { %>
+				<% _.each(sortedSearchResults, function(item) { %>
+					<tr id="<%= item.id %>" data-temp="<%= item.releaseDate %>">
+					<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
+					<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
+					<td class="title">
 					<div class="itemName"><%= item.name %></div>
 					<div class="calendarDate"><%= item.calendarDate %></div>
-					<div class="platform"><%= item.platform %></div>
-		   		</td>
-	   		</tr>
-	    </script>
-
-		<!-- video results -->
-		<script type="text/template" id="video-results-template">
-			<% _.each(videoResults, function(item, index) { %>
-				<li class="videoItem smallImage" data-id="<%= index %>">
-					<a href="#" rel="popover" data-content="Publish Date: <%= item.publishDate %> Length: <%= item.runningTime %>" data-original-title="<%= item.deck %>">
-						<img src="<%= item.image.small_url %>" alt="">
-					</a>
-				</li>
-				<li class="videoItem mediumImage" data-id="<%= index %>">
-					<a href="#" rel="popover" data-content="Date: <strong><%= item.publishDate %></strong> <br/> Length: <strong><%= item.runningTime %></strong>" data-original-title="<%= item.deck %>">
-						<img src="<%= item.image.thumb_url %>" alt="">
-					</a>
-				</li>
-	      	<% }); %>
-	    </script>
-
-	    <!-- list results -->
-	    <script type="text/template" id="list-results-template">
-	   		<% _.each(listResults, function(item) { %>
-		   		<tr>
-		   			<td class="mediumImage"><img src="<%= item.mediumImage %>" alt=""></td>
-		   			<td class="title">
-						<div class="itemName"><%= item.name %></div>
-						<div class="calendarDate"><%= item.calendarDate %></div>
-						<div class="releaseDate"><%= item.releaseDate %></div>
-						<div class="platform"><%= item.platforms %></div>
-			   		</td>
-		   		</tr>
-	      	<% }); %>
-	    </script>
-
-	   	<!-- item results -->
-	   	<script type="text/template" id="item-results-template">
-	   		<tbody class="list display-<%= displayType %>">
-				<% if(length === 0) { %>
-					<tr>
-						<td class="title">
-							<div class="noResults">No Items</div>
-						</td>
-					</tr>
-				<% } else { %>
-			   		<% _.each(items, function(item, index) { %>
-						<tr id="<%= item.id %>" data-content="<%= item.itemID %>">
-							<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
-							<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
-							<td>
-								<div class="itemName"><%= item.name %></div>
-								<div class="calendarDate"><%= item.calendarDate %></div>
-								<div class="releaseDate"><%= item.releaseDate %></div>
-								<div class="platform"><%= item.platform %></div>
-								<div class="gameStatus"><%= item.gameStatus %></div>
-								<div class="playStatus"><%= item.playStatus %></div>
-								<div class="userRating"><%= item.userRating %></div>
-							</td>
-							<td>
-								<div class="extraData">
-									<div class="priceDetails"></div>
-
-									<div class="quickAttributes" data-content="<%= item.id %>">
-										<span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying" href="#" rel="tooltip" data-content="0" data-original-title="Playing"></a></span>
-										<span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed" href="#" rel="tooltip" data-content="1" data-original-title="Played"></a></span>
-										<span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" rel="tooltip" data-content="2" data-original-title="Finished"></a></span>
-										<span class="rating-<%= item.userRating %>"><a class="attrFavorite" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"></a></span>
-										<span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned" href="#" rel="tooltip" data-content="4" data-original-title="Owned"></a></span>
-									</div>
-								</div>
-							</td>
-							<td class="scoreDetails"><a href="#" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
-							<% if (currentViewTagID !== '0') { %>
-								<td class="options"><a href="#" class="deleteItem_btn" data-content="<%= item.id %>"></a></td>
-							<% } %>
-						</tr>
-			      	<% }); %>
-				<% } %>
-	      	</tbody>
-	   	</script>
-
-	   	<!-- gridview results -->
-	   	<script type="text/template" id="grid-results-template">
-	   		<% _.each(items, function(item, index) { %>
-				<div class="gridItem" data-category="transition" data-content="<%= item.id %>">
-
-					<div class="thumbnail">
-						<img src="<%= item.largeImage %>"></img>
-						<div class="itemAttributes caption">
-							<ul class="nav nav-list">
-								<li class="platform"><i class="icon-tag"></i> <span class="data"><%= item.platform %></span></li>
-								<li class="calendarDate"><i class="icon-time"></i> <span class="data"><%= item.calendarDate %></span></li>
-								<li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i> Metascore: <%= item.displayMetascore %></a></li>
-								<% if (typeof item.offers.buyNowPrice !== 'undefined' && item.offers.buyNowPrice !== '') { %>
-								<li class="price"><a href="<%= item.offers.productURL %>" target="_blank"><i class="icon-shopping-cart"></i> <span class="data">$<%= item.offers.buyNowPrice %></span></a></li>
-								<% } %>
+					<% if (item.platform !== 'n/a') { %>
+						<div class="platform"><%= item.platform %></div>
+						<% } %>
+						<div class="platformDropdown">
+						<% if (item.platformList) { %>
+							<ul class="nav nav-pills">
+							<li class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= item.platformList[0] %><b class="caret"></b></a>
+							<ul class="dropdown-menu">
+							<% _.each(item.platformList, function(platform, index) { %>
+								<li data-content="<%= item.id %>"><a href="#"><%= platform %></a></li>
+								<% }); %>
 							</ul>
-						</div>
-					</div>
+							</ul>
+							<% } %>
+							</div>
+							</td>
+							</tr>
+							<% }); %>
+<% } %>
+</tbody>
+</script>
 
-					<div class="metacriticScore"><%= item.metascore %></a></div>
-					<div class="releaseDate"><%= item.releaseDate %></a></div>
-					<div class="rawPrice"><%= item.offers.buyNowPrice %></span></div>
-					<div class="itemName"><%= item.name %></div>
-					<div class="gameStatus"><%= item.gameStatus %></div>
-					<div class="playStatus"><%= item.playStatus %></div>
-					<div class="userRating"><%= item.userRating %></div>
-				</div>
-	      	<% }); %>
-	   	</script>
+<!-- import results -->
+<script type="text/template" id="import-results-template">
+<tr class="<%= item.importClass %>">
+<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
+<td class="title">
+<div class="itemName"><%= item.name %></div>
+<div class="calendarDate"><%= item.calendarDate %></div>
+<div class="platform"><%= item.platform %></div>
+</td>
+</tr>
+</script>
 
-	    <!-- platform dropdown -->
-	    <script type="text/template" id="search-results-platform-dropdown-template">
-			<ul class="nav nav-pills">
-				<li class="dropdown">
-				<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= platformList[0] %><b class="caret"></b></a>
-				<ul class="dropdown-menu">
-				<% _.each(platformList, function(item, index) { %>
-					<li data-content="<%= gbombID %>"><a href="#"><%= item %></a></li>
+<!-- video results -->
+<script type="text/template" id="video-results-template">
+<% _.each(videoResults, function(item, index) { %>
+	<li class="videoItem smallImage" data-id="<%= index %>">
+	<a href="#" rel="popover" data-content="Publish Date: <%= item.publishDate %> Length: <%= item.runningTime %>" data-original-title="<%= item.deck %>">
+	<img src="<%= item.image.small_url %>" alt="">
+	</a>
+	</li>
+	<li class="videoItem mediumImage" data-id="<%= index %>">
+	<a href="#" rel="popover" data-content="Date: <strong><%= item.publishDate %></strong> <br/> Length: <strong><%= item.runningTime %></strong>" data-original-title="<%= item.deck %>">
+	<img src="<%= item.image.thumb_url %>" alt="">
+	</a>
+	</li>
+	<% }); %>
+</script>
+
+<!-- list results -->
+<script type="text/template" id="list-results-template">
+<% _.each(listResults, function(item) { %>
+	<tr>
+	<td class="mediumImage"><img src="<%= item.mediumImage %>" alt=""></td>
+	<td class="title">
+	<div class="itemName"><%= item.name %></div>
+	<div class="calendarDate"><%= item.calendarDate %></div>
+	<div class="releaseDate"><%= item.releaseDate %></div>
+	<div class="platform"><%= item.platforms %></div>
+	</td>
+	</tr>
+	<% }); %>
+</script>
+
+<!-- item results -->
+<script type="text/template" id="item-results-template">
+<tbody class="list display-<%= displayType %>">
+<% if(length === 0) { %>
+	<tr>
+	<td class="title">
+	<div class="noResults">No Items</div>
+	</td>
+	</tr>
+	<% } else { %>
+		<% _.each(items, function(item, index) { %>
+			<tr id="<%= item.id %>" data-content="<%= item.itemID %>">
+			<td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
+			<td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
+			<td>
+			<div class="itemName"><%= item.name %></div>
+			<div class="calendarDate"><%= item.calendarDate %></div>
+			<div class="releaseDate"><%= item.releaseDate %></div>
+			<div class="platform"><%= item.platform %></div>
+			<div class="gameStatus"><%= item.gameStatus %></div>
+			<div class="playStatus"><%= item.playStatus %></div>
+			<div class="userRating"><%= item.userRating %></div>
+			</td>
+			<td>
+			<div class="extraData">
+			<div class="priceDetails"></div>
+
+			<div class="quickAttributes" data-content="<%= item.id %>">
+			<span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying" href="#" rel="tooltip" data-content="0" data-original-title="Playing"></a></span>
+			<span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed" href="#" rel="tooltip" data-content="1" data-original-title="Played"></a></span>
+			<span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" rel="tooltip" data-content="2" data-original-title="Finished"></a></span>
+			<span class="rating-<%= item.userRating %>"><a class="attrFavorite" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"></a></span>
+			<span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned" href="#" rel="tooltip" data-content="4" data-original-title="Owned"></a></span>
+			</div>
+			</div>
+			</td>
+			<td class="scoreDetails"><a href="#" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
+			<% if (currentViewTagID !== '0') { %>
+				<td class="options"><a href="#" class="deleteItem_btn" data-content="<%= item.id %>"></a></td>
+				<% } %>
+				</tr>
 				<% }); %>
-				</ul>
-			</ul>
-	    </script>
+<% } %>
+</tbody>
+</script>
 
-	   	<!-- view list dropdown -->
-	   	<script type="text/template" id="view-list-template">
-			<li><a href="#" data-content="0">View All</a></li>
-			<% if (orderedList.length > 0) { %>
-			<li class="divider"></li>
-	   		<% _.each(orderedList, function(item) { %>
-   				<li><a href="#" data-content="<%= item.id %>"><%= item.name %></a></li>
-	      	<% }); %>
-	      	<% } %>
-	   		<% if (emptyList.length > 0) { %>
-      		<li class="divider"></li>
-				<% _.each(emptyList, function(item) { %>
-					<li><a href="#" data-content="<%= item.id %>"><%= item.name %></a></li>
-				<% }); %>
-   			<% } %>
-	   	</script>
+<!-- gridview results -->
+<script type="text/template" id="grid-results-template">
+<% _.each(items, function(item, index) { %>
+	<div class="gridItem" data-category="transition" data-content="<%= item.id %>">
 
-	   	<!-- add list dropdown -->
-	   	<script type="text/template" id="add-list-template">
-   			<optgroup label="User Tags">
-	   		<% _.each(orderedList, function(item) { %>
-	   			<option value="<%= item.id %>"><%= item.name %></option>
-	      	<% }); %>
-	      	</optgroup>
-	   	</script>
+	<div class="thumbnail">
+	<img src="<%= item.largeImage %>"></img>
+	<div class="itemAttributes caption">
+	<ul class="nav nav-list">
+	<li class="platform"><i class="icon-tag"></i> <span class="data"><%= item.platform %></span></li>
+	<li class="calendarDate"><i class="icon-time"></i> <span class="data"><%= item.calendarDate %></span></li>
+	<li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i> Metascore: <%= item.displayMetascore %></a></li>
+	<% if (typeof item.offers.buyNowPrice !== 'undefined' && item.offers.buyNowPrice !== '') { %>
+		<li class="price"><a href="<%= item.offers.productURL %>" target="_blank"><i class="icon-amazon"></i> <span class="data">$<%= item.offers.buyNowPrice %></span></a></li>
+		<% } %>
+		</ul>
+		</div>
+		</div>
 
-	   	<!-- price menu -->
-	   	<script type="text/template" id="price-menu-template">
-			<div class="priceMenu nav">
-				<a class="priceButton lowestNew" href="<%= productURL %>" data-price="<%= buyNowPrice %>" target="_blank"><span class="priceSource">Amazon:</span> <span class="priceValue"><%= buyNowPrice %></span></a>
-				<a class="priceToggle" data-toggle="dropdown" href="#"></a>
-				<ul class="dropdown-menu">
-					<li><a href="<%= offersURLNew %>" data-content="0" target="_blank"><span class="priceDesc">Lowest New:</span> <%= lowestNewPrice %></a></li>
+		<div class="metacriticScore"><%= item.metascore %></a></div>
+		<div class="releaseDate"><%= item.releaseDate %></a></div>
+		<div class="rawPrice"><%= item.offers.buyNowPrice %></span></div>
+		<div class="itemName"><%= item.name %></div>
+		<div class="gameStatus"><%= item.gameStatus %></div>
+		<div class="playStatus"><%= item.playStatus %></div>
+		<div class="userRating"><%= item.userRating %></div>
+		</div>
+		<% }); %>
+</script>
 
-					<% if (lowestUsedPrice !== '') { %>
-					<li><a href="<%= offersURLUsed %>" data-content="1" target="_blank"><span class="priceDesc">Lowest Used:</span> <%= lowestUsedPrice %></a></li>
-					<% } %>
-				</ul>
-			</div>
-	   	</script>
+<!-- platform dropdown -->
+<script type="text/template" id="search-results-platform-dropdown-template">
+<ul class="nav nav-pills">
+<li class="dropdown">
+<a href="#" data-toggle="dropdown" class="dropdown-toggle"><%= platformList[0] %><b class="caret"></b></a>
+<ul class="dropdown-menu">
+<% _.each(platformList, function(item, index) { %>
+	<li data-content="<%= gbombID %>"><a href="#"><%= item %></a></li>
+	<% }); %>
+</ul>
+</ul>
+</script>
 
-	   	<!-- description modal -->
-	   	<script type="text/template" id="description-modal-template">
-			<div class="modal-header">
-				<h3><%= itemData.name %></h3>
-			</div>
-			<div class="modal-body">
-				<%=itemData.description %>
-			</div>
-			<div class="modal-footer">
-				<a id="description_close_btn" href="#" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i> Close</a>
-			</div>
-	   	</script>
-
-	   	<!-- GOOGLE ANALYTICS -->
-		<script type="text/javascript">
-		  var _gaq = _gaq || [];
-		  _gaq.push(['_setAccount', 'UA-28923926-1']);
-		  _gaq.push(['_trackPageview']);
-
-		  (function() {
-		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		  })();
+<!-- view list dropdown -->
+<script type="text/template" id="view-list-template">
+<li><a href="#" data-content="0">View All</a></li>
+<% if (orderedList.length > 0) { %>
+	<li class="divider"></li>
+	<% _.each(orderedList, function(item) { %>
+		<li><a href="#" data-content="<%= item.id %>"><%= item.name %></a></li>
+		<% }); %>
+	<% } %>
+	<% if (emptyList.length > 0) { %>
+		<li class="divider"></li>
+		<% _.each(emptyList, function(item) { %>
+			<li><a href="#" data-content="<%= item.id %>"><%= item.name %></a></li>
+			<% }); %>
+		<% } %>
 		</script>
 
-		<!-- JAVASCRIPT LIBRARIES -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script src="http://static.gamedex.net/dist/lib.min.js"></script>
-		<script src="http://static.gamedex.net/dist/scripts.js"></script>
+		<!-- add list dropdown -->
+		<script type="text/template" id="add-list-template">
+		<optgroup label="User Tags">
+		<% _.each(orderedList, function(item) { %>
+			<option value="<%= item.id %>"><%= item.name %></option>
+			<% }); %>
+		</optgroup>
+		</script>
 
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+		<!-- price menu -->
+		<script type="text/template" id="price-menu-template">
+		<div class="priceMenu nav">
+		<a class="priceButton lowestNew" href="<%= productURL %>" data-price="<%= buyNowPrice %>" target="_blank"><span class="priceSource">Amazon:</span> <span class="priceValue"><%= buyNowPrice %></span></a>
+		<a class="priceToggle" data-toggle="dropdown" href="#"></a>
+		<ul class="dropdown-menu">
+		<li><a href="<%= offersURLNew %>" data-content="0" target="_blank"><span class="priceDesc">Lowest New:</span> <%= lowestNewPrice %></a></li>
+
+		<% if (lowestUsedPrice !== '') { %>
+			<li><a href="<%= offersURLUsed %>" data-content="1" target="_blank"><span class="priceDesc">Lowest Used:</span> <%= lowestUsedPrice %></a></li>
+			<% } %>
+			</ul>
+			</div>
+			</script>
+
+			<!-- description modal -->
+			<script type="text/template" id="description-modal-template">
+			<div class="modal-header">
+			<h3><%= itemData.name %></h3>
+			</div>
+			<div class="modal-body">
+			<%=itemData.description %>
+			</div>
+			<div class="modal-footer">
+			<a id="description_close_btn" href="#" class="btn btn-danger" data-dismiss="modal"><i class="icon-close"></i> Close</a>
+			</div>
+			</script>
+
+			<!-- GOOGLE ANALYTICS -->
+			<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-28923926-1']);
+			_gaq.push(['_trackPageview']);
+
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+			</script>
+
+			<!-- JAVASCRIPT LIBRARIES -->
+			<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+			<script src="http://static.gamedex.net/dist/lib.min.js"></script>
+			<script src="http://static.gamedex.net/dist/scripts.js"></script>
+
+			<script type="text/javascript">
+			/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'gamedex'; // required: replace example with your forum shortname
 
             /* * * DON'T EDIT BELOW THIS LINE * * */
             (function() {
-                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                dsq.src = 'http://gamedex.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            	var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            	dsq.src = 'http://gamedex.disqus.com/embed.js';
+            	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
             })();
-        </script>
+            </script>
 
-		<script type="text/javascript">
-		  var uvOptions = {};
-		  (function() {
-		    var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
-		    uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/qGjvu7G71cflSw5tCVc7jA.js';
-		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-		  })();
-		</script>
+            <script type="text/javascript">
+            var uvOptions = {};
+            (function() {
+            	var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+            	uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/qGjvu7G71cflSw5tCVc7jA.js';
+            	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+            })();
+            </script>
 
-	</body>
-</html>
+        </body>
+        </html>
