@@ -27,6 +27,42 @@
             <div class="form-horizontal">
                 <fieldset>
                     <div class="control-group">
+                        <div class="controls">
+                            <a id="clearLocalStorage_btn" href="#" class="btn btn-primary"><i class="icon-refresh"></i> Clear Local Storage</a>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <a id="deleteAccount_btn" href="#" class="btn btn-primary"><i class="icon-trashcan"></i> Delete Account</a>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>Success: </strong> <span class="alertText"></span>
+            </div>
+
+            <div class="alert alert-error">
+                <strong>Error: </strong> <span class="alertText"></span>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">Close</a>
+        </div>
+    </div>
+
+    <!-- UPDATE PROFILE MODAL -->
+    <div id="updateProfile-modal" class="modal hide fade">
+        <div class="modal-header">
+            <h3>Update Profile</h3>
+        </div>
+        <div class="modal-body">
+
+            <div class="form-horizontal">
+                <fieldset>
+                    <div class="usernameGroup control-group">
                         <label class="control-label">User Name</label>
                         <div class="controls">
                             <input class="input" id="userNameUpdateField" type="text" value="">
@@ -38,13 +74,52 @@
                             <input class="input" id="emailUpdateField" type="text" value="">
                         </div>
                     </div>
+                    <div class="existingPasswordGroup control-group well">
+                        <label class="control-label">Enter Password</label>
+                        <div class="controls">
+                            <input class="input" id="passwordField" type="password" value="">
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>Success: </strong> <span class="alertText"></span>
+            </div>
+
+            <div class="alert alert-error">
+                <strong>Error: </strong> <span class="alertText"></span>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">Close</a>
+            <a id="updateAccount_btn" href="#" class="btn btn-success"><i class="icon-checkmark"></i> Update Profile</a>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD MODAL -->
+    <div id="changePassword-modal" class="modal hide fade">
+        <div class="modal-header">
+            <h3>Change Password</h3>
+        </div>
+        <div class="modal-body">
+
+            <div class="form-horizontal">
+                <fieldset>
                     <div class="control-group">
                         <label class="control-label">New Password</label>
                         <div class="controls">
                             <input class="input" id="passwordUpdateField" type="password" value="">
                         </div>
                     </div>
-                    <div class="existingPasswordGroup control-group">
+                    <div class="control-group">
+                        <label class="control-label">Confirm Password</label>
+                        <div class="controls">
+                            <input class="input" id="passwordConfirmField" type="password" value="">
+                        </div>
+                    </div>
+                    <div class="existingPasswordGroup control-group well">
                         <label class="control-label">Existing Password</label>
                         <div class="controls">
                             <input class="input" id="passwordField" type="password" value="">
@@ -63,10 +138,8 @@
 
         </div>
         <div class="modal-footer">
-            <a id="deleteAccount_btn" href="#" class="btn">Delete Account</a>
-            <a id="clearLocalStorage_btn" href="#" class="btn btn-primary">Clear Storage</a>
             <a href="#" class="btn" data-dismiss="modal">Close</a>
-            <a id="updateAccount_btn" href="#" class="btn btn-success">Update Account</a>
+            <a id="changePassword_btn" href="#" class="btn btn-success"><i class="icon-checkmark"></i> Change Password</a>
         </div>
     </div>
 
@@ -476,7 +549,9 @@
                             <li class="dropdown">
                                 <a href="#" id="loggedInButton" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <span class="userEmail"></span> <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#" id="managementButton"><i class="icon-list-alt"></i> Account Management</a></li>
+                                    <li><a href="#" id="updateProfileButton"><i class="icon-user"></i> Update Profile</a></li>
+                                    <li><a href="#" id="managementButton"><i class="icon-list"></i> Account Management</a></li>
+                                    <li><a href="#" id="changePasswordButton"><i class="icon-key"></i> Change Password</a></li>
                                     <li><a href="#" id="logoutButton"><i class="icon-off"></i> Logout</a></li>
                                 </ul>
                             </li>
@@ -1253,7 +1328,7 @@
 
         <!-- JAVASCRIPT LIBRARIES -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-        <script src="http://static.gamedex.net/dist/lib.js"></script>
+        <script src="http://static.gamedex.net/dist/lib.min.js"></script>
         <script src="http://static.gamedex.net/dist/scripts.js"></script>
 
         <script type="text/javascript">

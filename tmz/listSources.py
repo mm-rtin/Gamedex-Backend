@@ -49,8 +49,13 @@ GT_PROMOTION_ID = 'ae8bcc1b-d7f8-4b5b-8854-fd2700a56990'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def popularList(request):
 
-    if 'platform' in request.GET:
+    # http://www.gamestats.com/index/gpm/xbox-360.html
+    url = GAMESTATS_BASE_URL
+    platform = 'all'
+
+    if 'platform' in request.GET and request.GET.get('platform') != '':
         platform = request.GET.get('platform')
+        url = GAMESTATS_BASE_URL + platform + '.html'
 
     # return memcached list if available
     gameStatsByGPM = memcache.get('gameStatsListByGPM_' + platform)
@@ -60,9 +65,6 @@ def popularList(request):
     # load list from source
     else:
 
-        # http://www.gamestats.com/index/gpm/xbox-360.html
-        url = GAMESTATS_BASE_URL + platform + '.html'
-
         # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
         # allow 30 seconds for response
         response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
@@ -70,7 +72,7 @@ def popularList(request):
         if response.status_code == 200:
 
             # parse game stats list result
-            gameStatsList = parsePopularList(response.content)
+            gameStatsList = parsePopularList(response.content, platform)
 
             # cache game stats list for 1 day
             if not memcache.add('gameStatsListByGPM_' + platform, gameStatsList, 86400):
@@ -82,7 +84,7 @@ def popularList(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PARSE POPULAR LIST (GAMESTATS)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def parsePopularList(response):
+def parsePopularList(response, platform):
 
     list = []
 
@@ -91,6 +93,11 @@ def parsePopularList(response):
 
         # select all tr from 3rd table
         rowSel = CSSSelector('table:nth-child(3) tr')
+
+        # all platform has only 1 table
+        if (platform == 'all'):
+            rowSel = CSSSelector('table tr')
+
         # select all 2nd tds
         tdSel = CSSSelector('td:nth-child(2) a')
 
@@ -108,10 +115,10 @@ def parsePopularList(response):
                     list.append(listObj)
 
             except IndexError:
-                print('parsePopularList: IndexError')
+                logging.error('parsePopularList: IndexError')
 
     except:
-        print('parsePopularList: Parse Error')
+        logging.error('parsePopularList: Parse Error')
 
     # return list
     return list

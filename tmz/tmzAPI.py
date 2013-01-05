@@ -229,8 +229,20 @@ def updateUser(request):
                     user.user_email = request.POST.get('user_email')
                     save = True
                 if 'user_name' in request.POST:
-                    user.user_name = request.POST.get('user_name')
-                    save = True
+
+                    new_user_name = request.POST.get('user_name')
+                    try:
+                        Users.objects.get(user_name=new_user_name)
+
+                    # no user by that user name - continue to save
+                    except Users.DoesNotExist:
+                        user.user_name = request.POST.get('user_name')
+                        save = True
+
+                    # user name exists > return status error
+                    else:
+                        return HttpResponse(json.dumps({'status': 'username_exists'}), mimetype='application/json')
+
                 if 'user_new_password' in request.POST:
                     userNewPassword = request.POST.get('user_new_password')
                     user.user_password = hashlib.md5(userNewPassword).hexdigest()
