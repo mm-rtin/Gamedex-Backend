@@ -7,6 +7,9 @@ import urllib
 import urllib2
 import bottlenose
 
+from lxml.cssselect import CSSSelector
+from lxml import etree
+
 import json
 import logging
 
@@ -19,6 +22,111 @@ AMAZON_ASSOCIATE_TAG = 'codeco06-20'
 
 # giantbomb api properties
 GIANTBOMB_API_KEY = 'GIANTBOMB_API_KEY'
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# SEARCH STEAM
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def searchSteam(request):
+
+    # http://store.steampowered.com/search/suggest?term=searchTerms&f=games
+
+    if 'keywords' in request.GET:
+        keywords = request.GET.get('keywords')
+
+    # memcache key
+    memcacheKey = 'steamTitle_' + keywords
+
+    # return memcached search if available
+    steamSearch = memcache.get(memcacheKey)
+
+    if steamSearch is not None:
+        logging.info('')
+        logging.info('-------------- searchSteam CACHE HIT --------------')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
+        # return json
+        return HttpResponse(json.dumps(steamSearch), mimetype='application/json')
+
+    else:
+
+        logging.info('')
+        logging.info('-------------- searchSteam MISS --------------')
+        logging.info(memcacheKey)
+        logging.info('')
+        logging.info('')
+
+        url = 'http://store.steampowered.com/search/suggest?f=games&term=' + keywords
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+
+        searchList = parseSteamSearch(response.content)
+
+    return HttpResponse(json.dumps(searchList), mimetype='application/json')
+
+
+def parseSteamSearch(response):
+
+    searchList = []
+
+    try:
+        html = etree.HTML(response)
+
+        rowSel = CSSSelector('.match')
+        nameSel = CSSSelector('.match_name')
+        priceSel = CSSSelector('.match_price')
+
+        for row in rowSel(html):
+
+            try:
+                nameElement = nameSel(row)
+                priceElement = priceSel(row)
+
+                name = nameElement[0].text.strip()
+                price = priceElement[0].text.strip()
+                url = row.get('href')
+
+                steamObj = {'name': name, 'page': url, 'price': price}
+                searchList.append(steamObj)
+
+            except IndexError:
+                logging.error('parseSteamSearch: IndexError')
+
+    except:
+        logging.error('parseSteamSearch: Parse Error')
+
+    return searchList
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# CACHE STEAM
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def cacheSteam(request):
+
+    if all(k in request.GET for k in ('keywords', 'url', 'price')):
+
+        keywords = request.GET.get('keywords')
+        url = request.GET.get('url')
+        price = request.GET.get('price')
+
+        # construct object to cache
+        cachedObject = {
+            'url': url,
+            'price': price,
+        }
+
+        # memcache key
+        memcacheKey = 'steamTitle_' + keywords
+
+        # cache for 30 days
+        if not memcache.add(memcacheKey, cachedObject, 2592000):
+            logging.error('cacheSteam: Memcache set failed')
+            logging.error(memcacheKey)
+            return HttpResponse('FALSE', mimetype='text/html')
+
+    return HttpResponse('TRUE', mimetype='text/html')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -88,7 +196,7 @@ def cacheMetacritic(request):
 
     # cache for 7 days
     if not memcache.add(memcacheKey, cachedObject, 604800):
-        logging.error('searchMetacritic: Memcache set failed')
+        logging.error('cacheMetacritic: Memcache set failed')
         logging.error(memcacheKey)
         return HttpResponse('FALSE', mimetype='text/html')
 

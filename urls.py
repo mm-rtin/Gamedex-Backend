@@ -25,6 +25,10 @@ urlpatterns = patterns('',
     (r'^gametrailers/search/$', 'tmz.searchAPI.searchGametrailers'),
     (r'^gametrailers/cache/$', 'tmz.searchAPI.cacheGametrailers'),
 
+    # steam datasource
+    (r'^steam/search/$', 'tmz.searchAPI.searchSteam'),
+    (r'^steam/cache/$', 'tmz.searchAPI.cacheSteam'),
+
     # lists
     (r'^list/popular/$', 'tmz.listSources.popularList'),
     (r'^list/released/$', 'tmz.listSources.releasedList'),
