@@ -25,15 +25,25 @@
         <div class="modal-body">
 
             <div class="form-horizontal">
-                <fieldset>
+                <fieldset class="well">
                     <div class="control-group">
+                        <label class="control-label">Administration</label>
                         <div class="controls">
-                            <a id="clearLocalStorage_btn" href="#" class="btn btn-primary"><i class="icon-refresh"></i> Clear Local Storage</a>
+                            <a id="clearLocalStorage_btn" href="#" class="btn btn-primary">Clear Local Storage</a>
                         </div>
                     </div>
+                </fieldset>
+                <fieldset class="well">
                     <div class="control-group">
+                        <label class="control-label">Delete Account</label>
                         <div class="controls">
-                            <a id="deleteAccount_btn" href="#" class="btn btn-primary"><i class="icon-trashcan"></i> Delete Account</a>
+                            <a id="deleteAccount_btn" href="#" class="btn btn-primary">Delete Your Account</a>
+                        </div>
+                    </div>
+                    <div class="existingPasswordGroup control-group">
+                        <label class="control-label">Enter Password</label>
+                        <div class="controls">
+                            <input class="input" id="accountPasswordField" type="password" value="">
                         </div>
                     </div>
                 </fieldset>
@@ -50,6 +60,22 @@
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
+        </div>
+    </div>
+
+    <!-- DELETE USER CONFIRM MODAL -->
+    <div id="deleteAccountConfirm-modal" class="modal hide fade">
+        <div class="modal-header">
+            <h3>Confirm Account Deletion</h3>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-error" style="display: block; ">
+                <strong>Warning: </strong> <span class="alertText">Your account will be permanently deleted</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+            <a id="deleteAccountConfirm_btn" href="#" class="btn btn-danger">Delete My Account</a>
         </div>
     </div>
 
@@ -74,10 +100,10 @@
                             <input class="input" id="emailUpdateField" type="text" value="">
                         </div>
                     </div>
-                    <div class="existingPasswordGroup control-group well">
+                    <div class="existingPasswordGroup control-group">
                         <label class="control-label">Enter Password</label>
                         <div class="controls">
-                            <input class="input" id="passwordField" type="password" value="">
+                            <input class="input" id="profilePasswordField" type="password" value="">
                         </div>
                     </div>
                 </fieldset>
@@ -94,7 +120,7 @@
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
-            <a id="updateAccount_btn" href="#" class="btn btn-success"><i class="icon-checkmark"></i> Update Profile</a>
+            <a id="updateAccount_btn" href="#" class="btn btn-success">Update Profile</a>
         </div>
     </div>
 
@@ -107,22 +133,22 @@
 
             <div class="form-horizontal">
                 <fieldset>
-                    <div class="control-group">
+                    <div class="newPasswordGroup control-group">
                         <label class="control-label">New Password</label>
                         <div class="controls">
                             <input class="input" id="passwordUpdateField" type="password" value="">
                         </div>
                     </div>
-                    <div class="control-group">
+                    <div class="confirmPasswordGroup control-group">
                         <label class="control-label">Confirm Password</label>
                         <div class="controls">
                             <input class="input" id="passwordConfirmField" type="password" value="">
                         </div>
                     </div>
-                    <div class="existingPasswordGroup control-group well">
+                    <div class="existingPasswordGroup control-group">
                         <label class="control-label">Existing Password</label>
                         <div class="controls">
-                            <input class="input" id="passwordField" type="password" value="">
+                            <input class="input" id="existingPasswordField" type="password" value="">
                         </div>
                     </div>
                 </fieldset>
@@ -139,7 +165,7 @@
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
-            <a id="changePassword_btn" href="#" class="btn btn-success"><i class="icon-checkmark"></i> Change Password</a>
+            <a id="changePassword_btn" href="#" class="btn btn-success">Change Password</a>
         </div>
     </div>
 
@@ -155,7 +181,7 @@
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-            <a id="deleteListConfirm_btn" href="#" class="btn btn-danger"><i class="icon-trash"></i> Delete Tag</a>
+            <a id="deleteListConfirm_btn" href="#" class="btn btn-danger">Delete Tag</a>
         </div>
     </div>
 
@@ -547,9 +573,9 @@
                         <!-- RIGHT HEADER -->
                         <ul id="userMenu" class="nav pull-right">
                             <li class="dropdown">
-                                <a href="#" id="loggedInButton" class="dropdown-toggle" data-toggle="dropdown"><span class="userEmail"></span> <b class="caret"></b></a>
+                                <a href="#" id="loggedInButton" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i><span class="userEmail"></span> <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#" id="updateProfileButton"><i class="icon-user"></i> Update Profile</a></li>
+                                    <li><a href="#" id="updateProfileButton"><i class="icon-vcard"></i> Update Profile</a></li>
                                     <li><a href="#" id="managementButton"><i class="icon-list"></i> Account Management</a></li>
                                     <li><a href="#" id="changePasswordButton"><i class="icon-key"></i> Change Password</a></li>
                                     <li><a href="#" id="logoutButton"><i class="icon-off"></i> Logout</a></li>

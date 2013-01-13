@@ -169,8 +169,10 @@ def createUser(request):
                 else:
                     guid = str(uuid.uuid4())
 
-                user = Users(id=guid, user_email=userEmail, user_password=userPassword, user_secret_key='', user_name='')
-                user.save()
+                # generate username
+                username = generateUsername(userEmail)
+
+                user = Users(id=guid, user_email=userEmail, user_password=userPassword, user_secret_key='', user_name=username)
 
                 # generate secret key
                 secretKey = hashlib.md5(userEmail)
@@ -187,13 +189,77 @@ def createUser(request):
                 newList.save()
 
                 # construct json return object
-                data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey}
+                data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey, 'userName': username}
 
                 return HttpResponse(json.dumps(data), mimetype='application/json')
 
             # user exists
             else:
                 return HttpResponse(json.dumps({'status': 'user_exists'}), mimetype='application/json')
+        else:
+            return HttpResponse('missing_param', mimetype='text/plain', status='500')
+    else:
+        return HttpResponse('not_post', mimetype='text/plain', status='500')
+
+
+# GENERATE USERNAME
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def generateUsername(email):
+
+    name = email.split('@')[0]
+
+    # hash email address and pull first 3 digits
+    emailHash = str(int(hashlib.md5(email).hexdigest(), 16))[0:3]
+
+    # combine name and hash
+    username = name + emailHash
+
+    return username
+
+# DELETE USER
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def deleteUser(request):
+
+    if (request.POST):
+
+        if all(k in request.POST for k in ('uid', 'user_password')):
+
+            userID = request.POST.get('uid')
+            userPassword = request.POST.get('user_password')
+
+            # hash password
+            userPassword = hashlib.md5(userPassword).hexdigest()
+
+            # get user
+            try:
+                user = Users.objects.get(pk=userID, user_password=userPassword)
+            except Users.DoesNotExist:
+                user = None
+
+            if user:
+
+                # delete itemTagUser for user
+                try:
+                    itemTagUser = ItemTagUser.objects.filter(user=user)
+                    itemTagUser.delete()
+
+                except ItemTagUser.DoesNotExist:
+                    pass
+
+                # delete tags for user
+                try:
+                    tags = Tags.objects.filter(user=user)
+                    tags.delete()
+
+                except Tags.DoesNotExist:
+                    pass
+
+                # delete user
+                user.delete();
+
+                return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
+            else:
+                return HttpResponse(json.dumps({'status': 'incorrect_password'}), mimetype='application/json')
         else:
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
@@ -229,7 +295,6 @@ def updateUser(request):
                     user.user_email = request.POST.get('user_email')
                     save = True
                 if 'user_name' in request.POST:
-
                     new_user_name = request.POST.get('user_name')
                     try:
                         Users.objects.get(user_name=new_user_name)
@@ -388,10 +453,6 @@ def updatePassword(request):
             return HttpResponse('missing_param', mimetype='text/plain', status='500')
     else:
         return HttpResponse('not_post', mimetype='text/plain', status='500')
-
-
-# DELETE USER
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 

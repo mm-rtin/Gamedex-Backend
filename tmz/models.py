@@ -20,6 +20,9 @@ class Users(models.Model):
     user_reset_code = models.CharField(max_length=256, blank=True, null=True)
     user_update_timestamp = models.CharField(max_length=32, blank=True, null=True)
 
+    user_account_created = models.DateTimeField(auto_now=False, auto_now_add=True)
+    user_account_last_login = models.DateTimeField(auto_now=True, auto_now_add=True)
+
     class Meta:
         verbose_name_plural = 'Users'
 
@@ -29,6 +32,9 @@ class Tags(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
     user = models.ForeignKey('Users')
     list_name = models.CharField(max_length=128)
+
+    list_date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
+    list_date_last_modfied = models.DateTimeField(auto_now=True, auto_now_add=True)
 
     class Meta:
         verbose_name_plural = 'Lists'
@@ -44,6 +50,9 @@ class ItemTagUser(models.Model):
     item_gameStatus = models.CharField(max_length=16, blank=True, null=True)
     item_playStatus = models.CharField(max_length=16, blank=True, null=True)
     item_userRating = models.CharField(max_length=3, blank=True, null=True)
+
+    item_date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
+    item_date_last_modfied = models.DateTimeField(auto_now=True, auto_now_add=True)
 
 
 # LIST ITEMS
@@ -62,6 +71,9 @@ class Items(models.Model):
     item_thumbnailImage = models.CharField(max_length=512, blank=True, null=True)
     item_largeImage = models.CharField(max_length=512, blank=True, null=True)
     item_disqusID = models.SmallIntegerField(max_length=10, blank=True, null=True)
+
+    item_date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
+    item_date_last_modfied = models.DateTimeField(auto_now=True, auto_now_add=True)
 
     class Meta:
         verbose_name_plural = 'ListItems'
