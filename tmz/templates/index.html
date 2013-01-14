@@ -829,10 +829,10 @@
                                                                 <ul class="nav nav-list">
                                                                     <li id="platform"><a href="#"><i class="icon-tag"></i> <span class="data"></span></a></li>
                                                                     <li id="releaseDate"><a href="#"><i class="icon-time"></i> <span class="data"></span></a></li>
-                                                                    <li id="giantBombPage"><a href="#" target="_blank"><i class="icon-list-alt"></i> GiantBomb Page</a></li>
+                                                                    <li id="giantBombPage"><a href="#" target="_blank"><i class="icon-gamepad"></i> GiantBomb Page</a></li>
                                                                     <li id="gametrailersPage"><a href="#" target="_blank"><i class="icon-film"></i> Gametrailers Page</a></li>
                                                                     <li id="metacriticPage"><a href="#" target="_blank"><i class="icon-eye"></i> Metacritic Page</a></li>
-                                                                    <li id="wikipediaPage"><a href="#" target="_blank"><i class="icon-book"></i> Wikipedia Entry</a></li>
+                                                                    <li id="wikipediaPage"><a href="#" target="_blank"><i class="icon-wikipedia"></i> Wikipedia Entry</a></li>
                                                                     <li id="priceHeader" class="nav-header">Prices</li>
                                                                     <li id="amazonPriceNew"><a href="#" target="_blank"><i class="icon-amazon"></i> New: <span class="data"></span></a></li>
                                                                     <li id="amazonPriceUsed"><a href="#" target="_blank"><i class="icon-amazon"></i> Used: <span class="data"></span></a></li>
@@ -1314,6 +1314,19 @@
                     <% if (lowestUsedPrice !== '') { %>
                     <li><a href="<%= offersURLUsed %>" data-content="1" target="_blank"><span class="priceDesc">Lowest Used:</span> <%= lowestUsedPrice %></a></li>
                     <% } %>
+                </ul>
+            </div>
+        </script>
+
+        <!-- steam price menu -->
+        <script type="text/template" id="steam-price-menu-template">
+            <div class="priceMenu nav">
+                <a class="priceButton lowestNew" href="<%= steamPage %>" data-price="<%= steamPrice %>" target="_blank"><span class="priceSource">Steam:</span> <span class="priceValue"><%= steamPrice %></span></a>
+                <a class="priceToggle" data-toggle="dropdown" href="#"></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="<%= steamPage %>" data-content="0" target="_blank"><span class="priceDesc">Steam Page:</span> <%= steamPageDisplay %></a>
+                    </li>
                 </ul>
             </div>
         </script>

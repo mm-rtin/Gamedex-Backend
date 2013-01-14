@@ -31,7 +31,6 @@ GIANTBOMB_API_KEY = 'GIANTBOMB_API_KEY'
 def searchSteam(request):
 
     # http://store.steampowered.com/search/suggest?term=searchTerms&f=games
-
     if 'keywords' in request.GET:
         keywords = request.GET.get('keywords')
 
