@@ -1473,6 +1473,10 @@ def importGames(request):
                 elif (source == 2):
                     logging.info('XBL')
 
+                    # get linked game information
+                    importedTitles = gameSources.getXBLGames(sourceUser)
+
+
                 return HttpResponse(json.dumps(importedTitles), mimetype='application/json')
             else:
                 return HttpResponse(json.dumps({'status': 'user not found'}), mimetype='application/json')

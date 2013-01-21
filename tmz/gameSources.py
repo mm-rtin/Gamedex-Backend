@@ -123,18 +123,52 @@ def getPSNGames(id):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # getXBLGames
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def getXBLGames(request):
+def getXBLGames(id):
 
-    if 'id' in request.GET:
+    # convert spaces to +
+    id = id.replace(' ', '+')
 
-        # xboxapi url
-        url = 'https://xboxapi.com/games/%s' % (request.GET.get('id'))
+    # url
+    url = 'http://www.xboxgamertag.com/search/%s' % (id)
 
-        headers = {}
+    headers = {'Accept-Encoding': 'gzip'}
 
-        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-        # allow 30 seconds for response
-        response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30, True)
+    # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+    # allow 30 seconds for response
+    response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30, True)
 
-        if response.status_code == 200:
-            return HttpResponse(response.content, mimetype='application/json')
+    # decompress
+    f = StringIO.StringIO(response.content)
+    c = gzip.GzipFile(fileobj=f)
+    content = c.read()
+
+    logging.info(content)
+
+    # valid response - begin parse
+    if response.status_code == 200:
+
+        # game titles imported
+        importedTitles = []
+
+        # iterate game list
+        html = etree.HTML(content)
+
+        titleSectionSel = CSSSelector('#recentGamesTable tr')
+        titleSel = CSSSelector('.gameName a')
+
+        # for each game > get title
+        for row in titleSectionSel(html):
+
+            try:
+                titleElement = titleSel(row)
+
+                # get game title as plain ascii and remove non-ascii characters
+                gameTitle = titleElement[0].text.encode('ascii', 'ignore').strip()
+
+                # add title
+                importedTitles.append(gameTitle)
+
+            except IndexError:
+                logging.error('XBL Import: IndexError')
+
+        return importedTitles
