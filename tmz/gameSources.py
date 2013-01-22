@@ -1,7 +1,5 @@
 from google.appengine.api import urlfetch
 
-from django.http import HttpResponse
-
 from lxml.cssselect import CSSSelector
 from lxml import etree
 
