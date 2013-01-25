@@ -446,7 +446,7 @@
                                     <button type="button" class="btn" data-content="0">Not Started</button>
                                     <button type="button" class="btn" data-content="1">Playing</button>
                                     <button type="button" class="btn" data-content="2">Played</button>
-                                    <button type="button" class="btn" data-content="3">Finished</button>
+                                    <button type="button" class="btn" data-content="3">Completed</button>
                                 </div>
                             </div>
                         </div>
@@ -548,7 +548,7 @@
                                     <li><a href="#" data-content="3">Never Played</a></li>
                                     <li><a href="#" data-content="4">Playing</a></li>
                                     <li><a href="#" data-content="5">Played</a></li>
-                                    <li><a href="#" data-content="6">Finished </a></li>
+                                    <li><a href="#" data-content="6">Completed </a></li>
                                     <li class="divider"></li>
                                     <li><a href="#" data-content="7">Owned</a></li>
                                     <li><a href="#" data-content="8">Wanted</a></li>
@@ -871,7 +871,7 @@
                                                                                     <li><a href="#" data-content="0">Not Started</a></li>
                                                                                     <li><a href="#" data-content="1">Playing</a></li>
                                                                                     <li><a href="#" data-content="2">Played</a></li>
-                                                                                    <li><a href="#" data-content="3">Finished</a></li>
+                                                                                    <li><a href="#" data-content="3">Completed</a></li>
                                                                                 </ul>
                                                                             </div>
                                                                         </div>
@@ -1006,7 +1006,7 @@
                                                     <li><a href="#" data-content="3">Never Played</a></li>
                                                     <li><a href="#" data-content="4">Playing</a></li>
                                                     <li><a href="#" data-content="5">Played</a></li>
-                                                    <li><a href="#" data-content="6">Finished </a></li>
+                                                    <li><a href="#" data-content="6">Completed </a></li>
                                                     <li class="divider"></li>
                                                     <li><a href="#" data-content="7">Owned</a></li>
                                                     <li><a href="#" data-content="8">Wanted</a></li>
@@ -1093,6 +1093,8 @@
                 </div>
 
             </div>
+
+            <a id="whiskyPoweredIcon" href="http://www.giantbomb.com/" target="_blank"></a>
         </div>
 
 
@@ -1230,7 +1232,7 @@
                                     <div class="quickAttributes" data-content="<%= item.id %>">
                                         <span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying" href="#" rel="tooltip" data-content="0" data-original-title="Playing"></a></span>
                                         <span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed" href="#" rel="tooltip" data-content="1" data-original-title="Played"></a></span>
-                                        <span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" rel="tooltip" data-content="2" data-original-title="Finished"></a></span>
+                                        <span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" rel="tooltip" data-content="2" data-original-title="Completed"></a></span>
                                         <span class="rating-<%= item.userRating %>"><a class="attrFavorite" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"></a></span>
                                         <span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned" href="#" rel="tooltip" data-content="4" data-original-title="Owned"></a></span>
                                     </div>
@@ -1257,7 +1259,7 @@
                             <ul class="nav nav-list">
                                 <li class="platform"><i class="icon-tag"></i> <span class="data"><%= item.platform %></span></li>
                                 <li class="calendarDate"><i class="icon-time"></i> <span class="data"><%= item.calendarDate %></span></li>
-                                <li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye-open"></i> Metascore: <%= item.displayMetascore %></a></li>
+                                <li class="metascoreDisplay"><a href="http://www.metacritic.com<%= item.metascorePage %>" target="_blank"><i class="icon-eye"></i> Metascore: <%= item.displayMetascore %></a></li>
                                 <% if (typeof item.offers.buyNowPrice !== 'undefined' && item.offers.buyNowPrice !== '') { %>
                                 <li class="price"><a href="<%= item.offers.productURL %>" target="_blank"><i class="icon-shopping-cart"></i> <span class="data">$<%= item.offers.buyNowPrice %></span></a></li>
                                 <% } %>

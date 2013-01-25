@@ -84,6 +84,10 @@ urlpatterns = patterns('',
 
     (r'^createDisqusCategory/$', 'tmz.tmzAPI.createDisqusCategory'),
 
+    # experiments
+    (r'^getDirectory/$', 'tmz.views.getDirectory'),
+    (r'^getDirectory2/$', 'tmz.experiment.getDirectory2'),
+
     # catch all
     (r'^.*/$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
 

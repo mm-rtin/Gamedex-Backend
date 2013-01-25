@@ -13,7 +13,7 @@ inbound_services:
 
 libraries:
 - name: django
-  version: latest
+  version: 1.4
 
 - name: lxml
   version: latest
@@ -23,16 +23,9 @@ libraries:
 
 
 handlers:
-- url: /_ah/queue/deferred
-  script: djangoappengine.deferred.handler.application
-  login: admin
-
-- url: /_ah/stats/.*
-  script: djangoappengine.appstats.application
-
-- url: /media/admin
-  static_dir: django/contrib/admin/media
-  expiration: '0'
 
 - url: /.*
-  script: djangoappengine.main.application
+  script: main.application
+
+- url: /stats.*
+  script: google.appengine.ext.appstats.ui.app

@@ -1,79 +1,68 @@
-from django.db import models
+from google.appengine.ext import ndb
 
 
 # API KEYS
-class ApiKeys(models.Model):
-    keyName = models.CharField(max_length=1024)
-    keyValue = models.CharField(max_length=1024)
-
-    class Meta:
-        verbose_name_plural = 'ApiKeys'
+class ApiKeys(ndb.Model):
+    keyName = ndb.StringProperty()
+    keyValue = ndb.StringProperty()
 
 
 # USERS
-class Users(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
-    user_name = models.CharField(max_length=128, blank=True, null=True)
-    user_password = models.CharField(max_length=128)
-    user_email = models.CharField(max_length=256)
-    user_secret_key = models.CharField(max_length=256)
-    user_reset_code = models.CharField(max_length=256, blank=True, null=True)
-    user_update_timestamp = models.CharField(max_length=32, blank=True, null=True)
+class Users(ndb.Model):
+    id = ndb.KeyProperty()
+    user_name = ndb.StringProperty(required=False)
+    user_password = ndb.StringProperty()
+    user_email = ndb.StringProperty()
+    user_secret_key = ndb.StringProperty()
+    user_reset_code = ndb.StringProperty(required=False)
+    user_update_timestamp = ndb.StringProperty(required=False)
 
-    user_account_created = models.DateTimeField(auto_now=False, auto_now_add=True)
-    user_account_last_login = models.DateTimeField(auto_now=True, auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = 'Users'
+    user_account_created = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
+    user_account_last_login = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
 
 
 # TAGS
-class Tags(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
-    user = models.ForeignKey('Users')
-    list_name = models.CharField(max_length=128)
+class Tags(ndb.Model):
+    id = ndb.KeyProperty()
+    user = ndb.KeyProperty(kind=Users)
+    list_name = ndb.StringProperty()
 
-    list_date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
-    list_date_last_modfied = models.DateTimeField(auto_now=True, auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = 'Lists'
-
-
-# ITEMS to TAGS to USERS link table
-class ItemTagUser(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
-    user = models.ForeignKey('Users')
-    tag = models.ForeignKey('Tags')
-    item = models.ForeignKey('Items')
-    item_note = models.TextField(blank=True, null=True)
-    item_gameStatus = models.CharField(max_length=16, blank=True, null=True)
-    item_playStatus = models.CharField(max_length=16, blank=True, null=True)
-    item_userRating = models.CharField(max_length=3, blank=True, null=True)
-
-    item_date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
-    item_date_last_modfied = models.DateTimeField(auto_now=True, auto_now_add=True)
-
+    list_date_added = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
+    list_date_last_modfied = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
 
 # LIST ITEMS
-class Items(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
-    item_initialProvider = models.CharField(max_length=32)
-    item_name = models.CharField(max_length=128)
-    item_asin = models.CharField(max_length=16, blank=True, null=True)
-    item_gbombID = models.CharField(max_length=16, blank=True, null=True)
-    item_metacriticPage = models.CharField(max_length=512, blank=True, null=True)
-    item_metascore = models.SmallIntegerField(max_length=3, blank=True, null=True)
-    item_releasedate = models.DateField(blank=True, null=True)
-    item_platform = models.CharField(max_length=32, blank=True, null=True)
-    item_imageBaseURL = models.CharField(max_length=512, blank=True, null=True)
-    item_smallImage = models.CharField(max_length=512, blank=True, null=True)
-    item_thumbnailImage = models.CharField(max_length=512, blank=True, null=True)
-    item_largeImage = models.CharField(max_length=512, blank=True, null=True)
-    item_disqusID = models.SmallIntegerField(max_length=10, blank=True, null=True)
+class Items(ndb.Model):
+    id = ndb.KeyProperty()
+    item_initialProvider = ndb.StringProperty()
+    item_name = ndb.StringProperty()
+    item_asin = ndb.StringProperty(required=False)
+    item_gbombID = ndb.StringProperty(required=False)
+    item_metacriticPage = ndb.StringProperty(required=False)
+    item_metascore = ndb.IntegerProperty(required=False)
+    item_releasedate = ndb.DateProperty(required=False)
+    item_platform = ndb.StringProperty(required=False)
+    item_imageBaseURL = ndb.StringProperty(required=False)
+    item_smallImage = ndb.StringProperty(required=False)
+    item_thumbnailImage = ndb.StringProperty(required=False)
+    item_largeImage = ndb.StringProperty(required=False)
+    item_disqusID = ndb.IntegerProperty(required=False)
 
-    item_date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
-    item_date_last_modfied = models.DateTimeField(auto_now=True, auto_now_add=True)
+    item_date_added = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
+    item_date_last_modfied = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
 
-    class Meta:
-        verbose_name_plural = 'ListItems'
+# ITEMS to TAGS to USERS link table
+class ItemTagUser(ndb.Model):
+    id = ndb.KeyProperty()
+    user = ndb.KeyProperty(kind=Users)
+    tag = ndb.KeyProperty(kind=Tags)
+    item = ndb.KeyProperty(kind=Items)
+    item_note = ndb.TextProperty(required=False)
+    item_gameStatus = ndb.StringProperty(required=False)
+    item_playStatus = ndb.StringProperty(required=False)
+    item_userRating = ndb.StringProperty(required=False)
+
+    item_date_added = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
+    item_date_last_modfied = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
+
+
+
