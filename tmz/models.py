@@ -9,21 +9,19 @@ class ApiKeys(ndb.Model):
 
 # USERS
 class Users(ndb.Model):
-    id = ndb.KeyProperty()
     user_name = ndb.StringProperty(required=False)
     user_password = ndb.StringProperty()
     user_email = ndb.StringProperty()
     user_secret_key = ndb.StringProperty()
     user_reset_code = ndb.StringProperty(required=False)
     user_update_timestamp = ndb.StringProperty(required=False)
+    user_admin = ndb.BooleanProperty(required=False, default=False)
 
     user_account_created = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
     user_account_last_login = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
 
-
 # TAGS
 class Tags(ndb.Model):
-    id = ndb.KeyProperty()
     user = ndb.KeyProperty(kind=Users)
     list_name = ndb.StringProperty()
 
@@ -32,13 +30,12 @@ class Tags(ndb.Model):
 
 # LIST ITEMS
 class Items(ndb.Model):
-    id = ndb.KeyProperty()
     item_initialProvider = ndb.StringProperty()
     item_name = ndb.StringProperty()
     item_asin = ndb.StringProperty(required=False)
     item_gbombID = ndb.StringProperty(required=False)
     item_metacriticPage = ndb.StringProperty(required=False)
-    item_metascore = ndb.IntegerProperty(required=False)
+    item_metascore = ndb.StringProperty(required=False)
     item_releasedate = ndb.DateProperty(required=False)
     item_platform = ndb.StringProperty(required=False)
     item_imageBaseURL = ndb.StringProperty(required=False)
@@ -52,7 +49,6 @@ class Items(ndb.Model):
 
 # ITEMS to TAGS to USERS link table
 class ItemTagUser(ndb.Model):
-    id = ndb.KeyProperty()
     user = ndb.KeyProperty(kind=Users)
     tag = ndb.KeyProperty(kind=Tags)
     item = ndb.KeyProperty(kind=Items)

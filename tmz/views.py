@@ -8,9 +8,6 @@ from google.appengine.ext import ndb
 
 from django.core import serializers
 
-import logging
-import json
-
 
 # database models
 from tmz.models import Users, Items, Tags, ItemTagUser

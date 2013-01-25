@@ -13,10 +13,7 @@ class Keys(object):
     def setKey(keyName, keyValue):
 
         # get existing key
-        try:
-            apiKey = ApiKeys.objects.get(keyName=keyName)
-        except ApiKeys.DoesNotExist:
-            apiKey = None
+        apiKey = ApiKeys.query(ApiKeys.keyName == keyName).get()
 
         # update existing keyName
         if apiKey:
@@ -30,7 +27,7 @@ class Keys(object):
                 keyValue=keyValue
             )
 
-        apiKey.save()
+        apiKey.put()
 
         # save to memcache
         if not memcache.add(keyName, keyValue):
@@ -52,15 +49,13 @@ class Keys(object):
         if not apiKey:
 
             # fetch from ApiKeys table
-            try:
-                apiKeyRecord = ApiKeys.objects.get(keyName=keyName)
+            apiKeyRecord = ApiKeys.query(ApiKeys.keyName == keyName).get()
+
+            if apiKeyRecord:
                 # save to memcache
                 if not memcache.add(apiKeyRecord.keyName, apiKeyRecord.keyValue):
                     logging.error('memcache set failed')
 
-                apiKey = apiKeyRecord.keyValue
-
-            except ApiKeys.DoesNotExist:
-                apiKey = None
+            apiKey = apiKeyRecord.keyValue
 
         return str(apiKey)

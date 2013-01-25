@@ -1,7 +1,9 @@
 from django.http import HttpResponse
 from google.appengine.api import mail
+from google.appengine.ext import ndb
 
 import hashlib
+import datetime
 import time
 import uuid
 import random
@@ -23,7 +25,7 @@ import gameSources
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# LOGIN
+# LOGIN #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def login(request):
 
@@ -39,10 +41,7 @@ def login(request):
             userPassword = hashlib.md5(userPassword).hexdigest()
 
             # validate login
-            try:
-                user = Users.objects.get(user_email=userEmail, user_password=userPassword)
-            except Users.DoesNotExist:
-                user = None
+            user = Users.query(Users.user_email == userEmail, Users.user_password == userPassword).get()
 
             if user:
 
@@ -53,10 +52,10 @@ def login(request):
 
                 # save secret key
                 user.user_secret_key = secretKey
-                user.save()
+                user.put()
 
                 # construct json return object
-                data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey, 'timestamp': user.user_update_timestamp, 'userName': user.user_name}
+                data = {'status': 'success', 'userID': user.key.urlsafe(), 'secretKey': secretKey, 'timestamp': user.user_update_timestamp, 'userName': user.user_name}
 
                 return HttpResponse(json.dumps(data), mimetype='application/json')
             else:
@@ -67,7 +66,7 @@ def login(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# LOGOUT
+# LOGOUT #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def logout(request):
 
@@ -80,15 +79,12 @@ def logout(request):
             secretKey = request.POST.get('uk')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            user = ndb.Key(urlsafe=userID).get()
 
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # set key back to '1' for demo user
-                if userID == '1':
+                if user.user_admin == True:
                     secretKey = '1'
 
                 # generate secret key
@@ -99,9 +95,10 @@ def logout(request):
 
                 # save secret key
                 user.user_secret_key = secretKey
-                user.save()
+                user.put()
 
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
+
             else:
                 return HttpResponse(json.dumps({'status': 'failed'}), mimetype='application/json')
         else:
@@ -122,10 +119,7 @@ def user(request):
             userName = request.POST.get('user_name')
 
             # find user
-            try:
-                user = Users.objects.get(user_name=userName)
-            except Users.DoesNotExist:
-                user = None
+            user = Users.query(Users.user_name == userName).get()
 
             if user:
                 # construct json return object
@@ -140,7 +134,7 @@ def user(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# CREATE USER
+# CREATE USER - #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def createUser(request):
 
@@ -153,10 +147,7 @@ def createUser(request):
             userPassword = request.POST.get('user_password')
 
             # check existing email
-            try:
-                user = Users.objects.get(user_email=userEmail)
-            except Users.DoesNotExist:
-                user = None
+            user = Users.query(Users.user_email == userEmail).get()
 
             # user does not exist: create new user
             if user == None:
@@ -164,32 +155,28 @@ def createUser(request):
                 userPassword = hashlib.md5(userPassword).hexdigest()
 
                 # create user
-                if userEmail == 'demo@gamedex.net':
-                    guid = '1'
-                else:
-                    guid = str(uuid.uuid4())
-
                 # generate username
                 username = generateUsername(userEmail)
-
-                user = Users(id=guid, user_email=userEmail, user_password=userPassword, user_secret_key='', user_name=username)
 
                 # generate secret key
                 secretKey = hashlib.md5(userEmail)
                 secretKey.update(str(time.time()))
                 secretKey = secretKey.hexdigest()
 
-                # save secret key
-                user.user_secret_key = secretKey
-                user.save()
+                # create user
+                user = Users(user_email=userEmail, user_password=userPassword, user_secret_key=secretKey, user_name=username)
+
+                if userEmail == 'demo@gamedex.net':
+                    user.user_admin = True
+
+                userKey = user.put()
 
                 # create default list
-                listguid = str(uuid.uuid4())
-                newList = Tags(id=listguid, user=user, list_name='wishlist')
-                newList.save()
+                newList = Tags(user=userKey, list_name='wishlist')
+                newList.put()
 
                 # construct json return object
-                data = {'status': 'success', 'userID': user.pk, 'secretKey': secretKey, 'userName': username}
+                data = {'status': 'success', 'userID': userKey.urlsafe(), 'secretKey': secretKey, 'userName': username}
 
                 return HttpResponse(json.dumps(data), mimetype='application/json')
 
@@ -482,8 +469,7 @@ def createList(request):
             except Users.DoesNotExist:
                 user = None
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # get list
                 try:
@@ -516,7 +502,7 @@ def createList(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# READ TAGS
+# READ TAGS #DONE#
 # return a list of tags
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getList(request):
@@ -532,26 +518,23 @@ def getList(request):
             # get user by username
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
-                try:
-                    user = Users.objects.get(user_name=userName)
-                except Users.DoesNotExist:
-                    user = None
+
+                userKey = Users.query(Users.user_name == userName)
+                user = userKey.get()
 
             # get user by userid
             else:
-                try:
-                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-                except Users.DoesNotExist:
-                    user = None
+                userKey = ndb.Key(urlsafe=userID)
+                user = userKey.get()
 
             # user found
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 listDictionary = {'list': []}
 
                 # get lists
                 try:
-                    lists = Tags.objects.filter(user=user)
+                    lists = Tags.query(Tags.user == userKey)
                 except Tags.DoesNotExist:
                     lists = None
 
@@ -561,7 +544,7 @@ def getList(request):
                     usersList = []
                     # construct python dictionary
                     for item in lists:
-                        usersList.append({'tagID': item.pk, 'tagName': item.list_name})
+                        usersList.append({'tagID': item.key.urlsafe(), 'tagName': item.list_name})
 
                     listDictionary = {'list': usersList}
 
@@ -604,8 +587,7 @@ def updateList(request):
             except Users.DoesNotExist:
                 user = None
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
@@ -660,8 +642,7 @@ def deleteList(request):
             except Users.DoesNotExist:
                 user = None
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
@@ -744,43 +725,36 @@ def createListItem(request):
             updateTimestamp = request.POST.get('ts')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            itemKey = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
             # get existing item based on initial provider
-            try:
-                existingItem = None
+            existingItem = None
 
-                # amazon provider
-                if initialProvider == '0':
-                    existingItem = Items.objects.get(item_asin=asin, item_initialProvider='0')
-                # giantbomb provider
-                elif initialProvider == '1':
-                    existingItem = Items.objects.get(item_gbombID=gbombID, item_initialProvider='1', item_platform=platform)
+            # amazon provider
+            if initialProvider == '0':
+                existingItem = Items.query(Items.item_asin == asin, Items.item_initialProvider == '0').get()
+            # giantbomb provider
+            elif initialProvider == '1':
+                existingItem = Items.query(Items.item_gbombID == gbombID, Items.item_initialProvider == '1', Items.item_platform == platform).get()
 
-            except Items.DoesNotExist:
-                existingItem = None
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
                 # create new item
-                if (existingItem is None):
+                if existingItem == None:
 
-                    guid = str(uuid.uuid4())
                     item = Items(
-                        id=guid,
                         item_asin=asin,
                         item_gbombID=gbombID,
                         item_initialProvider=initialProvider,
                         item_name=itemName,
-                        item_releasedate=releaseDate,
+                        item_releasedate=datetime.datetime.strptime(releaseDate, '%Y-%m-%d').date(),
                         item_platform=platform,
                         item_imageBaseURL=imageBaseURL,
                         item_smallImage=smallImage,
@@ -792,48 +766,47 @@ def createListItem(request):
 
                     # prevent demo account from saving data
                     if (secretKey != '1'):
-                        item.save()
+                        itemKey = item.put()
 
                 # item already exists, use instead
                 else:
                     item = existingItem
+                    itemKey = existingItem.key
 
                 # create link between Item, Tag and User for multiple tags
                 tagIDsAdded = []
                 idsAdded = []
 
                 for tagID in tagIDs:
-                    guid = str(uuid.uuid4())
 
                     # prevent demo account from saving data
                     if (secretKey != '1'):
 
                         # get tag
-                        tag = Tags.objects.get(pk=tagID)
+                        tagKey = ndb.Key(urlsafe=tagID)
 
                         # get existing ItemTagUser
-                        try:
-                            ItemTagUser.objects.get(item=item, tag=tag, user=user)
+                        itemTagUser = ItemTagUser.query(ItemTagUser.item == itemKey, ItemTagUser.tag == tagKey, ItemTagUser.user == userKey).get()
 
-                        except ItemTagUser.DoesNotExist:
-
+                        if itemTagUser == None:
                             # create link
                             link = ItemTagUser(
-                                id=guid,
-                                user=user,
-                                tag=tag,
-                                item=item,
+                                user=userKey,
+                                tag=tagKey,
+                                item=itemKey,
                                 item_gameStatus=gameStatus,
                                 item_playStatus=playStatus,
                                 item_userRating=userRating,
                             )
-                            link.save()
+                            itemTagUserKey = link.put()
+                        else:
+                            itemTagUserKey = itemTagUser.key
 
                     # record item ids and tag ids that have been added
-                    tagIDsAdded.append(tagID)
-                    idsAdded.append(guid)
+                    tagIDsAdded.append(tagKey.urlsafe())
+                    idsAdded.append(itemTagUserKey.urlsafe())
 
-                returnData = {'idsAdded': idsAdded, 'itemID': item.pk, 'tagIDsAdded': tagIDsAdded}
+                returnData = {'idsAdded': idsAdded, 'itemID': itemKey.urlsafe(), 'tagIDsAdded': tagIDsAdded}
 
                 return HttpResponse(json.dumps(returnData), mimetype='application/json')
 
@@ -881,8 +854,7 @@ def updateUserItem(request):
             except ItemTagUser.DoesNotExist:
                 links = None
 
-            # validate secretKey against user
-            if user and links is not None:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
@@ -936,8 +908,7 @@ def updateMetacritic(request):
             except Items.DoesNotExist:
                 item = None
 
-            # validate secretKey against user
-            if user and item is not None:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
@@ -998,8 +969,7 @@ def updateSharedItem(request):
             except Items.DoesNotExist:
                 item = None
 
-            # validate secretKey against user
-            if user and item is not None:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
@@ -1025,7 +995,7 @@ def updateSharedItem(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# READ ITEMS
+# READ ITEMS #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getListItems(request):
 
@@ -1041,41 +1011,30 @@ def getListItems(request):
             # get user by username
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
-                try:
-                    user = Users.objects.get(user_name=userName)
-                except Users.DoesNotExist:
-                    user = None
+                userKey = Users.query(Users.user_name == userName)
+                user = userKey.get()
 
             # get user by userid
             else:
-                try:
-                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-                except Users.DoesNotExist:
-                    user = None
+                userKey = ndb.Key(urlsafe=userID)
+                user = userKey.get()
 
-            # get existing list by tagID
-            try:
-                existingTag = Tags.objects.get(pk=tagID)
-            except Tags.DoesNotExist:
-                existingTag = None
 
             # empty dictionary
             itemDictionary = {'items': []}
 
             # user found
-            if user and (existingTag or tagID == '0'):
+            if user and user.user_secret_key == secretKey:
 
-                # get tag items
-                try:
-                    # items for all tags
-                    if tagID == '0':
-                        itemTagUsers = ItemTagUser.objects.filter(user=user)
-                    # items filtered by tag
-                    else:
-                        itemTagUsers = ItemTagUser.objects.filter(user=user, tag=existingTag)
+                # items for all tags
+                if tagID == '0':
+                    itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey).fetch(20)
 
-                except ItemTagUser.DoesNotExist:
-                    itemTagUsers = None
+                # items filtered by tag
+                else:
+                    existingTagKey = ndb.Key(urlsafe=tagID)
+                    itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey, ItemTagUser.tag == existingTagKey).fetch(20)
+
 
                 # list items found
                 if itemTagUsers:
@@ -1086,27 +1045,29 @@ def getListItems(request):
                     # construct python dictionary
                     for items in itemTagUsers:
 
-                        if (items.item.pk not in addedItemIDs):
+                        item = items.item.get()
+
+                        if (items.item.urlsafe() not in addedItemIDs):
 
                             # add item to userListItems
                             usersListItems.append({
-                                'ip': items.item.item_initialProvider,
-                                'iid': items.item.pk,
-                                'aid': items.item.item_asin,
-                                'gid': items.item.item_gbombID,
-                                'n': items.item.item_name,
-                                'rd': str(items.item.item_releasedate),
-                                'p': items.item.item_platform,
-                                'ib': items.item.item_imageBaseURL,
-                                'si': items.item.item_smallImage,
-                                'ti': items.item.item_thumbnailImage,
-                                'li': items.item.item_largeImage,
-                                'ms': items.item.item_metascore,
-                                'mp': items.item.item_metacriticPage
+                                'ip': item.item_initialProvider,
+                                'iid': item.key.urlsafe(),
+                                'aid': item.item_asin,
+                                'gid': item.item_gbombID,
+                                'n': item.item_name,
+                                'rd': str(item.item_releasedate),
+                                'p': item.item_platform,
+                                'ib': item.item_imageBaseURL,
+                                'si': item.item_smallImage,
+                                'ti': item.item_thumbnailImage,
+                                'li': item.item_largeImage,
+                                'ms': item.item_metascore,
+                                'mp': item.item_metacriticPage
                             })
 
                             # add to list of itemIDs added - prevent multiple distinct items (by itemID) from appearing in 'view all list'
-                            addedItemIDs.append(items.item.pk)
+                            addedItemIDs.append(items.item.urlsafe())
 
                     itemDictionary = {'items': usersListItems}
 
@@ -1114,7 +1075,6 @@ def getListItems(request):
                     return HttpResponse(json.dumps(itemDictionary), mimetype='application/json')
 
                 else:
-
                     return HttpResponse(json.dumps(itemDictionary), mimetype='application/json')
             else:
                 return HttpResponse(json.dumps(itemDictionary), mimetype='application/json')
@@ -1124,7 +1084,7 @@ def getListItems(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# GET DIRECTORY OF ID/3RD PARTY IDs
+# GET DIRECTORY OF ID/3RD PARTY IDs #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getDirectory(request):
 
@@ -1139,26 +1099,18 @@ def getDirectory(request):
             # get user by username
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
-                try:
-                    user = Users.objects.get(user_name=userName)
-                except Users.DoesNotExist:
-                    user = None
+                userKey = Users.query(Users.user_name == userName)
+                user = userKey.get()
 
             # get user by userid
             else:
-                try:
-                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-                except Users.DoesNotExist:
-                    user = None
+                userKey = ndb.Key(urlsafe=userID)
+                user = userKey.get()
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # get tag items
-                try:
-                    itemTagUsers = ItemTagUser.objects.filter(user=user)
-                except ItemTagUser.DoesNotExist:
-                    itemTagUsers = None
+                itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey).fetch()
 
                 directoryItems = {}
 
@@ -1168,11 +1120,15 @@ def getDirectory(request):
                     # construct python dictionary
                     for items in itemTagUsers:
 
+                        itemKey = items.item.urlsafe()
+                        item = items.item.get()
+
                         # create item object
-                        if items.item.pk not in directoryItems:
-                            directoryItems[items.item.pk] = {
-                                'aid': items.item.item_asin,
-                                'gid': items.item.item_gbombID,
+                        if itemKey not in directoryItems:
+
+                            directoryItems[itemKey] = {
+                                'aid': item.item_asin,
+                                'gid': item.item_gbombID,
                                 'gs': items.item_gameStatus,
                                 'ps': items.item_playStatus,
                                 'ur': items.item_userRating,
@@ -1181,8 +1137,8 @@ def getDirectory(request):
                             }
 
                         # append tag
-                        directoryItems[items.item.pk]['t'][items.tag.pk] = items.pk
-                        directoryItems[items.item.pk]['tc'] = directoryItems[items.item.pk]['tc'] + 1
+                        directoryItems[itemKey]['t'][items.tag.urlsafe()] = items.key.urlsafe()
+                        directoryItems[itemKey]['tc'] = directoryItems[itemKey]['tc'] + 1
 
                 # serialize and return directory
                 return HttpResponse(json.dumps({'directory': directoryItems}), mimetype='application/json')
@@ -1210,26 +1166,19 @@ def getItemTags(request):
             # get user by username
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
-                try:
-                    user = Users.objects.get(user_name=userName)
-                except Users.DoesNotExist:
-                    user = None
+
+                userKey = Users.query(Users.user_name == userName)
+                user = userKey.get()
 
             # get user by userid
             else:
-                try:
-                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-                except Users.DoesNotExist:
-                    user = None
+                userKey = ndb.Key(urlsafe=userID)
+                user = userKey.get()
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
-                # get item tags
-                try:
-                    itemTagUsers = ItemTagUser.objects.filter(user=user, item=itemID)
-                except ItemTagUser.DoesNotExist:
-                    itemTagUsers = None
+                itemKey = ndb.Key(urlsafe=itemID)
+                itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey, ItemTagUser.item == itemKey)
 
                 # list items found
                 if itemTagUsers:
@@ -1270,20 +1219,15 @@ def getItemTagsByThirdPartyID(request):
             # get user by username
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
-                try:
-                    user = Users.objects.get(user_name=userName)
-                except Users.DoesNotExist:
-                    user = None
+                userKey = Users.query(Users.user_name == userName)
+                user = userKey.get()
 
             # get user by userid
             else:
-                try:
-                    user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-                except Users.DoesNotExist:
-                    user = None
+                userKey = ndb.Key(urlsafe=userID)
+                user = userKey.get()
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # get item tags
                 try:
@@ -1335,8 +1279,7 @@ def deleteListItem(request):
             except Users.DoesNotExist:
                 user = None
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
@@ -1389,8 +1332,7 @@ def deleteListItemsInBatch(request):
             except Users.DoesNotExist:
                 user = None
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
@@ -1444,8 +1386,7 @@ def importGames(request):
             except Users.DoesNotExist:
                 user = None
 
-            # validate secretKey against user
-            if user:
+            if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
