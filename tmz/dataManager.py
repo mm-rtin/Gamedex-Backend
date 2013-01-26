@@ -1,4 +1,6 @@
 from google.appengine.api import urlfetch
+from google.appengine.ext import ndb
+
 from django.http import HttpResponse
 
 from lxml.cssselect import CSSSelector
@@ -18,7 +20,7 @@ METACRITIC_BASE_URL = 'http://www.metacritic.com'
 def updateMetascore(request):
 
     # get items
-    items = Items.objects.all()
+    items = Items.query().fetc()
 
     # iterate items
     for item in items:
@@ -46,7 +48,7 @@ def updateMetascore(request):
 
                 # upate item record
                 item.item_metascore = metascore
-                item.save()
+                item.put()
 
     return HttpResponse('success', mimetype='text/plain', status='200')
 

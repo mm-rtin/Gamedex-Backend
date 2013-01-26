@@ -5,7 +5,6 @@ from google.appengine.ext import ndb
 import hashlib
 import datetime
 import time
-import uuid
 import random
 import json
 
@@ -203,7 +202,7 @@ def generateUsername(email):
 
     return username
 
-# DELETE USER
+# DELETE USER #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def deleteUser(request):
 
@@ -218,31 +217,37 @@ def deleteUser(request):
             userPassword = hashlib.md5(userPassword).hexdigest()
 
             # get user
-            try:
-                user = Users.objects.get(pk=userID, user_password=userPassword)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
-            if user:
+            # validate user password
+            if user and user.user_password == userPassword:
 
                 # delete itemTagUser for user
-                try:
-                    itemTagUser = ItemTagUser.objects.filter(user=user)
-                    itemTagUser.delete()
+                itemTagUserQuery = ItemTagUser.query(ItemTagUser.user == userKey).fetch()
+                itemTagUserKeys = []
 
-                except ItemTagUser.DoesNotExist:
-                    pass
+                if (itemTagUserQuery):
+
+                    for itemTagUser in itemTagUserQuery:
+                        itemTagUserKeys.append(itemTagUser.key)
+
+                    ndb.delete_multi(itemTagUserKeys)
+
 
                 # delete tags for user
-                try:
-                    tags = Tags.objects.filter(user=user)
-                    tags.delete()
+                tagsQuery = Tags.query(Tags.user == userKey).fetch()
+                tagKeys = []
 
-                except Tags.DoesNotExist:
-                    pass
+                if (tagsQuery):
+
+                    for tag in tagsQuery:
+                        tagKeys.append(tag.key)
+
+                    ndb.delete_multi(tagKeys)
 
                 # delete user
-                user.delete();
+                user.key.delete()
 
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
             else:
@@ -267,13 +272,12 @@ def updateUser(request):
             # hash password
             userPassword = hashlib.md5(userPassword).hexdigest()
 
-            # validate login
-            try:
-                user = Users.objects.get(pk=userID, user_password=userPassword)
-            except Users.DoesNotExist:
-                user = None
+            # get user
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
-            if user:
+            # validate user password
+            if user and user.user_password == userPassword:
 
                 save = False
 
@@ -283,11 +287,11 @@ def updateUser(request):
                     save = True
                 if 'user_name' in request.POST:
                     new_user_name = request.POST.get('user_name')
-                    try:
-                        Users.objects.get(user_name=new_user_name)
+
+                    existingUser = Users.query(Users.user_name == new_user_name).get()
 
                     # no user by that user name - continue to save
-                    except Users.DoesNotExist:
+                    if (existingUser == None):
                         user.user_name = request.POST.get('user_name')
                         save = True
 
@@ -301,7 +305,7 @@ def updateUser(request):
                     save = True
 
                 if (save):
-                    user.save()
+                    user.put()
 
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
             else:
@@ -323,10 +327,7 @@ def sendResetCode(request):
             email = request.POST.get('user_email')
 
             # get user by email
-            try:
-                user = Users.objects.get(user_email=email)
-            except Users.DoesNotExist:
-                user = None
+            user = Users.query(Users.user_email == email).get()
 
             # send email with reset code parameter
             if mail.is_email_valid(email):
@@ -339,7 +340,7 @@ def sendResetCode(request):
 
                     # save code to user record
                     user.user_reset_code = resetCode
-                    user.save()
+                    user.put()
 
                     message = mail.EmailMessage(sender='Gamedex.net <no-reply@gamedex.net>', subject='Gamedex.net: Password Reset Code')
                     message.to = email
@@ -391,12 +392,9 @@ def submitResetCode(request):
             resetCode = request.POST.get('user_reset_code')
 
             # get user by email and reset code
-            try:
-                user = Users.objects.get(user_email=email, user_reset_code=resetCode)
-            except Users.DoesNotExist:
-                user = None
+            user = Users.query(Users.user_email == email)
 
-            if user:
+            if user and user.user_reset_code == resetCode:
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
             else:
                 return HttpResponse(json.dumps({'status': 'incorrect_code'}), mimetype='application/json')
@@ -420,18 +418,15 @@ def updatePassword(request):
             resetCode = request.POST.get('user_reset_code')
 
             # validate login
-            try:
-                user = Users.objects.get(user_email=email, user_reset_code=resetCode)
-            except Users.DoesNotExist:
-                user = None
+            user = Users.query(Users.user_email == email)
 
-            if user:
+            if user and user.user_reset_code == resetCode:
 
                 # remove reset code from user record
                 user.user_reset_code = ''
                 # update user password
                 user.user_password = hashlib.md5(newPassword).hexdigest()
-                user.save()
+                user.put()
 
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
             else:
@@ -449,7 +444,7 @@ def updatePassword(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# CREATE TAG
+# CREATE TAG #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def createList(request):
 
@@ -464,32 +459,28 @@ def createList(request):
             updateTimestamp = request.POST.get('ts')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
             if user and user.user_secret_key == secretKey:
 
                 # get list
-                try:
-                    listItem = Tags.objects.get(list_name=tagName, user=user)
+                listItem = Tags.query(Tags.list_name == tagName, Tags.user == userKey).get()
 
-                except Tags.DoesNotExist:
+                if listItem == None:
 
                     # set new timestamp
                     user.user_update_timestamp = updateTimestamp
-                    user.save()
+                    user.put()
 
                     # create list
-                    guid = str(uuid.uuid4())
-                    listItem = Tags(id=guid, user=user, list_name=tagName)
+                    listItem = Tags(user=userKey, list_name=tagName)
 
                     # prevent demo account from saving data
                     if (secretKey != '1'):
-                        listItem.save()
+                        listItem.put()
 
-                returnData = {'tagID': listItem.pk, 'tagName': tagName}
+                returnData = {'tagID': listItem.key.urlsafe(), 'tagName': tagName}
 
                 return HttpResponse(json.dumps(returnData), mimetype='application/json')
 
@@ -561,7 +552,7 @@ def getList(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# UPDATE TAG
+# UPDATE TAG #DONE#
 # update tag name
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def updateList(request):
@@ -582,28 +573,24 @@ def updateList(request):
                 return HttpResponse(json.dumps({'status': 'demo'}), mimetype='application/json')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
+            # validate user secret key
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
                 # get list
-                try:
-                    listItem = Tags.objects.get(pk=tagID, user=user)
-                except Tags.DoesNotExist:
-                    listItem = None
+                tag = ndb.Key(urlsafe=tagID).get()
 
-                # listItem found
-                if listItem:
+                # tag found
+                if tag:
 
-                    listItem.list_name = tagName
-                    listItem.save()
+                    tag.list_name = tagName
+                    tag.put()
 
                     return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
@@ -617,7 +604,7 @@ def updateList(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# DELETE TAG
+# DELETE TAG #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def deleteList(request):
 
@@ -637,35 +624,35 @@ def deleteList(request):
                 return HttpResponse(json.dumps({'status': 'demo'}), mimetype='application/json')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
+            # validate secret key
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
                 # get all ItemTagUser entries in List
-                try:
-                    itemTagUser = ItemTagUser.objects.filter(tag=tagID, user=user)
-                except ItemTagUser.DoesNotExist:
-                    itemTagUser = None
+                tagKey = ndb.Key(urlsafe=tagID)
+
+                itemTagUserQuery = ItemTagUser.query(ItemTagUser.tag == tagKey, ItemTagUser.user == userKey).fetch()
+                itemTagUserKeys = []
+
+                if (itemTagUserQuery):
+
+                    for itemTagUser in itemTagUserQuery:
+                        itemTagUserKeys.append(itemTagUser.key)
+
+                    ndb.delete_multi(itemTagUserKeys)
 
                 # get tag entry
-                try:
-                    tag = Tags.objects.get(pk=tagID, user=user)
-                except Tags.DoesNotExist:
-                    tag = None
-
-                # found record(s) > delete ItemTagUser entries
-                if itemTagUser:
-                    itemTagUser.delete()
+                tag = tagKey.get()
 
                 if tag:
-                    tag.delete()
+                    tag.key.delete()
+
                     return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
                 return HttpResponse(json.dumps({'status': 'no_record'}), mimetype='application/json')
@@ -682,7 +669,7 @@ def deleteList(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# CREATE ITEM
+# CREATE ITEM #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def createListItem(request):
 
@@ -799,6 +786,7 @@ def createListItem(request):
                                 item_userRating=userRating,
                             )
                             itemTagUserKey = link.put()
+
                         else:
                             itemTagUserKey = itemTagUser.key
 
@@ -818,7 +806,7 @@ def createListItem(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# UPDATE USER ITEM
+# UPDATE USER ITEM #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def updateUserItem(request):
 
@@ -843,30 +831,29 @@ def updateUserItem(request):
                 return HttpResponse(json.dumps({'status': 'demo'}), mimetype='application/json')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
+
+            # get item key
+            itemKey = ndb.Key(urlsafe=itemID)
 
             # get existing link
-            try:
-                links = ItemTagUser.objects.filter(item=itemID, user=user)
-            except ItemTagUser.DoesNotExist:
-                links = None
+            itemTagUser = ItemTagUser.query(ItemTagUser.item == itemKey, ItemTagUser.user == userKey).fetch()
 
+            # validate user secret key
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
-                # iterate all links items and update attributes
-                for link in links:
+                # iterate all itemTagUser items and update attributes
+                for link in itemTagUser:
                     link.item_gameStatus = gameStatus
                     link.item_playStatus = playStatus
                     link.item_userRating = userRating
 
-                    link.save()
+                    link.put()
 
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
@@ -878,7 +865,7 @@ def updateUserItem(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-# UPDATE METACRITIC INFO
+# UPDATE METACRITIC INFO #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def updateMetacritic(request):
 
@@ -897,28 +884,25 @@ def updateMetacritic(request):
             updateTimestamp = request.POST.get('ts')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
             # get existing item
-            try:
-                item = Items.objects.get(pk=itemID)
-            except Items.DoesNotExist:
-                item = None
+            itemKey = ndb.Key(urlsafe=itemID)
+            item = itemKey.get()
 
+            # validate user secret key
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
                 # update item
                 item.item_metacriticPage = metacriticPage
                 item.item_metascore = metascore
 
-                item.save()
+                item.put()
 
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
@@ -958,22 +942,19 @@ def updateSharedItem(request):
                 return HttpResponse(json.dumps({'status': 'demo'}), mimetype='application/json')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
             # get existing item
-            try:
-                item = Items.objects.get(pk=itemID)
-            except Items.DoesNotExist:
-                item = None
+            itemKey = ndb.Key(urlsafe=itemID)
+            item = itemKey.get()
 
+            # validate user secret key
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
                 # update item
                 item.item_asin = asin
@@ -983,7 +964,7 @@ def updateSharedItem(request):
                 item.item_thumbnailImage = thumbnailImage
                 item.item_largeImage = largeImage
 
-                item.save()
+                item.put()
 
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
 
@@ -1227,13 +1208,14 @@ def getItemTagsByThirdPartyID(request):
                 userKey = ndb.Key(urlsafe=userID)
                 user = userKey.get()
 
+            # validate user secret key
             if user and user.user_secret_key == secretKey:
 
+                # get itemKey
+                itemKey = ndb.Key(urlsafe=itemID)
+
                 # get item tags
-                try:
-                    itemTagUsers = ItemTagUser.objects.filter(user=user, item=itemID)
-                except ItemTagUser.DoesNotExist:
-                    itemTagUsers = None
+                itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey, ItemTagUser.item == itemKey).fetch()
 
                 # list items found
                 if itemTagUsers:
@@ -1241,7 +1223,7 @@ def getItemTagsByThirdPartyID(request):
                     itemTags = []
                     # construct python dictionary
                     for items in itemTagUsers:
-                        itemTags.append({'id': items.pk, 'tagID': items.tag.pk})
+                        itemTags.append({'id': items.key.urlsafe(), 'tagID': items.tag.urlsafe()})
 
                     tagDictionary = {'itemTags': itemTags}
 
@@ -1274,30 +1256,27 @@ def deleteListItem(request):
             id = request.POST.get('id')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
+            # validate user secret key
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
                 # get element to delete from ItemTagUser
-                try:
-                    itemTagUser = ItemTagUser.objects.get(pk=id, user=user)
-                except ItemTagUser.DoesNotExist:
-                    itemTagUser = None
+                itemTagUserKey = ndb.Key(urlsafe=id)
+                itemTagUser = itemTagUserKey.get()
 
                 # found record > delete
-                if itemTagUser:
-                    tagID = itemTagUser.tag.pk
+                if itemTagUser and itemTagUser.user == userKey:
+                    tagID = itemTagUser.tag.urlsafe()
 
                     # prevent demo account from saving data
                     if (secretKey != '1'):
-                        itemTagUser.delete()
+                        itemTagUser.key.delete()
 
                     return HttpResponse(json.dumps({'tagID': tagID}), mimetype='application/json')
 
@@ -1327,34 +1306,31 @@ def deleteListItemsInBatch(request):
             ids = request.POST.getlist('ids[]')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
+            # validate user secret key
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
                 itemsDeleted = []
 
                 for id in ids:
                     # get element to delete from ItemTagUser
-                    try:
-                        itemTagUser = ItemTagUser.objects.get(pk=id, user=user)
-                    except ItemTagUser.DoesNotExist:
-                        itemTagUser = None
+                    itemTagUserKey = ndb.Key(urlsafe=id)
+                    itemTagUser = itemTagUserKey.get()
 
                     # found record > delete
-                    if itemTagUser:
+                    if itemTagUser and itemTagUser.user == userKey:
                         # add to list of items deleted
-                        itemsDeleted.append({'id': itemTagUser.pk, 'tagID': itemTagUser.tag.pk})
+                        itemsDeleted.append({'id': itemTagUser.key.urlsafe(), 'tagID': itemTagUser.tag.urlsafe()})
 
                         # prevent demo account from saving data
                         if (secretKey != '1'):
-                            itemTagUser.delete()
+                            itemTagUser.key.delete()
 
                 return HttpResponse(json.dumps({'itemsDeleted': itemsDeleted}), mimetype='application/json')
             else:
@@ -1381,16 +1357,15 @@ def importGames(request):
             sourceUser = request.POST.get('source_user')
 
             # get user by userid
-            try:
-                user = Users.objects.get(pk=userID, user_secret_key=secretKey)
-            except Users.DoesNotExist:
-                user = None
+            userKey = ndb.Key(urlsafe=userID)
+            user = userKey.get()
 
+            # validate user secret key
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
                 user.user_update_timestamp = updateTimestamp
-                user.save()
+                user.put()
 
                 importedTitles = []
 
