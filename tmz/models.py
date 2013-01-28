@@ -20,6 +20,7 @@ class Users(ndb.Model):
     user_account_created = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
     user_account_last_login = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
 
+
 # TAGS
 class Tags(ndb.Model):
     user = ndb.KeyProperty(kind=Users)
@@ -27,6 +28,7 @@ class Tags(ndb.Model):
 
     list_date_added = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
     list_date_last_modfied = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
+
 
 # LIST ITEMS
 class Items(ndb.Model):
@@ -42,10 +44,10 @@ class Items(ndb.Model):
     item_smallImage = ndb.StringProperty(required=False)
     item_thumbnailImage = ndb.StringProperty(required=False)
     item_largeImage = ndb.StringProperty(required=False)
-    item_disqusID = ndb.IntegerProperty(required=False)
 
     item_date_added = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
     item_date_last_modfied = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
+
 
 # ITEMS to TAGS to USERS link table
 class ItemTagUser(ndb.Model):

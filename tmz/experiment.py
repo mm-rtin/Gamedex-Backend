@@ -1,8 +1,6 @@
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template.context import RequestContext
+from google.appengine.ext import ndb
 
+from django.http import HttpResponse
 from django.core import serializers
 
 import logging
@@ -16,53 +14,53 @@ from tmz.models import Users, Items, Tags, ItemTagUser
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getDirectory(request):
 
-    try:
-        user = Users.objects.get(pk='69a92fe7-5fc1-4607-9e5e-04ce1a7e725b', user_secret_key='1')
-    except Users.DoesNotExist:
-        user = None
+    user = Users.query(Users.user_email == 'demo@gamedex.net').get()
 
-    # validate secretKey against user
     if user:
 
         # get tag items
-        try:
-            itemTagUsers = ItemTagUser.objects.filter(user=user)
-        except ItemTagUser.DoesNotExist:
-            itemTagUsers = None
+        itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key).fetch(projection=['item', 'tag', 'item_gameStatus', 'item_playStatus', 'item_userRating'])
 
-    data = serializers.serialize("json", itemTagUsers)
-
-    return HttpResponse(data, mimetype='application/json')
-
-# GET DIRECTORY OF ID/3RD PARTY IDs
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def getDirectory2(request):
-
-    try:
-        user = Users.objects.get(pk='1', user_secret_key='1')
-    except Users.DoesNotExist:
-        user = None
-
-    # validate secretKey against user
-    if user:
-
-        # get tag items
-        try:
-            itemTagUsers = ItemTagUser.objects.select_related('item__item_asin', 'item__item_gbombID').filter(user=user)
-        except ItemTagUser.DoesNotExist:
-            itemTagUsers = None
-
+        itemTagUserDict = {}
         directoryItems = {}
+        itemKeyList = []
 
         # list items found
         if itemTagUsers:
 
-            # construct python dictionary
-            for items in itemTagUsers:
+            # add item keys to list
+            for itemTagUser in itemTagUsers:
 
-                directoryItems[items.item.pk] = {
-                    'aid': items.item.item_asin,
-                    'gid': items.item.item_gbombID,
-                }
+                # append key to list
+                itemKeyList.append(itemTagUser.item)
 
-    return HttpResponse(json.dumps({'directory': directoryItems}), mimetype='application/json')
+                # add itemTagUser info to dictionary
+                itemTagUserDict[itemTagUser.item.urlsafe()] = {'key': itemTagUser.key.urlsafe(), 'tag': itemTagUser.tag.urlsafe(), 'item_gameStatus': itemTagUser.item_gameStatus, 'item_playStatus': itemTagUser.item_playStatus, 'item_userRating': itemTagUser.item_userRating}
+
+            # get batch of items
+            items = ndb.get_multi(itemKeyList)
+
+            # iterate item batch
+            for item in items:
+
+                itemKey = item.key.urlsafe()
+
+                # create item object
+                if itemKey not in directoryItems:
+
+                    directoryItems[itemKey] = {
+                        'aid': item.item_asin,
+                        'gid': item.item_gbombID,
+                        'gs': itemTagUserDict[itemKey]['item_gameStatus'],
+                        'ps': itemTagUserDict[itemKey]['item_playStatus'],
+                        'ur': itemTagUserDict[itemKey]['item_userRating'],
+                        't': {},
+                        'tc': 0
+                    }
+
+                # append tag
+                directoryItems[itemKey]['t'][itemTagUserDict[itemKey]['tag']] = itemTagUserDict[itemKey]['key']
+                directoryItems[itemKey]['tc'] = directoryItems[itemKey]['tc'] + 1
+
+        # serialize and return directory
+        return HttpResponse(json.dumps({'directory': directoryItems}), mimetype='application/json')

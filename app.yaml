@@ -24,8 +24,9 @@ libraries:
 
 handlers:
 
+- url: /stats.*
+  script: google.appengine.ext.appstats.ui.app
+
 - url: /.*
   script: main.application
 
-- url: /stats.*
-  script: google.appengine.ext.appstats.ui.app

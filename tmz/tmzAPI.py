@@ -392,7 +392,7 @@ def submitResetCode(request):
             resetCode = request.POST.get('user_reset_code')
 
             # get user by email and reset code
-            user = Users.query(Users.user_email == email)
+            user = Users.query(Users.user_email == email).get()
 
             if user and user.user_reset_code == resetCode:
                 return HttpResponse(json.dumps({'status': 'success'}), mimetype='application/json')
@@ -418,7 +418,7 @@ def updatePassword(request):
             resetCode = request.POST.get('user_reset_code')
 
             # validate login
-            user = Users.query(Users.user_email == email)
+            user = Users.query(Users.user_email == email).get()
 
             if user and user.user_reset_code == resetCode:
 
@@ -510,8 +510,7 @@ def getList(request):
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
 
-                userKey = Users.query(Users.user_name == userName)
-                user = userKey.get()
+                user = Users.query(Users.user_name == userName).get()
 
             # get user by userid
             else:
@@ -524,10 +523,7 @@ def getList(request):
                 listDictionary = {'list': []}
 
                 # get lists
-                try:
-                    lists = Tags.query(Tags.user == userKey)
-                except Tags.DoesNotExist:
-                    lists = None
+                lists = Tags.query(Tags.user == user.key).fetch()
 
                 # lists found
                 if lists:
@@ -992,8 +988,7 @@ def getListItems(request):
             # get user by username
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
-                userKey = Users.query(Users.user_name == userName)
-                user = userKey.get()
+                user = Users.query(Users.user_name == userName).get()
 
             # get user by userid
             else:
@@ -1009,12 +1004,12 @@ def getListItems(request):
 
                 # items for all tags
                 if tagID == '0':
-                    itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey).fetch(20)
+                    itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key).fetch()
 
                 # items filtered by tag
                 else:
                     existingTagKey = ndb.Key(urlsafe=tagID)
-                    itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey, ItemTagUser.tag == existingTagKey).fetch(20)
+                    itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key, ItemTagUser.tag == existingTagKey).fetch()
 
 
                 # list items found
@@ -1080,8 +1075,7 @@ def getDirectory(request):
             # get user by username
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
-                userKey = Users.query(Users.user_name == userName)
-                user = userKey.get()
+                user = Users.query(Users.user_name == userName).get()
 
             # get user by userid
             else:
@@ -1091,18 +1085,31 @@ def getDirectory(request):
             if user and user.user_secret_key == secretKey:
 
                 # get tag items
-                itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey).fetch()
+                itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key).fetch(projection=['item', 'tag', 'item_gameStatus', 'item_playStatus', 'item_userRating'])
 
+                itemTagUserDict = {}
                 directoryItems = {}
+                itemKeyList = []
 
                 # list items found
                 if itemTagUsers:
 
-                    # construct python dictionary
-                    for items in itemTagUsers:
+                    # add item keys to list
+                    for itemTagUser in itemTagUsers:
 
-                        itemKey = items.item.urlsafe()
-                        item = items.item.get()
+                        # append key to list
+                        itemKeyList.append(itemTagUser.item)
+
+                        # add itemTagUser info to dictionary
+                        itemTagUserDict[itemTagUser.item.urlsafe()] = {'key': itemTagUser.key.urlsafe(), 'tag': itemTagUser.tag.urlsafe(), 'item_gameStatus': itemTagUser.item_gameStatus, 'item_playStatus': itemTagUser.item_playStatus, 'item_userRating': itemTagUser.item_userRating}
+
+                    # get batch of items
+                    items = ndb.get_multi(itemKeyList)
+
+                    # iterate item batch
+                    for item in items:
+
+                        itemKey = item.key.urlsafe()
 
                         # create item object
                         if itemKey not in directoryItems:
@@ -1110,15 +1117,15 @@ def getDirectory(request):
                             directoryItems[itemKey] = {
                                 'aid': item.item_asin,
                                 'gid': item.item_gbombID,
-                                'gs': items.item_gameStatus,
-                                'ps': items.item_playStatus,
-                                'ur': items.item_userRating,
+                                'gs': itemTagUserDict[itemKey]['item_gameStatus'],
+                                'ps': itemTagUserDict[itemKey]['item_playStatus'],
+                                'ur': itemTagUserDict[itemKey]['item_userRating'],
                                 't': {},
                                 'tc': 0
                             }
 
                         # append tag
-                        directoryItems[itemKey]['t'][items.tag.urlsafe()] = items.key.urlsafe()
+                        directoryItems[itemKey]['t'][itemTagUserDict[itemKey]['tag']] = itemTagUserDict[itemKey]['key']
                         directoryItems[itemKey]['tc'] = directoryItems[itemKey]['tc'] + 1
 
                 # serialize and return directory
@@ -1148,8 +1155,7 @@ def getItemTags(request):
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
 
-                userKey = Users.query(Users.user_name == userName)
-                user = userKey.get()
+                user = Users.query(Users.user_name == userName).get()
 
             # get user by userid
             else:
@@ -1159,7 +1165,7 @@ def getItemTags(request):
             if user and user.user_secret_key == secretKey:
 
                 itemKey = ndb.Key(urlsafe=itemID)
-                itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey, ItemTagUser.item == itemKey)
+                itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key, ItemTagUser.item == itemKey).fetch()
 
                 # list items found
                 if itemTagUsers:
@@ -1200,8 +1206,7 @@ def getItemTagsByThirdPartyID(request):
             # get user by username
             if 'user_name' in request.POST:
                 userName = request.POST.get('user_name')
-                userKey = Users.query(Users.user_name == userName)
-                user = userKey.get()
+                user = Users.query(Users.user_name == userName).get()
 
             # get user by userid
             else:
@@ -1215,7 +1220,7 @@ def getItemTagsByThirdPartyID(request):
                 itemKey = ndb.Key(urlsafe=itemID)
 
                 # get item tags
-                itemTagUsers = ItemTagUser.query(ItemTagUser.user == userKey, ItemTagUser.item == itemKey).fetch()
+                itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key, ItemTagUser.item == itemKey).fetch()
 
                 # list items found
                 if itemTagUsers:
