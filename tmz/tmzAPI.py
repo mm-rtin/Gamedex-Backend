@@ -7,6 +7,7 @@ import datetime
 import time
 import random
 import json
+import uuid
 
 import logging
 
@@ -689,6 +690,16 @@ def createListItem(request):
             metacriticPage = request.POST.get('mp')
             metascore = request.POST.get('ms')
 
+            amazonPrice = request.POST.get('ap')
+            amazonNewPrice = request.POST.get('anp')
+            amazonUsedPrice = request.POST.get('aup')
+            steamPrice = request.POST.get('sp')
+
+            amazonPriceURL = request.POST.get('apu')
+            amazonNewPriceURL = request.POST.get('anpu')
+            amazonUsedPriceURL = request.POST.get('aupu')
+            steamPriceURL = request.POST.get('spu')
+
             # optional game properties
             if all(k in request.POST for k in ('gs', 'ps', 'ur')):
                 gameStatus = request.POST.get('gs')
@@ -708,7 +719,7 @@ def createListItem(request):
             updateTimestamp = request.POST.get('ts')
 
             # get user by userid
-            itemKey = None
+            itemKey = str(uuid.uuid4())
             userKey = ndb.Key(urlsafe=userID)
             user = userKey.get()
 
@@ -744,7 +755,17 @@ def createListItem(request):
                         item_thumbnailImage=thumbnailImage,
                         item_largeImage=largeImage,
                         item_metacriticPage=metacriticPage,
-                        item_metascore=metascore
+                        item_metascore=metascore,
+
+                        item_amazonPrice=amazonPrice,
+                        item_amazonNewPrice=amazonNewPrice,
+                        item_amazonUsedPrice=amazonUsedPrice,
+                        item_steamPrice=steamPrice,
+
+                        item_amazonPriceURL=amazonPriceURL,
+                        item_amazonNewPriceURL=amazonNewPriceURL,
+                        item_amazonUsedPriceURL=amazonUsedPriceURL,
+                        item_steamPriceURL=steamPriceURL,
                     )
 
                     # prevent demo account from saving data
@@ -762,11 +783,14 @@ def createListItem(request):
 
                 for tagID in tagIDs:
 
+                    # get tag
+                    tagKey = ndb.Key(urlsafe=tagID)
+
+                    # generate fake itemTagUserKey for demo
+                    itemTagUserKey = str(uuid.uuid4())
+
                     # prevent demo account from saving data
                     if (secretKey != '1'):
-
-                        # get tag
-                        tagKey = ndb.Key(urlsafe=tagID)
 
                         # get existing ItemTagUser
                         itemTagUser = ItemTagUser.query(ItemTagUser.item == itemKey, ItemTagUser.tag == tagKey, ItemTagUser.user == userKey).get()
@@ -786,11 +810,15 @@ def createListItem(request):
                         else:
                             itemTagUserKey = itemTagUser.key
 
+                        # convert to url safe
+                        itemTagUserKey = itemTagUserKey.urlsafe()
+                        itemKey = itemKey.urlsafe()
+
                     # record item ids and tag ids that have been added
                     tagIDsAdded.append(tagKey.urlsafe())
-                    idsAdded.append(itemTagUserKey.urlsafe())
+                    idsAdded.append(itemTagUserKey)
 
-                returnData = {'idsAdded': idsAdded, 'itemID': itemKey.urlsafe(), 'tagIDsAdded': tagIDsAdded}
+                returnData = {'idsAdded': idsAdded, 'itemID': itemKey, 'tagIDsAdded': tagIDsAdded}
 
                 return HttpResponse(json.dumps(returnData), mimetype='application/json')
 
@@ -912,7 +940,7 @@ def updateMetacritic(request):
 
 # UPDATE SHARED ITEM DATA
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def updateSharedItem(request):
+def updateSharedItemPrice(request):
 
     if (request.POST):
 
@@ -925,13 +953,19 @@ def updateSharedItem(request):
 
             # collect list item parameters
             itemID = request.POST.get('id')
-            asin = request.POST.get('aid')
-            gbombID = request.POST.get('gid')
 
-            releaseDate = request.POST.get('rd')
-            smallImage = request.POST.get('si')
-            thumbnailImage = request.POST.get('ti')
-            largeImage = request.POST.get('li')
+            if 'ap' in request.POST:
+                amazonPrice = request.POST.get('ap')
+                amazonPriceURL = request.POST.get('apu')
+            if 'anp' in request.POST:
+                amazonNewPrice = request.POST.get('anp')
+                amazonNewPriceURL = request.POST.get('anpu')
+            if 'aup' in request.POST:
+                amazonUsedPrice = request.POST.get('aup')
+                amazonUsedPriceURL = request.POST.get('aupu')
+            if 'sp' in request.POST:
+                steamPrice = request.POST.get('sp')
+                steamPriceURL = request.POST.get('spu')
 
             # prevent demo account
             if (secretKey == '1'):
@@ -953,12 +987,21 @@ def updateSharedItem(request):
                 user.put()
 
                 # update item
-                item.item_asin = asin
-                item.item_gbombID = gbombID
-                item.item_releasedate = releaseDate
-                item.item_smallImage = smallImage
-                item.item_thumbnailImage = thumbnailImage
-                item.item_largeImage = largeImage
+                if amazonPrice and amazonPrice != '':
+                    item.item_amazonPrice = amazonPrice
+                    item.item_amazonPriceURL = amazonPriceURL
+
+                if amazonNewPrice and amazonNewPrice != '':
+                    item.item_amazonNewPrice = amazonNewPrice
+                    item.item_amazonNewPriceURL = amazonNewPriceURL
+
+                if amazonUsedPrice and amazonUsedPrice != '':
+                    item.item_amazonUsedPrice = amazonUsedPrice
+                    item.item_amazonUsedPriceURL = amazonUsedPriceURL
+
+                if steamPrice and steamPrice != '':
+                    item.item_steamPrice = steamPrice
+                    item.item_steamPriceURL = steamPriceURL
 
                 item.put()
 
@@ -1011,7 +1054,6 @@ def getListItems(request):
                     existingTagKey = ndb.Key(urlsafe=tagID)
                     itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key, ItemTagUser.tag == existingTagKey).fetch()
 
-
                 # list items found
                 if itemTagUsers:
 
@@ -1039,7 +1081,17 @@ def getListItems(request):
                                 'ti': item.item_thumbnailImage,
                                 'li': item.item_largeImage,
                                 'ms': item.item_metascore,
-                                'mp': item.item_metacriticPage
+                                'mp': item.item_metacriticPage,
+
+                                'ap': item.item_amazonPrice,
+                                'anp': item.item_amazonNewPrice,
+                                'aup': item.item_amazonUsedPrice,
+                                'sp': item.item_steamPrice,
+
+                                'apu': item.item_amazonPriceURL,
+                                'anpu': item.item_amazonNewPriceURL,
+                                'aupu': item.item_amazonUsedPriceURL,
+                                'spu': item.item_steamPriceURL,
                             })
 
                             # add to list of itemIDs added - prevent multiple distinct items (by itemID) from appearing in 'view all list'
@@ -1049,7 +1101,6 @@ def getListItems(request):
 
                     # serialize and return lists
                     return HttpResponse(json.dumps(itemDictionary), mimetype='application/json')
-
                 else:
                     return HttpResponse(json.dumps(itemDictionary), mimetype='application/json')
             else:
@@ -1272,8 +1323,11 @@ def deleteListItem(request):
                 user.put()
 
                 # get element to delete from ItemTagUser
-                itemTagUserKey = ndb.Key(urlsafe=id)
-                itemTagUser = itemTagUserKey.get()
+                try:
+                    itemTagUserKey = ndb.Key(urlsafe=id)
+                    itemTagUser = itemTagUserKey.get()
+                except Exception:
+                    itemTagUser = None
 
                 # found record > delete
                 if itemTagUser and itemTagUser.user == userKey:

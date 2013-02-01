@@ -45,6 +45,16 @@ class Items(ndb.Model):
     item_thumbnailImage = ndb.StringProperty(required=False)
     item_largeImage = ndb.StringProperty(required=False)
 
+    item_amazonPrice = ndb.StringProperty(required=False)
+    item_amazonNewPrice = ndb.StringProperty(required=False)
+    item_amazonUsedPrice = ndb.StringProperty(required=False)
+    item_steamPrice = ndb.StringProperty(required=False)
+
+    item_amazonPriceURL = ndb.StringProperty(required=False)
+    item_amazonNewPriceURL = ndb.StringProperty(required=False)
+    item_amazonUsedPriceURL = ndb.StringProperty(required=False)
+    item_steamPriceURL = ndb.StringProperty(required=False)
+
     item_date_added = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
     item_date_last_modfied = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
 
