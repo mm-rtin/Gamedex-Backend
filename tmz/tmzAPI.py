@@ -581,7 +581,10 @@ def updateList(request):
                 user.put()
 
                 # get list
-                tag = ndb.Key(urlsafe=tagID).get()
+                ItemTagUser.user == userKey
+
+                tagKey = ndb.Key(urlsafe=tagID)
+                tag = Tags.query(Tags.key == tagKey, Tags.user == userKey).get()
 
                 # tag found
                 if tag:
@@ -719,7 +722,7 @@ def createListItem(request):
             updateTimestamp = request.POST.get('ts')
 
             # get user by userid
-            itemKey = str(uuid.uuid4())
+            itemKeyURLSafe = str(uuid.uuid4())
             userKey = ndb.Key(urlsafe=userID)
             user = userKey.get()
 
@@ -771,11 +774,13 @@ def createListItem(request):
                     # prevent demo account from saving data
                     if (secretKey != '1'):
                         itemKey = item.put()
+                        itemKeyURLSafe = itemKey.urlsafe()
 
                 # item already exists, use instead
                 else:
                     item = existingItem
                     itemKey = existingItem.key
+                    itemKeyURLSafe = itemKey.urlsafe()
 
                 # create link between Item, Tag and User for multiple tags
                 tagIDsAdded = []
@@ -812,13 +817,12 @@ def createListItem(request):
 
                         # convert to url safe
                         itemTagUserKey = itemTagUserKey.urlsafe()
-                        itemKey = itemKey.urlsafe()
 
                     # record item ids and tag ids that have been added
                     tagIDsAdded.append(tagKey.urlsafe())
                     idsAdded.append(itemTagUserKey)
 
-                returnData = {'idsAdded': idsAdded, 'itemID': itemKey, 'tagIDsAdded': tagIDsAdded}
+                returnData = {'idsAdded': idsAdded, 'itemID': itemKeyURLSafe, 'tagIDsAdded': tagIDsAdded}
 
                 return HttpResponse(json.dumps(returnData), mimetype='application/json')
 
@@ -1325,7 +1329,8 @@ def deleteListItem(request):
                 # get element to delete from ItemTagUser
                 try:
                     itemTagUserKey = ndb.Key(urlsafe=id)
-                    itemTagUser = itemTagUserKey.get()
+                    itemTagUser = ItemTagUser.query(ItemTagUser.key == itemTagUserKey, ItemTagUser.user == userKey).get()
+
                 except Exception:
                     itemTagUser = None
 
@@ -1380,7 +1385,7 @@ def deleteListItemsInBatch(request):
                 for id in ids:
                     # get element to delete from ItemTagUser
                     itemTagUserKey = ndb.Key(urlsafe=id)
-                    itemTagUser = itemTagUserKey.get()
+                    itemTagUser = ItemTagUser.query(ItemTagUser.key == itemTagUserKey, ItemTagUser.user == userKey).get()
 
                     # found record > delete
                     if itemTagUser and itemTagUser.user == userKey:
