@@ -516,10 +516,10 @@ def getList(request):
             # get user by userid
             else:
                 userKey = ndb.Key(urlsafe=userID)
-                user = userKey.get()
+                user = Users.query(Users.key == userKey, Users.user_secret_key == secretKey).get()
 
             # user found
-            if user and user.user_secret_key == secretKey:
+            if user:
 
                 listDictionary = {'list': []}
 
@@ -958,6 +958,13 @@ def updateSharedItemPrice(request):
             # collect list item parameters
             itemID = request.POST.get('id')
 
+            # default price data
+            amazonPrice = ''
+            amazonNewPrice = ''
+            amazonUsedPrice = ''
+            steamPrice = ''
+
+
             if 'ap' in request.POST:
                 amazonPrice = request.POST.get('ap')
                 amazonPriceURL = request.POST.get('apu')
@@ -991,19 +998,19 @@ def updateSharedItemPrice(request):
                 user.put()
 
                 # update item
-                if amazonPrice and amazonPrice != '':
+                if amazonPrice != '':
                     item.item_amazonPrice = amazonPrice
                     item.item_amazonPriceURL = amazonPriceURL
 
-                if amazonNewPrice and amazonNewPrice != '':
+                if amazonNewPrice != '':
                     item.item_amazonNewPrice = amazonNewPrice
                     item.item_amazonNewPriceURL = amazonNewPriceURL
 
-                if amazonUsedPrice and amazonUsedPrice != '':
+                if amazonUsedPrice != '':
                     item.item_amazonUsedPrice = amazonUsedPrice
                     item.item_amazonUsedPriceURL = amazonUsedPriceURL
 
-                if steamPrice and steamPrice != '':
+                if steamPrice != '':
                     item.item_steamPrice = steamPrice
                     item.item_steamPriceURL = steamPriceURL
 
@@ -1040,14 +1047,14 @@ def getListItems(request):
             # get user by userid
             else:
                 userKey = ndb.Key(urlsafe=userID)
-                user = userKey.get()
+                user = Users.query(Users.key == userKey, Users.user_secret_key == secretKey).get()
 
 
             # empty dictionary
             itemDictionary = {'items': []}
 
             # user found
-            if user and user.user_secret_key == secretKey:
+            if user:
 
                 # items for all tags
                 if tagID == '0':
@@ -1135,9 +1142,9 @@ def getDirectory(request):
             # get user by userid
             else:
                 userKey = ndb.Key(urlsafe=userID)
-                user = userKey.get()
+                user = Users.query(Users.key == userKey, Users.user_secret_key == secretKey).get()
 
-            if user and user.user_secret_key == secretKey:
+            if user:
 
                 # get tag items
                 itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key).fetch(projection=['item', 'tag', 'item_gameStatus', 'item_playStatus', 'item_userRating'])
@@ -1215,9 +1222,9 @@ def getItemTags(request):
             # get user by userid
             else:
                 userKey = ndb.Key(urlsafe=userID)
-                user = userKey.get()
+                user = Users.query(Users.key == userKey, Users.user_secret_key == secretKey).get()
 
-            if user and user.user_secret_key == secretKey:
+            if user:
 
                 itemKey = ndb.Key(urlsafe=itemID)
                 itemTagUsers = ItemTagUser.query(ItemTagUser.user == user.key, ItemTagUser.item == itemKey).fetch()
@@ -1266,10 +1273,10 @@ def getItemTagsByThirdPartyID(request):
             # get user by userid
             else:
                 userKey = ndb.Key(urlsafe=userID)
-                user = userKey.get()
+                user = Users.query(Users.key == userKey, Users.user_secret_key == secretKey).get()
 
-            # validate user secret key
-            if user and user.user_secret_key == secretKey:
+            # validate user
+            if user:
 
                 # get itemKey
                 itemKey = ndb.Key(urlsafe=itemID)
