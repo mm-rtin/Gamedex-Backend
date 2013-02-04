@@ -959,10 +959,10 @@ def updateSharedItemPrice(request):
             itemID = request.POST.get('id')
 
             # default price data
-            amazonPrice = ''
-            amazonNewPrice = ''
-            amazonUsedPrice = ''
-            steamPrice = ''
+            amazonPrice = None
+            amazonNewPrice = None
+            amazonUsedPrice = None
+            steamPrice = None
 
 
             if 'ap' in request.POST:
@@ -998,19 +998,19 @@ def updateSharedItemPrice(request):
                 user.put()
 
                 # update item
-                if amazonPrice != '':
+                if amazonPrice != None:
                     item.item_amazonPrice = amazonPrice
                     item.item_amazonPriceURL = amazonPriceURL
 
-                if amazonNewPrice != '':
+                if amazonNewPrice != None:
                     item.item_amazonNewPrice = amazonNewPrice
                     item.item_amazonNewPriceURL = amazonNewPriceURL
 
-                if amazonUsedPrice != '':
+                if amazonUsedPrice != None:
                     item.item_amazonUsedPrice = amazonUsedPrice
                     item.item_amazonUsedPriceURL = amazonUsedPriceURL
 
-                if steamPrice != '':
+                if steamPrice != None:
                     item.item_steamPrice = steamPrice
                     item.item_steamPriceURL = steamPriceURL
 
