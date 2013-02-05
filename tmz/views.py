@@ -1,5 +1,13 @@
+import random
 from django.shortcuts import render_to_response
 
 # index page
 def index(request):
-    return render_to_response('index.html')
+
+    # random image color
+    randomColorIndex = random.randrange(6) + 1
+
+    # create context
+    context = {'randomColorIndex': randomColorIndex}
+
+    return render_to_response('index.html', context)

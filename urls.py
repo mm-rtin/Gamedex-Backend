@@ -7,7 +7,7 @@ from django.conf.urls.defaults import patterns
 urlpatterns = patterns('',
 
     # index
-    (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
+    (r'^$', 'tmz.views.index'),
 
     # amazon product api rest proxy
     (r'^amazon/search/$', 'tmz.searchAPI.searchAmazon'),
