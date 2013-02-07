@@ -481,7 +481,7 @@
         <div id="wrapper" class="standardView">
 
             <!-- INFO HEADER -->
-            <div id="infoHeader" class="color{{ randomColorIndex }}">
+            <div id="infoHeader" style="background-image: url('http://d2sifwlm28j6up.cloudfront.net/header_color_{{ randomColorIndex }}.jpg')">
 
                 <div class="infoHeaderContent">
                     <div id="logo"></div>
@@ -1073,7 +1073,12 @@
                                     <div class="loadingStatus"></div>
                                     <div id="resizeContainer">
                                         <div id="disqus_thread"></div>
-                                        <table id="itemResults" class="table table-striped"></table>
+                                        <table id="itemResults" class="table table-striped">
+                                            <tbody>
+
+
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -1204,48 +1209,46 @@
 
         <!-- item results -->
         <script type="text/template" id="item-results-template">
-            <tbody class="list display-<%= displayType %>">
-                <% if(length === 0) { %>
-                    <tr>
-                        <td class="title">
-                            <div class="noResults">No Items</div>
+            <% if(length === 0) { %>
+                <tr>
+                    <td class="title">
+                        <div class="noResults">No Items</div>
+                    </td>
+                </tr>
+            <% } else { %>
+                <% _.each(items, function(item, index) { %>
+                    <tr id="<%= item.id %>" data-content="<%= item.itemID %>">
+                        <td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
+                        <td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
+                        <td>
+                            <div class="itemName"><%= item.name %></div>
+                            <div class="calendarDate"><%= item.calendarDate %></div>
+                            <div class="releaseDate"><%= item.releaseDate %></div>
+                            <div class="platform"><%= item.platform %></div>
+                            <div class="gameStatus"><%= item.gameStatus %></div>
+                            <div class="playStatus"><%= item.playStatus %></div>
+                            <div class="userRating"><%= item.userRating %></div>
                         </td>
-                    </tr>
-                <% } else { %>
-                    <% _.each(items, function(item, index) { %>
-                        <tr id="<%= item.id %>" data-content="<%= item.itemID %>">
-                            <td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
-                            <td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
-                            <td>
-                                <div class="itemName"><%= item.name %></div>
-                                <div class="calendarDate"><%= item.calendarDate %></div>
-                                <div class="releaseDate"><%= item.releaseDate %></div>
-                                <div class="platform"><%= item.platform %></div>
-                                <div class="gameStatus"><%= item.gameStatus %></div>
-                                <div class="playStatus"><%= item.playStatus %></div>
-                                <div class="userRating"><%= item.userRating %></div>
-                            </td>
-                            <td>
-                                <div class="extraData">
-                                    <div class="priceDetails"></div>
+                        <td>
+                            <div class="extraData">
+                                <div class="priceDetails"></div>
 
-                                    <div class="quickAttributes" data-content="<%= item.id %>">
-                                        <span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying" href="#" rel="tooltip" data-content="0" data-original-title="Playing"></a></span>
-                                        <span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed" href="#" rel="tooltip" data-content="1" data-original-title="Played"></a></span>
-                                        <span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" rel="tooltip" data-content="2" data-original-title="Completed"></a></span>
-                                        <span class="rating-<%= item.userRating %>"><a class="attrFavorite" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"></a></span>
-                                        <span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned" href="#" rel="tooltip" data-content="4" data-original-title="Owned"></a></span>
-                                    </div>
+                                <div class="quickAttributes" data-content="<%= item.id %>">
+                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying" href="#" rel="tooltip" data-content="0" data-original-title="Playing"></a></span>
+                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed" href="#" rel="tooltip" data-content="1" data-original-title="Played"></a></span>
+                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" rel="tooltip" data-content="2" data-original-title="Completed"></a></span>
+                                    <span class="rating-<%= item.userRating %>"><a class="attrFavorite" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"></a></span>
+                                    <span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned" href="#" rel="tooltip" data-content="4" data-original-title="Owned"></a></span>
                                 </div>
-                            </td>
-                            <td class="scoreDetails"><a href="#" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
-                            <% if (currentViewTagID !== '0') { %>
-                                <td class="options"><a href="#" class="deleteItem_btn" data-content="<%= item.id %>"></a></td>
-                            <% } %>
-                        </tr>
-                    <% }); %>
-                <% } %>
-            </tbody>
+                            </div>
+                        </td>
+                        <td class="scoreDetails"><a href="#" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
+                        <% if (currentViewTagID !== '0') { %>
+                            <td class="options"><a href="#" class="deleteItem_btn" data-content="<%= item.id %>"></a></td>
+                        <% } %>
+                    </tr>
+                <% }); %>
+            <% } %>
         </script>
 
         <!-- gridview results -->
