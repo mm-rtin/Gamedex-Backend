@@ -88,7 +88,7 @@ urlpatterns = patterns('',
     (r'^getDirectory/$', 'tmz.experiment.getDirectory'),
 
     # catch all
-    (r'^.*/$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
+    (r'^.*/$', 'tmz.views.index'),
 
 
 )
