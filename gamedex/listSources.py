@@ -11,7 +11,7 @@ import time
 
 from boto.s3.connection import S3Connection
 
-from tmz.keys import Keys
+from gamedex.keys import Keys
 
 import logging
 import json

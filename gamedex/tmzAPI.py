@@ -12,7 +12,7 @@ import uuid
 import logging
 
 # database models
-from tmz.models import Users, Items, Tags, ItemTagUser
+from gamedex.models import Users, Items, Tags, ItemTagUser
 
 import gameSources
 

@@ -10,8 +10,8 @@ from boto.s3.connection import S3Connection
 import logging
 import re
 
-from tmz.keys import Keys
-from tmz.authentication import Authentication
+from gamedex.keys import Keys
+from gamedex.authentication import Authentication
 
 # base url
 S3_URL = 'https://s3.amazonaws.com/'
@@ -88,7 +88,7 @@ def copyAssetsToS3(s3conn):
 
         # css
         'http://static.gamedex.net/css/bootstrap.css',
-        'http://static.gamedex.net/css/tmz.css',
+        'http://static.gamedex.net/css/gamedex.css',
 
         # scripts
         'http://static.gamedex.net/dist/scripts.min.js',

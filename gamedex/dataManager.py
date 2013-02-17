@@ -11,10 +11,10 @@ import StringIO
 import gzip
 import difflib
 
-from tmz.searchService import Steam, Amazon, Metacritic
+from gamedex.searchService import Steam, Amazon, Metacritic
 
 # database models
-from tmz.models import Items
+from gamedex.models import Items
 
 # constants
 METACRITIC_BASE_URL = 'http://www.metacritic.com'

@@ -1,6 +1,6 @@
 from google.appengine.api import memcache
 
-from tmz.models import ApiKeys
+from gamedex.models import ApiKeys
 
 import logging
 

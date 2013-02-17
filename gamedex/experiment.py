@@ -7,7 +7,7 @@ import logging
 import json
 
 # database models
-from tmz.models import Users, Items, Tags, ItemTagUser
+from gamedex.models import Users, Items, Tags, ItemTagUser
 
 
 # GET DIRECTORY OF ID/3RD PARTY IDs

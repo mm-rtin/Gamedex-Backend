@@ -10,7 +10,7 @@ from lxml import etree
 
 import logging
 
-from tmz.keys import Keys
+from gamedex.keys import Keys
 
 # amazon api properties
 AMAZON_ACCESS_KEY = 'AMAZON_ACCESS_KEY'

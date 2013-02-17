@@ -13,8 +13,8 @@ from lxml import etree
 import json
 import logging
 
-from tmz.keys import Keys
-from tmz.searchService import Steam, Amazon, Metacritic
+from gamedex.keys import Keys
+from gamedex.searchService import Steam, Amazon, Metacritic
 
 # amazon api properties
 AMAZON_ACCESS_KEY = 'AMAZON_ACCESS_KEY'
