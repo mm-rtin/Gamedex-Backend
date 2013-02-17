@@ -69,23 +69,28 @@ urlpatterns = patterns('',
     # import games
     (r'^import/$', 'tmz.tmzAPI.importGames'),
 
-    # data management
-    (r'^manage/metascore/update$', 'tmz.dataManager.updateMetascore'),
-
     # game sources
     (r'^steam/games/$', 'tmz.gameSources.getSteamGames'),
     (r'^psn/games/$', 'tmz.gameSources.getPSNGames_endpoint'),
     (r'^xbl/games/$', 'tmz.gameSources.getXBLGames'),
 
+
+    # data management
+
+    # update metascore
+    (r'^manage/metascore/update/$', 'tmz.dataManager.updateMetascore'),
+
+    # update steam
+    (r'^manage/steam/price/update/$', 'tmz.dataManager.updateSteamPrice'),
+    (r'^manage/steam/page/update/$', 'tmz.dataManager.updateSteamPage'),
+
+
     # management
-    (r'^key/create$', 'tmz.management.setAPIKey'),
+    (r'^key/create/$', 'tmz.management.setAPIKey'),
     (r'^copy/assets/$', 'tmz.management.copyAssetsToS3'),
     (r'^gamewallpapers/$', 'tmz.management.gamewallpapers'),
 
     (r'^createDisqusCategory/$', 'tmz.tmzAPI.createDisqusCategory'),
-
-    # experiments
-    (r'^getDirectory/$', 'tmz.experiment.getDirectory'),
 
     # catch all
     (r'^.*/$', 'tmz.views.index'),

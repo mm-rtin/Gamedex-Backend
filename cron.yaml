@@ -1,4 +1,12 @@
 cron:
 - description: daily metascore update
   url: /manage/metascore/update
-  schedule: every 24 hours
+  schedule: every day 00:00
+
+- description: daily steam page update
+  url: /manage/steam/page/update/
+  schedule: every day 01:00
+
+- description: daily steam price update
+  url: /manage/steam/price/update/
+  schedule: every day 02:00

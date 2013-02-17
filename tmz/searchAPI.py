@@ -14,6 +14,7 @@ import json
 import logging
 
 from tmz.keys import Keys
+from tmz.searchService import Steam, Amazon, Metacritic
 
 # amazon api properties
 AMAZON_ACCESS_KEY = 'AMAZON_ACCESS_KEY'
@@ -22,7 +23,6 @@ AMAZON_ASSOCIATE_TAG = 'codeco06-20'
 
 # giantbomb api properties
 GIANTBOMB_API_KEY = 'GIANTBOMB_API_KEY'
-
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,69 +34,13 @@ def searchSteam(request):
     if 'keywords' in request.GET:
         keywords = request.GET.get('keywords')
 
-    # memcache key
-    memcacheKey = 'steamTitle_' + keywords
+        # get steam results
+        searchList = Steam.searchSteam(keywords)
 
-    # return memcached search if available
-    steamSearch = memcache.get(memcacheKey)
-
-    if steamSearch is not None:
-        logging.info('')
-        logging.info('-------------- searchSteam CACHE HIT --------------')
-        logging.info(memcacheKey)
-        logging.info('')
-        logging.info('')
-
-        # return json
-        return HttpResponse(json.dumps(steamSearch), mimetype='application/json')
+        return HttpResponse(json.dumps(searchList), mimetype='application/json')
 
     else:
-
-        logging.info('')
-        logging.info('-------------- searchSteam MISS --------------')
-        logging.info(memcacheKey)
-        logging.info('')
-        logging.info('')
-
-        url = 'http://store.steampowered.com/search/suggest?f=games&term=' + keywords
-        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
-
-        searchList = parseSteamSearch(response.content)
-
-    return HttpResponse(json.dumps(searchList), mimetype='application/json')
-
-
-def parseSteamSearch(response):
-
-    searchList = []
-
-    try:
-        html = etree.HTML(response)
-
-        rowSel = CSSSelector('.match')
-        nameSel = CSSSelector('.match_name')
-        priceSel = CSSSelector('.match_price')
-
-        for row in rowSel(html):
-
-            try:
-                nameElement = nameSel(row)
-                priceElement = priceSel(row)
-
-                name = nameElement[0].text.strip()
-                price = priceElement[0].text.strip()
-                url = row.get('href')
-
-                steamObj = {'name': name, 'page': url, 'price': price}
-                searchList.append(steamObj)
-
-            except IndexError:
-                logging.error('parseSteamSearch: IndexError')
-
-    except:
-        logging.error('parseSteamSearch: Parse Error')
-
-    return searchList
+        return HttpResponse('missing_param', mimetype='text/plain', status='500')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,12 +64,16 @@ def cacheSteam(request):
         memcacheKey = 'steamTitle_' + keywords
 
         # cache for 30 days
-        if not memcache.add(memcacheKey, cachedObject, 2592000):
+        if memcache.add(memcacheKey, cachedObject, 2592000):
+            return HttpResponse('TRUE', mimetype='text/html')
+
+        else:
             logging.error('cacheSteam: Memcache set failed')
             logging.error(memcacheKey)
             return HttpResponse('FALSE', mimetype='text/html')
 
-    return HttpResponse('TRUE', mimetype='text/html')
+    else:
+        return HttpResponse('missing_param', mimetype='text/plain', status='500')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,41 +81,19 @@ def cacheSteam(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def searchMetacritic(request):
 
+    platform = ''
+
     if 'keywords' in request.GET:
         keywords = request.GET.get('keywords')
 
     if 'platform' in request.GET:
         platform = request.GET.get('platform')
 
-    # memcache key
-    memcacheKey = 'searchMetacritic_' + keywords + '_' + platform
-
-    # return memcached search if available
-    metacriticSearch = memcache.get(memcacheKey)
-
-    if metacriticSearch is not None:
-        logging.info('')
-        logging.info('-------------- searchMetacritic CACHE HIT --------------')
-        logging.info(memcacheKey)
-        logging.info('')
-        logging.info('')
-
-        # return json
-        return HttpResponse(json.dumps(metacriticSearch), mimetype='application/json')
-
-    else:
-
-        logging.info('')
-        logging.info('-------------- searchMetacritic MISS --------------')
-        logging.info(memcacheKey)
-        logging.info('')
-        logging.info('')
-
-        url = 'http://www.metacritic.com/search/game/' + keywords + '/results'
-        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+    # search metacritic
+    response = Metacritic.searchMetacritic(keywords, platform)
 
     # return raw response html
-    return HttpResponse(response.content, mimetype='text/html')
+    return HttpResponse(response, mimetype='text/html')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -275,56 +201,21 @@ def cacheGametrailers(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def searchAmazon(request):
 
-    amazon = bottlenose.Amazon(Keys.getKey(AMAZON_ACCESS_KEY), Keys.getKey(AMAZON_SECRET_KEY), AMAZON_ASSOCIATE_TAG)
+    if all(k in request.GET for k in ('keywords', 'browse_node', 'response_group', 'search_index', 'page')):
 
-    if 'keywords' in request.GET:
+        # get request parameters
         keywords = request.GET.get('keywords')
-
-    if 'browse_node' in request.GET:
         browseNode = request.GET.get('browse_node')
-
-    if 'response_group' in request.GET:
         responseGroup = request.GET.get('response_group')
-
-    if 'search_index' in request.GET:
         searchIndex = request.GET.get('search_index')
-
-    if 'page' in request.GET:
         page = request.GET.get('page')
 
-    # memcache key
-    memcacheKey = 'searchAmazon_' + keywords + '_' + browseNode + '_' + responseGroup + '_' + searchIndex + '_' + page
-
-    # return memcached search if available
-    search = memcache.get(memcacheKey)
-
-    if search is not None:
-        logging.info('')
-        logging.info('-------------- searchAmazon CACHE HIT --------------')
-        logging.info(memcacheKey)
-        logging.info('')
-        logging.info('')
-        return HttpResponse(search, mimetype='application/xml')
-
-    else:
-        # Availability='Available', Condition='All', MerchantId='Amazon', MinimumPrice='800', MaximumPrice='13500'
-        if browseNode == '0':
-            response = amazon.ItemSearch(SearchIndex=searchIndex, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, Sort='salesrank')
-        else:
-            response = amazon.ItemSearch(SearchIndex=searchIndex, Title=keywords, ResponseGroup=responseGroup, ItemPage=page, Sort='salesrank', MinimumPrice='800', MaximumPrice='13500', BrowseNode=browseNode)
-
-        logging.info('')
-        logging.info('-------------- searchAmazon MISS --------------')
-        logging.info(memcacheKey)
-        logging.info('')
-        logging.info('')
-
-        # cache amazon search for 1 day
-        if not memcache.add(memcacheKey, response, 86400):
-            logging.error('searchAmazon: Memcache set failed')
-            logging.error(memcacheKey)
+        # search amazon
+        response = Amazon.searchAmazon(keywords, browseNode, responseGroup, searchIndex, page)
 
         return HttpResponse(response, mimetype='application/xml')
+    else:
+        return HttpResponse('missing_param', mimetype='text/plain', status='500')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -332,43 +223,19 @@ def searchAmazon(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def detailAmazon(request):
 
-    # get request parameters
-    if 'asin' in request.GET:
-        asin = request.GET.get('asin')
+    if all(k in request.GET for k in ('asin', 'response_group')):
 
-    if 'response_group' in request.GET:
+        # get request parameters
+        asin = request.GET.get('asin')
         responseGroup = request.GET.get('response_group')
 
-    memcacheKey = 'detailAmazon_' + asin + '_' + responseGroup
-
-    # return memcached detail if available
-    detail = memcache.get(memcacheKey)
-
-    if detail is not None:
-        logging.info('')
-        logging.info('-------------- detailAmazon HIT --------------')
-        logging.info(memcacheKey)
-        logging.info('')
-        logging.info('')
-        return HttpResponse(detail, mimetype='application/xml')
-
-    # get detail from source
-    else:
-        amazon = bottlenose.Amazon(Keys.getKey(AMAZON_ACCESS_KEY), Keys.getKey(AMAZON_SECRET_KEY), AMAZON_ASSOCIATE_TAG)
-        response = amazon.ItemLookup(ItemId=asin, IdType='ASIN', ResponseGroup=responseGroup)
-
-        logging.info('')
-        logging.info('-------------- detailAmazon MISS --------------')
-        logging.info(memcacheKey)
-        logging.info('')
-        logging.info('')
-
-        # cache amazon detail for 1 day
-        if not memcache.add(memcacheKey, response, 86400):
-            logging.error('detailAmazon: Memcache set failed')
-            logging.error(memcacheKey)
+        # get amazon detail response
+        response = Amazon.detailAmazon(asin, responseGroup)
 
         return HttpResponse(response, mimetype='application/xml')
+
+    else:
+        return HttpResponse('missing_param', mimetype='text/plain', status='500')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
