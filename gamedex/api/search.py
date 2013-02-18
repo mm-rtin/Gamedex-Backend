@@ -1,16 +1,20 @@
+"""search.py: API for accessing Search Sources """
+
+__author__ = "Michael Martin"
+__status__ = "Production"
+
+import urllib
+import urllib2
+import json
+import logging
+
 from google.appengine.api import urlfetch
 from google.appengine.api import memcache
 
 from django.http import HttpResponse
 
-import urllib
-import urllib2
-
-import json
-import logging
-
-from gamedex.keys import Keys
-from gamedex.searchService import Steam, Amazon, Metacritic
+from gamedex.management import Keys
+from gamedex.services.searchSources import Steam, Amazon, Metacritic
 
 # amazon api properties
 AMAZON_ACCESS_KEY = 'AMAZON_ACCESS_KEY'

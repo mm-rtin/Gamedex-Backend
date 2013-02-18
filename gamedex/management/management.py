@@ -1,16 +1,19 @@
-from google.appengine.api import urlfetch
+"""management.py: Admin Tools """
 
-from django.http import HttpResponse
-
-from lxml.cssselect import CSSSelector
-from lxml import etree
-
-from boto.s3.connection import S3Connection
+__author__ = "Michael Martin"
+__status__ = "Production"
 
 import logging
 import re
 
-from gamedex.keys import Keys
+from google.appengine.api import urlfetch
+from django.http import HttpResponse
+
+from boto.s3.connection import S3Connection
+from lxml.cssselect import CSSSelector
+from lxml import etree
+
+from gamedex.management import Keys
 from gamedex.authentication import Authentication
 
 # base url

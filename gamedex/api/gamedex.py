@@ -1,6 +1,7 @@
-from django.http import HttpResponse
-from google.appengine.api import mail
-from google.appengine.ext import ndb
+"""gamedex.py: Main gamedex application API """
+
+__author__ = "Michael Martin"
+__status__ = "Production"
 
 import hashlib
 import datetime
@@ -8,13 +9,15 @@ import time
 import random
 import json
 import uuid
-
 import logging
 
-# database models
-from gamedex.models import Users, Items, Tags, ItemTagUser
+from google.appengine.api import mail
+from google.appengine.ext import ndb
 
-import gameSources
+from django.http import HttpResponse
+
+from gamedex.services import gameSources
+from gamedex.models import Users, Items, Tags, ItemTagUser
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # GAMEDEX REST API

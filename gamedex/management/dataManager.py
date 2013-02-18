@@ -1,3 +1,14 @@
+"""dataManager.py: Methods for peridically updating main application datastore """
+
+__author__ = "Michael Martin"
+__status__ = "Production"
+
+
+import logging
+import StringIO
+import gzip
+import difflib
+
 from google.appengine.api import urlfetch
 from google.appengine.ext import deferred
 
@@ -6,15 +17,8 @@ from django.http import HttpResponse
 from lxml.cssselect import CSSSelector
 from lxml import etree
 
-import logging
-import StringIO
-import gzip
-import difflib
-
-from gamedex.searchService import Steam, Amazon, Metacritic
-
-# database models
 from gamedex.models import Items
+from gamedex.services.searchSources import Steam
 
 # constants
 METACRITIC_BASE_URL = 'http://www.metacritic.com'

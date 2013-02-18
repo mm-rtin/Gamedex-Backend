@@ -10,86 +10,78 @@ urlpatterns = patterns('',
     # third party proxies
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # amazon source
-    (r'^amazon/search/$',       'gamedex.searchAPI.searchAmazon'),
-    (r'^amazon/detail/$',       'gamedex.searchAPI.detailAmazon'),
+    (r'^amazon/search/$',       'gamedex.api.search.searchAmazon'),
+    (r'^amazon/detail/$',       'gamedex.api.search.detailAmazon'),
 
-    (r'^giantbomb/search/$',    'gamedex.searchAPI.searchGiantBomb'),
-    (r'^giantbomb/detail/$',    'gamedex.searchAPI.detailGiantBomb'),
+    (r'^giantbomb/search/$',    'gamedex.api.search.searchGiantBomb'),
+    (r'^giantbomb/detail/$',    'gamedex.api.search.detailGiantBomb'),
 
-    (r'^metacritic/search/$',   'gamedex.searchAPI.searchMetacritic'),
-    (r'^metacritic/cache/$',    'gamedex.searchAPI.cacheMetacritic'),
+    (r'^metacritic/search/$',   'gamedex.api.search.searchMetacritic'),
+    (r'^metacritic/cache/$',    'gamedex.api.search.cacheMetacritic'),
 
-    (r'^gametrailers/search/$', 'gamedex.searchAPI.searchGametrailers'),
-    (r'^gametrailers/cache/$',  'gamedex.searchAPI.cacheGametrailers'),
+    (r'^gametrailers/search/$', 'gamedex.api.search.searchGametrailers'),
+    (r'^gametrailers/cache/$',  'gamedex.api.search.cacheGametrailers'),
 
-    (r'^steam/search/$',        'gamedex.searchAPI.searchSteam'),
-    (r'^steam/cache/$',         'gamedex.searchAPI.cacheSteam'),
+    (r'^steam/search/$',        'gamedex.api.search.searchSteam'),
+    (r'^steam/cache/$',         'gamedex.api.search.cacheSteam'),
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # list sources
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    (r'^list/popular/$',    'gamedex.listSources.popularList'),
-    (r'^list/released/$',   'gamedex.listSources.releasedList'),
-    (r'^list/upcoming/$',   'gamedex.listSources.upcomingList'),
+    (r'^list/popular/$',    'gamedex.api.list.popularList'),
+    (r'^list/released/$',   'gamedex.api.list.releasedList'),
+    (r'^list/upcoming/$',   'gamedex.api.list.upcomingList'),
 
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # gamedex rest api
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # user
-    (r'^user/login/$',                  'gamedex.gamedexAPI.login'),
-    (r'^user/logout/$',                 'gamedex.gamedexAPI.logout'),
-    (r'^user/$',                        'gamedex.gamedexAPI.user'),
-    (r'^user/create/$',                 'gamedex.gamedexAPI.createUser'),
-    (r'^user/update/$',                 'gamedex.gamedexAPI.updateUser'),
-    (r'^user/delete/$',                 'gamedex.gamedexAPI.deleteUser'),
-    (r'^user/resetcode/send/$',         'gamedex.gamedexAPI.sendResetCode'),
-    (r'^user/resetcode/submit/$',       'gamedex.gamedexAPI.submitResetCode'),
-    (r'^user/password/update/$',        'gamedex.gamedexAPI.updatePassword'),
+    (r'^user/login/$',                  'gamedex.api.gamedex.login'),
+    (r'^user/logout/$',                 'gamedex.api.gamedex.logout'),
+    (r'^user/$',                        'gamedex.api.gamedex.user'),
+    (r'^user/create/$',                 'gamedex.api.gamedex.createUser'),
+    (r'^user/update/$',                 'gamedex.api.gamedex.updateUser'),
+    (r'^user/delete/$',                 'gamedex.api.gamedex.deleteUser'),
+    (r'^user/resetcode/send/$',         'gamedex.api.gamedex.sendResetCode'),
+    (r'^user/resetcode/submit/$',       'gamedex.api.gamedex.submitResetCode'),
+    (r'^user/password/update/$',        'gamedex.api.gamedex.updatePassword'),
 
     # tag
-    (r'^tag/$',                         'gamedex.gamedexAPI.getTag'),
-    (r'^tag/add/$',                     'gamedex.gamedexAPI.createTag'),
-    (r'^tag/update/$',                  'gamedex.gamedexAPI.updateTag'),
-    (r'^tag/delete/$',                  'gamedex.gamedexAPI.deleteTag'),
+    (r'^tag/$',                         'gamedex.api.gamedex.getTag'),
+    (r'^tag/add/$',                     'gamedex.api.gamedex.createTag'),
+    (r'^tag/update/$',                  'gamedex.api.gamedex.updateTag'),
+    (r'^tag/delete/$',                  'gamedex.api.gamedex.deleteTag'),
 
     # item
-    (r'^item/$',                        'gamedex.gamedexAPI.getTagItems'),
-    (r'^item/directory/$',              'gamedex.gamedexAPI.getDirectory'),
-    (r'^item/tags/$',                   'gamedex.gamedexAPI.getItemTags'),
-    (r'^item/user/update/$',            'gamedex.gamedexAPI.updateUserItem'),
-    (r'^item/shared/price/update/$',    'gamedex.gamedexAPI.updateSharedItemPrice'),
-    (r'^item/metacritic/update/$',      'gamedex.gamedexAPI.updateMetacritic'),
-    (r'^item/add/$',                    'gamedex.gamedexAPI.createTagItem'),
-    (r'^item/delete/$',                 'gamedex.gamedexAPI.deleteTagItem'),
-    (r'^item/delete/batch/$',           'gamedex.gamedexAPI.deleteTagItemsInBatch'),
+    (r'^item/$',                        'gamedex.api.gamedex.getTagItems'),
+    (r'^item/directory/$',              'gamedex.api.gamedex.getDirectory'),
+    (r'^item/tags/$',                   'gamedex.api.gamedex.getItemTags'),
+    (r'^item/user/update/$',            'gamedex.api.gamedex.updateUserItem'),
+    (r'^item/shared/price/update/$',    'gamedex.api.gamedex.updateSharedItemPrice'),
+    (r'^item/metacritic/update/$',      'gamedex.api.gamedex.updateMetacritic'),
+    (r'^item/add/$',                    'gamedex.api.gamedex.createTagItem'),
+    (r'^item/delete/$',                 'gamedex.api.gamedex.deleteTagItem'),
+    (r'^item/delete/batch/$',           'gamedex.api.gamedex.deleteTagItemsInBatch'),
 
     # import games
-    (r'^import/$', 'gamedex.gamedexAPI.importGames'),
-
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # game imports
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    (r'^steam/games/$', 'gamedex.gameSources.getSteamGames'),
-    (r'^psn/games/$',   'gamedex.gameSources.getPSNGames_endpoint'),
-    (r'^xbl/games/$',   'gamedex.gameSources.getXBLGames'),
-
+    (r'^import/$', 'gamedex.api.gamedex.importGames'),
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # data management
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # update metascore
-    (r'^manage/metascore/update/$',     'gamedex.dataManager.updateMetascore'),
+    (r'^manage/metascore/update/$',     'gamedex.management.dataManager.updateMetascore'),
     # update steam
-    (r'^manage/steam/price/update/$',   'gamedex.dataManager.updateSteamPrice'),
-    (r'^manage/steam/page/update/$',    'gamedex.dataManager.updateSteamPage'),
+    (r'^manage/steam/price/update/$',   'gamedex.management.dataManager.updateSteamPrice'),
+    (r'^manage/steam/page/update/$',    'gamedex.management.dataManager.updateSteamPage'),
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # admin
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    (r'^key/create/$',              'gamedex.management.setAPIKey'),
-    (r'^copy/assets/$',             'gamedex.management.copyAssetsToS3'),
-    (r'^gamewallpapers/$',          'gamedex.management.gamewallpapers'),
+    (r'^key/create/$',              'gamedex.management.management.setAPIKey'),
+    (r'^copy/assets/$',             'gamedex.management.management.copyAssetsToS3'),
+    (r'^gamewallpapers/$',          'gamedex.management.management.gamewallpapers'),
 
     (r'^createDisqusCategory/$',    'gamedex.gamedexAPI.createDisqusCategory'),
 

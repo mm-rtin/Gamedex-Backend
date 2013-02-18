@@ -1,21 +1,17 @@
-from google.appengine.api import urlfetch
+"""gameSources.py: Import Games from third party sources: Steam, PSN and XBL """
 
-from lxml.cssselect import CSSSelector
-from lxml import etree
-
-import logging
+__author__ = "Michael Martin"
+__status__ = "Production"
 
 import StringIO
 import gzip
 import json
+import logging
 
+from google.appengine.api import urlfetch
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# getPSNGames_endpoint
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def getPSNGames_endpoint(request):
-
-    getPSNGames(request.GET.get('id'))
+from lxml.cssselect import CSSSelector
+from lxml import etree
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

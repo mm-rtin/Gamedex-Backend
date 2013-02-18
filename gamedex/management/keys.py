@@ -1,10 +1,18 @@
+"""keys.py: Save and Retrieve keys from Datastore """
+
+__author__ = "Michael Martin"
+__status__ = "Production"
+
+import logging
+
 from google.appengine.api import memcache
 
 from gamedex.models import ApiKeys
 
-import logging
 
-
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Keys
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Keys(object):
 
     # setKey

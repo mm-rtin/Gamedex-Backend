@@ -1,15 +1,19 @@
-from google.appengine.api import urlfetch
-from google.appengine.api import memcache
+"""searchSources.py: Third party search data sources: Steam, Metacritic, Amazon """
+
+__author__ = "Michael Martin"
+__status__ = "Production"
 
 import urllib
 import bottlenose
+import logging
+
+from google.appengine.api import urlfetch
+from google.appengine.api import memcache
 
 from lxml.cssselect import CSSSelector
 from lxml import etree
 
-import logging
-
-from gamedex.keys import Keys
+from gamedex.management import Keys
 
 # amazon api properties
 AMAZON_ACCESS_KEY = 'AMAZON_ACCESS_KEY'

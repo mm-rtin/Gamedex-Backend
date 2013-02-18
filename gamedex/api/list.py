@@ -1,20 +1,23 @@
+"""list.py: API for retrieving list data """
+
+__author__ = "Michael Martin"
+__status__ = "Production"
+
+
+import datetime
+import time
+import logging
+import json
+
 from google.appengine.api import urlfetch
 from google.appengine.api import memcache
 
 from django.http import HttpResponse
-
 from lxml.cssselect import CSSSelector
 from lxml import etree
-
-import datetime
-import time
-
 from boto.s3.connection import S3Connection
 
-from gamedex.keys import Keys
-
-import logging
-import json
+from gamedex.management import Keys
 
 # constants
 # base url
