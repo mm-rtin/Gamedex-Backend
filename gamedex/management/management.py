@@ -13,8 +13,8 @@ from boto.s3.connection import S3Connection
 from lxml.cssselect import CSSSelector
 from lxml import etree
 
-from gamedex.management import Keys
-from gamedex.authentication import Authentication
+from authentication import Authentication
+from management.keys import Keys
 
 # base url
 S3_URL = 'https://s3.amazonaws.com/'

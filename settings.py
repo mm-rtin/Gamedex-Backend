@@ -1,11 +1,18 @@
-# Django settings
+import os
+import sys
 
+# Django settings
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
+
+PROJECT_ROOT = os.path.dirname(__file__)
+
+# add current directory as apps directory
+sys.path.insert(0, os.path.join(PROJECT_ROOT, "gamedex"))
 
 MANAGERS = ADMINS
 
@@ -105,10 +112,7 @@ ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'main.application'
 
 TEMPLATE_DIRS = (
-    'gamedex/templates',
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (

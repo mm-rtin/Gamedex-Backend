@@ -17,8 +17,8 @@ from django.http import HttpResponse
 from lxml.cssselect import CSSSelector
 from lxml import etree
 
-from gamedex.models import Items
-from gamedex.services.searchSources import Steam
+from models import Items
+from services.searchSources import Steam
 
 # constants
 METACRITIC_BASE_URL = 'http://www.metacritic.com'

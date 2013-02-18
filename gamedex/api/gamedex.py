@@ -16,8 +16,8 @@ from google.appengine.ext import ndb
 
 from django.http import HttpResponse
 
-from gamedex.services import gameSources
-from gamedex.models import Users, Items, Tags, ItemTagUser
+from services import gameSources
+from models import Users, Items, Tags, ItemTagUser
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # GAMEDEX REST API

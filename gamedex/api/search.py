@@ -13,8 +13,8 @@ from google.appengine.api import memcache
 
 from django.http import HttpResponse
 
-from gamedex.management import Keys
-from gamedex.services.searchSources import Steam, Amazon, Metacritic
+from management.keys import Keys
+from services.searchSources import Steam, Amazon, Metacritic
 
 # amazon api properties
 AMAZON_ACCESS_KEY = 'AMAZON_ACCESS_KEY'

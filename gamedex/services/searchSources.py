@@ -13,7 +13,7 @@ from google.appengine.api import memcache
 from lxml.cssselect import CSSSelector
 from lxml import etree
 
-from gamedex.management import Keys
+from management.keys import Keys
 
 # amazon api properties
 AMAZON_ACCESS_KEY = 'AMAZON_ACCESS_KEY'

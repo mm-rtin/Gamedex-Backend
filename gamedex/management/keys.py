@@ -7,7 +7,7 @@ import logging
 
 from google.appengine.api import memcache
 
-from gamedex.models import ApiKeys
+from models import ApiKeys
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
