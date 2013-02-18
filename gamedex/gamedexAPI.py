@@ -17,7 +17,7 @@ from gamedex.models import Users, Items, Tags, ItemTagUser
 import gameSources
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# T_MINUS ZERO REST API
+# GAMEDEX REST API
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -203,6 +203,7 @@ def generateUsername(email):
 
     return username
 
+
 # DELETE USER #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def deleteUser(request):
@@ -234,7 +235,6 @@ def deleteUser(request):
                         itemTagUserKeys.append(itemTagUser.key)
 
                     ndb.delete_multi(itemTagUserKeys)
-
 
                 # delete tags for user
                 tagsQuery = Tags.query(Tags.user == userKey).fetch()
@@ -447,7 +447,7 @@ def updatePassword(request):
 
 # CREATE TAG #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def createList(request):
+def createTag(request):
 
     if (request.POST):
 
@@ -497,7 +497,7 @@ def createList(request):
 # READ TAGS #DONE#
 # return a list of tags
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def getList(request):
+def getTag(request):
 
     if (request.POST):
 
@@ -552,7 +552,7 @@ def getList(request):
 # UPDATE TAG #DONE#
 # update tag name
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def updateList(request):
+def updateTag(request):
 
     if (request.POST):
 
@@ -606,7 +606,7 @@ def updateList(request):
 
 # DELETE TAG #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def deleteList(request):
+def deleteTag(request):
 
     if (request.POST):
 
@@ -671,7 +671,7 @@ def deleteList(request):
 
 # CREATE ITEM #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def createListItem(request):
+def createTagItem(request):
 
     if (request.POST):
 
@@ -1028,7 +1028,7 @@ def updateSharedItemPrice(request):
 
 # READ ITEMS #DONE#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def getListItems(request):
+def getTagItems(request):
 
     if (request.POST):
 
@@ -1309,7 +1309,7 @@ def getItemTagsByThirdPartyID(request):
 
 # DELETE ITEM
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def deleteListItem(request):
+def deleteTagItem(request):
 
     if (request.POST):
 
@@ -1363,7 +1363,7 @@ def deleteListItem(request):
 
 # DELETE ITEMS IN BATCH
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def deleteListItemsInBatch(request):
+def deleteTagItemsInBatch(request):
 
     if (request.POST):
 

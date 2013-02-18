@@ -2,7 +2,6 @@ from google.appengine.api import urlfetch
 from google.appengine.api import memcache
 
 import urllib
-import urllib2
 import bottlenose
 
 from lxml.cssselect import CSSSelector

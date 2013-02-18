@@ -5,10 +5,6 @@ from django.http import HttpResponse
 
 import urllib
 import urllib2
-import bottlenose
-
-from lxml.cssselect import CSSSelector
-from lxml import etree
 
 import json
 import logging

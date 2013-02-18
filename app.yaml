@@ -1,11 +1,11 @@
 application: t-minuszero
-version: 9
+version: 1
 runtime: python27
 api_version: 1
 threadsafe: yes
 
 builtins:
-- remote_api: on
+- remote_api: off
 - appstats: on
 - deferred: on
 
