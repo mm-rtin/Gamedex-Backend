@@ -29,8 +29,9 @@ urlpatterns = patterns('',
     # list sources
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     (r'^list/popular/$',    'gamedex.api.list.popularList'),
-    (r'^list/released/$',   'gamedex.api.list.releasedList'),
-    (r'^list/upcoming/$',   'gamedex.api.list.upcomingList'),
+    (r'^list/ign/upcoming/$',   'gamedex.api.list.ignUpcomingList'),
+    (r'^list/ign/reviewed/$',    'gamedex.api.list.ignReviewedList'),
+    (r'^list/gt/released/$',   'gamedex.api.list.gtReleasedList'),
 
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

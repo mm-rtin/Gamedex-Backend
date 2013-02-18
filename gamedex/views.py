@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 def index(request):
 
     # random image color
-    randomColorIndex = random.randrange(8) + 1
+    randomColorIndex = random.randrange(6) + 1
 
     # create context
     context = {'randomColorIndex': randomColorIndex}

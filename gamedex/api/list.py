@@ -28,6 +28,7 @@ S3_SECRET_KEY = 'AMAZON_SECRET_KEY'
 # site bucket
 UPCOMING_LIST_BUCKET = 's3.gamedex.net-upcominglist'
 RELEASED_LIST_BUCKET = 's3.gamedex.net-releasedlist'
+REVIEWED_LIST_BUCKET = 's3.gamedex.net-reviewedlist'
 
 # S3 Properties
 AWS_HEADERS = {
@@ -35,14 +36,15 @@ AWS_HEADERS = {
 }
 AWS_ACL = 'public-read'
 
-# ign base URL
-IGN_BASE_URL = 'http://www.ign.com/_views/ign/ign_tinc_reviewed_games.ftl?indexType=upcoming&locale=us'
+# ign
+IGN_UPCOMING_URL = 'http://www.ign.com/games/upcoming-ajax'
+IGN_REVIEWED_URL = 'http://www.ign.com/games/reviews-ajax'
 IGN_ITEMS_PER_PAGE = 25
 
-# gamestats base url
+# gamestats
 GAMESTATS_BASE_URL = 'http://www.gamestats.com/index/gpm/'
 
-# gametrailers base URL
+# gametrailers
 GT_BASE_URL = 'http://www.gametrailers.com/release_calendar_ajax/'
 GT_PROMOTION_ID = 'ae8bcc1b-d7f8-4b5b-8854-fd2700a56990'
 
@@ -128,9 +130,103 @@ def parsePopularList(response, platform):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# REVIEWED LIST (IGN)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def ignReviewedList(request):
+
+    if 'platform' in request.GET:
+        platform = request.GET.get('platform')
+
+    if 'page' in request.GET:
+        page = request.GET.get('page')
+
+    memcacheKey = 'ignReviewedList_' + platform + '_' + page
+
+    # return memcached list if available
+    result = memcache.get(memcacheKey)
+    if result is not None:
+        return HttpResponse(json.dumps(result), mimetype='application/json')
+
+    # load list from source
+    else:
+
+        # offset=0
+        offset = IGN_ITEMS_PER_PAGE * int(page)
+        url = IGN_REVIEWED_URL + '?startIndex=' + str(offset) + '&platformSlug=' + platform
+
+        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+        # allow 30 seconds for response
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+
+        if response.status_code == 200:
+
+            # parse result
+            result = parseIGNReviewedList(response.content)
+
+            # cache game stats list for 1 day
+            if not memcache.add(memcacheKey, result, 86400):
+                logging.error('ignReviewedList: Memcache set failed')
+
+            return HttpResponse(json.dumps(result), mimetype='application/json')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PARSE REVIEWED LIST (IGN)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def parseIGNReviewedList(response):
+
+    list = []
+    titleIndex = {}
+
+    # s3 connection
+    s3conn = S3Connection(Keys.getKey(S3_ACCESS_KEY), Keys.getKey(S3_SECRET_KEY), is_secure=False)
+
+    html = etree.HTML(response)
+
+    rowSel = CSSSelector('.itemList-item')
+    nameSel = CSSSelector('.item-title a')
+    imageSel = CSSSelector('.grid_3.alpha img')
+    dateSel = CSSSelector('.grid_3:nth-child(3) div')
+
+    for row in rowSel(html):
+
+        try:
+            nameElement = nameSel(row)
+            imageElement = imageSel(row)
+            dateElement = dateSel(row)
+
+            name = nameElement[0].text.strip()
+            url = nameElement[0].get('href').strip()
+            imageURL = imageElement[0].get('src').strip()
+            date = dateElement[0].text.strip()
+            displayDate = dateElement[0].text.strip()
+
+            # check if title name already added to list
+            if (name not in titleIndex):
+
+                # copy IGN image to S3 bucket
+                # get filename and extension
+                filename = imageURL.split('/')[-1]
+                extension = filename.split('.')[-1]
+                image = copyImageToS3(REVIEWED_LIST_BUCKET, imageURL, filename, extension, s3conn)
+
+                listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'releaseDate': date, 'mediumImage': image}
+                list.append(listObj)
+
+                # add to title index
+                titleIndex[name] = True
+
+        except IndexError:
+            logging.error('parseIGNReviewedList: IndexError')
+
+    # return list
+    return list
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # UPCOMING LIST (IGN)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def upcomingList(request):
+def ignUpcomingList(request):
 
     if 'platform' in request.GET:
         platform = request.GET.get('platform')
@@ -148,41 +244,27 @@ def upcomingList(request):
     # load list from source
     else:
 
-        # http://ps3.ign.com/_views/ign/ign_tinc_reviewed_games.ftl?
-        # platform=568479
-        # releaseStartDate=20120325
-        # releaseEndDate=21120301
-        # sort=popularity
-        # order=desc
-        # sortOrders=xxd
-        # currentGenre=All
-        # currentTimeSpan=Any%20Time
-        # pageType=top
-        # indexType=upcoming
-        # timeFilter=anytime
-        # location=ps3
-        # locale=us
-        # offset=25
-        # http://pc.ign.com/index/upcoming.html
-
-        # http://www.ign.com/_views/ign/ign_tinc_reviewed_games.ftl?indexType=upcoming&locale=us
-        # location=ps3
         # offset=0
         offset = IGN_ITEMS_PER_PAGE * int(page)
-        url = IGN_BASE_URL + '&location=' + platform + '&offset=' + str(offset)
+        url = IGN_UPCOMING_URL + '?startIndex=' + str(offset) + '&platformSlug=' + platform
+
+        logging.info(url)
 
         # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
         # allow 30 seconds for response
         response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
+        logging.info(response.status_code)
+        logging.info(response.content)
+
         if response.status_code == 200:
 
-            # parse game stats list result
-            result = parseUpcomingList(response.content)
+            # parse result
+            result = parseIGNUpcomingList(response.content)
 
             # cache game stats list for 1 day
             if not memcache.add(memcacheKey, result, 86400):
-                logging.error('ignUpcomingList: Memcache set failed')
+                logging.error('ignReviewedList: Memcache set failed')
 
             return HttpResponse(json.dumps(result), mimetype='application/json')
 
@@ -190,21 +272,22 @@ def upcomingList(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PARSE UPCOMING LIST (IGN)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def parseUpcomingList(response):
+def parseIGNUpcomingList(response):
 
     list = []
+    titleIndex = {}
 
     # s3 connection
     s3conn = S3Connection(Keys.getKey(S3_ACCESS_KEY), Keys.getKey(S3_SECRET_KEY), is_secure=False)
 
     html = etree.HTML(response)
 
-    tableSel = CSSSelector('#table-section-index .game-row')
-    nameSel = CSSSelector('.title-game a')
-    imageSel = CSSSelector('.box-art img')
-    dateSel = CSSSelector('td:nth-child(3)')
+    rowSel = CSSSelector('.itemList-item')
+    nameSel = CSSSelector('.item-title a')
+    imageSel = CSSSelector('.grid_3.alpha img')
+    dateSel = CSSSelector('.releaseDate')
 
-    for row in tableSel(html):
+    for row in rowSel(html):
 
         try:
             nameElement = nameSel(row)
@@ -217,19 +300,25 @@ def parseUpcomingList(response):
             date = dateElement[0].text.strip()
             displayDate = dateElement[0].text.strip()
 
-            # copy IGN image to S3 bucket
-            # get filename and extension
-            filename = imageURL.split('/')[-1]
-            extension = filename.split('.')[-1]
-            image = copyImageToS3(UPCOMING_LIST_BUCKET, imageURL, filename, extension, s3conn)
+            # check if title name already added to list
+            if (name not in titleIndex):
 
-            # detect Dec 31, 20XX - signifies unknown date > change to TBA 20XX
-            dateParts = date.split(',')
-            if (dateParts[0] == 'Dec 31'):
-                displayDate = 'TBA' + dateParts[1]
+                # copy IGN image to S3 bucket
+                # get filename and extension
+                filename = imageURL.split('/')[-1]
+                extension = filename.split('.')[-1]
+                image = copyImageToS3(UPCOMING_LIST_BUCKET, imageURL, filename, extension, s3conn)
 
-            listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'releaseDate': date, 'mediumImage': image}
-            list.append(listObj)
+                # detect TBA 20XX - signifies unknown date > change to real date: Dec 31, 20XX
+                dateParts = date.split(' ')
+                if (dateParts[0] == 'TBA'):
+                    date = 'Dec 31, ' + dateParts[1]
+
+                listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'releaseDate': date, 'mediumImage': image}
+                list.append(listObj)
+
+                # add to title index
+                titleIndex[name] = True
 
         except IndexError:
             logging.error('parseIGNUpcomingList: IndexError')
@@ -241,7 +330,7 @@ def parseUpcomingList(response):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # RELEASED LIST (GT)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def releasedList(request):
+def gtReleasedList(request):
 
     if all(k in request.GET for k in ('year', 'month', 'day')):
 
@@ -250,7 +339,7 @@ def releasedList(request):
         month = request.GET.get('month')
         day = request.GET.get('day')
 
-        memcacheKey = 'getReleasedList_' + year + '_' + month + '_' + day
+        memcacheKey = 'gtReleasedList_' + year + '_' + month + '_' + day
 
         # return memcached list if available
         result = memcache.get(memcacheKey)
@@ -287,7 +376,7 @@ def releasedList(request):
             if response.status_code == 200:
 
                 # parse game stats list result
-                result = parseReleasedList(response.content)
+                result = parseGTReleasedList(response.content)
 
                 # cache game stats list for 30 days
                 if not memcache.add(memcacheKey, result, 2592000):
@@ -302,7 +391,7 @@ def releasedList(request):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PARSE RELEASED LIST (GT)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def parseReleasedList(response):
+def parseGTReleasedList(response):
 
     list = []
 
@@ -349,7 +438,7 @@ def parseReleasedList(response):
                 list.append(listObj)
 
         except IndexError:
-            logging.error('parseReleasedList: IndexError')
+            logging.error('parseGTReleasedList: IndexError')
 
     # return list
     return list
