@@ -1052,7 +1052,6 @@ def getTagItems(request):
                 userKey = ndb.Key(urlsafe=userID)
                 user = Users.query(Users.key == userKey, Users.user_secret_key == secretKey).get()
 
-
             # empty dictionary
             itemDictionary = {'items': []}
 

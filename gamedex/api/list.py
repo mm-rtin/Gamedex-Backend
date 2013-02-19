@@ -17,6 +17,8 @@ from lxml.cssselect import CSSSelector
 from lxml import etree
 from boto.s3.connection import S3Connection
 
+from models import ListImages
+
 from management.keys import Keys
 
 # constants
@@ -41,92 +43,64 @@ IGN_UPCOMING_URL = 'http://www.ign.com/games/upcoming-ajax'
 IGN_REVIEWED_URL = 'http://www.ign.com/games/reviews-ajax'
 IGN_ITEMS_PER_PAGE = 25
 
-# gamestats
-GAMESTATS_BASE_URL = 'http://www.gamestats.com/index/gpm/'
-
 # gametrailers
 GT_BASE_URL = 'http://www.gametrailers.com/release_calendar_ajax/'
 GT_PROMOTION_ID = 'ae8bcc1b-d7f8-4b5b-8854-fd2700a56990'
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# POPULAR LIST (GAMESTATS)
+# RELEASED LIST (GT)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def popularList(request):
+def gtReleasedList(request):
 
-    # http://www.gamestats.com/index/gpm/xbox-360.html
-    url = GAMESTATS_BASE_URL
-    platform = 'all'
+    if all(k in request.GET for k in ('year', 'month', 'day')):
 
-    if 'platform' in request.GET and request.GET.get('platform') != '':
-        platform = request.GET.get('platform')
-        url = GAMESTATS_BASE_URL + platform + '.html'
+        # get parameters
+        year = request.GET.get('year')
+        month = request.GET.get('month')
+        day = request.GET.get('day')
 
-    # return memcached list if available
-    gameStatsByGPM = memcache.get('gameStatsListByGPM_' + platform)
-    if gameStatsByGPM is not None:
-        return HttpResponse(json.dumps(gameStatsByGPM), mimetype='application/json')
+        memcacheKey = 'gtReleasedList_' + year + '_' + month + '_' + day
 
-    # load list from source
+        # return memcached list if available
+        result = memcache.get(memcacheKey)
+        if result is not None:
+            return HttpResponse(json.dumps(result), mimetype='application/json')
+
+        # load list from source
+        else:
+
+            # 1341091189076 datetime.datetime.now() * 1000 - now timestamp in milliseconds
+            # promotionID
+            # 1339300800 - unix time (Sun, 10 Jun 2012 04:00:00 GMT) - week to fetch
+
+            # /ae8bcc1b-d7f8-4b5b-8854-fd2700a56990/1339300800/
+            # now stamp
+
+            # week stamp
+            displayDate = datetime.datetime(int(year), int(month), int(day), 6, 0, 0)
+            # unix timestamp
+            displayStamp = int(time.mktime(displayDate.utctimetuple()))
+
+            url = GT_BASE_URL + GT_PROMOTION_ID + '/' + str(displayStamp)
+
+            # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+            # allow 30 seconds for response
+            response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+
+            if response.status_code == 200:
+
+                # parse game stats list result
+                result = parseGTReleasedList(response.content)
+
+                # cache game stats list for 30 days
+                if not memcache.add(memcacheKey, result, 2592000):
+                    logging.error('gtReleasedList: Memcache set failed')
+
+                return HttpResponse(json.dumps(result), mimetype='application/json')
+
     else:
-
-        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-        # allow 30 seconds for response
-        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
-
-        if response.status_code == 200:
-
-            # parse game stats list result
-            gameStatsList = parsePopularList(response.content, platform)
-
-            # cache game stats list for 1 day
-            if not memcache.add('gameStatsListByGPM_' + platform, gameStatsList, 86400):
-                logging.error('gameStatsListByGPM: Memcache set failed')
-
-            return HttpResponse(json.dumps(gameStatsList), mimetype='application/json')
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# PARSE POPULAR LIST (GAMESTATS)
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def parsePopularList(response, platform):
-
-    list = []
-
-    try:
-        html = etree.HTML(response)
-
-        # select all tr from 3rd table
-        rowSel = CSSSelector('table:nth-child(3) tr')
-
-        # all platform has only 1 table
-        if (platform == 'all'):
-            rowSel = CSSSelector('table tr')
-
-        # select all 2nd tds
-        tdSel = CSSSelector('td:nth-child(2) a')
-
-        for row in rowSel(html):
-
-            try:
-                # get 2nd td elements from row
-                element = tdSel(row)
-
-                name = element[0].text.strip()
-                url = element[0].get('href')
-
-                if (name != 'Next 50'):
-                    listObj = {'name': name, 'gameStatsPage': url}
-                    list.append(listObj)
-
-            except IndexError:
-                logging.error('parsePopularList: IndexError')
-
-    except:
-        logging.error('parsePopularList: Parse Error')
-
-    # return list
-    return list
+        return HttpResponse('missing_param', mimetype='text/plain', status='500')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -171,6 +145,90 @@ def ignReviewedList(request):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# UPCOMING POPULAR LIST (IGN)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def ignUpcomingPopularList(request):
+
+    if 'platform' in request.GET:
+        platform = request.GET.get('platform')
+
+    if 'page' in request.GET:
+        page = request.GET.get('page')
+
+    memcacheKey = 'ignUpcomingPopularList_' + platform + '_' + page
+
+    # return memcached list if available
+    result = memcache.get(memcacheKey)
+    if result is not None:
+        return HttpResponse(json.dumps(result), mimetype='application/json')
+
+    # load list from source
+    else:
+
+        # offset=0
+        offset = IGN_ITEMS_PER_PAGE * int(page)
+        url = IGN_UPCOMING_URL + '?startIndex=' + str(offset) + '&platformSlug=' + platform
+
+        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+        # allow 30 seconds for response
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+
+        if response.status_code == 200:
+
+            # parse result
+            result = parseIGNUpcomingList(response.content)
+
+            # cache game stats list for 1 day
+            if not memcache.add(memcacheKey, result, 86400):
+                logging.error('ignUpcomingPopularList: Memcache set failed')
+
+            return HttpResponse(json.dumps(result), mimetype='application/json')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# UPCOMING LIST (IGN)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def ignUpcomingList(request):
+
+    if 'platform' in request.GET:
+        platform = request.GET.get('platform')
+
+    if 'page' in request.GET:
+        page = request.GET.get('page')
+
+    memcacheKey = 'ignUpcomingList_' + platform + '_' + page
+
+    # return memcached list if available
+    result = memcache.get(memcacheKey)
+    if result is not None:
+        return HttpResponse(json.dumps(result), mimetype='application/json')
+
+    # load list from source
+    else:
+
+        # offset=0
+        offset = IGN_ITEMS_PER_PAGE * int(page)
+        url = IGN_UPCOMING_URL + '?startIndex=' + str(offset) + '&platformSlug=' + platform + '&sortBy=releaseDate&sortOrder=asc'
+
+        logging.info(url)
+
+        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+        # allow 30 seconds for response
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+
+        if response.status_code == 200:
+
+            # parse result
+            result = parseIGNUpcomingList(response.content)
+
+            # cache game stats list for 1 day
+            if not memcache.add(memcacheKey, result, 86400):
+                logging.error('ignUpcomingList: Memcache set failed')
+
+            return HttpResponse(json.dumps(result), mimetype='application/json')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PARSE REVIEWED LIST (IGN)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def parseIGNReviewedList(response):
@@ -180,6 +238,8 @@ def parseIGNReviewedList(response):
 
     # s3 connection
     s3conn = S3Connection(Keys.getKey(S3_ACCESS_KEY), Keys.getKey(S3_SECRET_KEY), is_secure=False)
+    # get s3 bucket
+    s3bucket = s3conn.get_bucket(REVIEWED_LIST_BUCKET, validate=False)
 
     html = etree.HTML(response)
 
@@ -208,7 +268,7 @@ def parseIGNReviewedList(response):
                 # get filename and extension
                 filename = imageURL.split('/')[-1]
                 extension = filename.split('.')[-1]
-                image = copyImageToS3(REVIEWED_LIST_BUCKET, imageURL, filename, extension, s3conn)
+                image = copyImageToS3(s3conn, s3bucket, REVIEWED_LIST_BUCKET, imageURL, filename, extension)
 
                 listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'releaseDate': date, 'mediumImage': image}
                 list.append(listObj)
@@ -224,52 +284,6 @@ def parseIGNReviewedList(response):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# UPCOMING LIST (IGN)
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def ignUpcomingList(request):
-
-    if 'platform' in request.GET:
-        platform = request.GET.get('platform')
-
-    if 'page' in request.GET:
-        page = request.GET.get('page')
-
-    memcacheKey = 'ignUpcomingList_' + platform + '_' + page
-
-    # return memcached list if available
-    result = memcache.get(memcacheKey)
-    if result is not None:
-        return HttpResponse(json.dumps(result), mimetype='application/json')
-
-    # load list from source
-    else:
-
-        # offset=0
-        offset = IGN_ITEMS_PER_PAGE * int(page)
-        url = IGN_UPCOMING_URL + '?startIndex=' + str(offset) + '&platformSlug=' + platform
-
-        logging.info(url)
-
-        # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-        # allow 30 seconds for response
-        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
-
-        logging.info(response.status_code)
-        logging.info(response.content)
-
-        if response.status_code == 200:
-
-            # parse result
-            result = parseIGNUpcomingList(response.content)
-
-            # cache game stats list for 1 day
-            if not memcache.add(memcacheKey, result, 86400):
-                logging.error('ignReviewedList: Memcache set failed')
-
-            return HttpResponse(json.dumps(result), mimetype='application/json')
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PARSE UPCOMING LIST (IGN)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def parseIGNUpcomingList(response):
@@ -279,6 +293,8 @@ def parseIGNUpcomingList(response):
 
     # s3 connection
     s3conn = S3Connection(Keys.getKey(S3_ACCESS_KEY), Keys.getKey(S3_SECRET_KEY), is_secure=False)
+    # get s3 bucket
+    s3bucket = s3conn.get_bucket(UPCOMING_LIST_BUCKET, validate=False)
 
     html = etree.HTML(response)
 
@@ -307,11 +323,24 @@ def parseIGNUpcomingList(response):
                 # get filename and extension
                 filename = imageURL.split('/')[-1]
                 extension = filename.split('.')[-1]
-                image = copyImageToS3(UPCOMING_LIST_BUCKET, imageURL, filename, extension, s3conn)
+                image = copyImageToS3(s3conn, s3bucket, UPCOMING_LIST_BUCKET, imageURL, filename, extension)
 
                 # detect TBA 20XX - signifies unknown date > change to real date: Dec 31, 20XX
                 dateParts = date.split(' ')
                 if (dateParts[0] == 'TBA'):
+                    date = 'Dec 31, ' + dateParts[1]
+
+                # detect Q1
+                elif (dateParts[0] == 'Q1'):
+                    date = 'Mar 31, ' + dateParts[1]
+                # detect Q2
+                elif (dateParts[0] == 'Q2'):
+                    date = 'Jun 31, ' + dateParts[1]
+                # detect Q3
+                elif (dateParts[0] == 'Q3'):
+                    date = 'Sep 31, ' + dateParts[1]
+                # detect Q4
+                elif (dateParts[0] == 'Q4'):
                     date = 'Dec 31, ' + dateParts[1]
 
                 listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'releaseDate': date, 'mediumImage': image}
@@ -328,67 +357,6 @@ def parseIGNUpcomingList(response):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# RELEASED LIST (GT)
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def gtReleasedList(request):
-
-    if all(k in request.GET for k in ('year', 'month', 'day')):
-
-        # get parameters
-        year = request.GET.get('year')
-        month = request.GET.get('month')
-        day = request.GET.get('day')
-
-        memcacheKey = 'gtReleasedList_' + year + '_' + month + '_' + day
-
-        # return memcached list if available
-        result = memcache.get(memcacheKey)
-        if result is not None:
-            return HttpResponse(json.dumps(result), mimetype='application/json')
-
-        # load list from source
-        else:
-
-            # 1341091189076 datetime.datetime.now() * 1000 - now timestamp in milliseconds
-            # promotionID
-            # 1339300800 - unix time (Sun, 10 Jun 2012 04:00:00 GMT) - week to fetch
-
-            # /ae8bcc1b-d7f8-4b5b-8854-fd2700a56990/1339300800/
-            # now stamp
-
-            # week stamp
-            displayDate = datetime.datetime(int(year), int(month), int(day), 6, 0, 0)
-            # unix timestamp
-            displayStamp = int(time.mktime(displayDate.utctimetuple()))
-
-            url = GT_BASE_URL + GT_PROMOTION_ID + '/' + str(displayStamp)
-
-            logging.info('------------------------')
-            logging.info('------------------------')
-            logging.info(url)
-            logging.info('------------------------')
-            logging.info('------------------------')
-
-            # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-            # allow 30 seconds for response
-            response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
-
-            if response.status_code == 200:
-
-                # parse game stats list result
-                result = parseGTReleasedList(response.content)
-
-                # cache game stats list for 30 days
-                if not memcache.add(memcacheKey, result, 2592000):
-                    logging.error('gtReleasedList: Memcache set failed')
-
-                return HttpResponse(json.dumps(result), mimetype='application/json')
-
-    else:
-        return HttpResponse('missing_param', mimetype='text/plain', status='500')
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PARSE RELEASED LIST (GT)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def parseGTReleasedList(response):
@@ -397,6 +365,8 @@ def parseGTReleasedList(response):
 
     # s3 connection
     s3conn = S3Connection(Keys.getKey(S3_ACCESS_KEY), Keys.getKey(S3_SECRET_KEY), is_secure=False)
+    # get s3 bucket
+    s3bucket = s3conn.get_bucket(RELEASED_LIST_BUCKET, validate=False)
 
     html = etree.HTML(response)
 
@@ -431,7 +401,7 @@ def parseGTReleasedList(response):
                 extension = filename.split('.')[-1].split('?')[0]
 
                 # copy GT image to S3 bucket
-                image = copyImageToS3(RELEASED_LIST_BUCKET, imageURL, filename, extension, s3conn)
+                image = copyImageToS3(s3conn, s3bucket, RELEASED_LIST_BUCKET, imageURL, filename, extension)
                 listObj = {'name': name, 'GTPage': url, 'calendarDate': date, 'releaseDate': date, 'mediumImage': image, 'platforms': platforms}
 
                 # append to output list
@@ -447,30 +417,38 @@ def parseGTReleasedList(response):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # COPY LIST IMAGE
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def copyImageToS3(S3bucket, url, filename, extension, s3conn):
+def copyImageToS3(s3conn, S3bucket, bucketString, url, filename, extension):
 
-    # get s3 bucket
-    bucket = s3conn.get_bucket(S3bucket, validate=False)
+    # get existing url from ListImages
+    image = ListImages.query(ListImages.filename == filename).get()
 
-    # load url
-    response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+    # image does not exist in database
+    if not image:
 
-    # create new S3 key, set mimetype and Expires header
-    k = bucket.new_key(filename)
-    if (extension.lower() == 'jpg' or extension.lower() == 'jpeg'):
-        mimeType = 'jpeg'
-    elif (extension.lower() == 'png'):
-        mimeType = 'png'
-    elif (extension.lower() == 'gif'):
-        mimeType = 'gif'
-    else:
-        mimeType = 'jpeg'
+        # load url
+        response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
-    k.content_type = 'image/' + mimeType
+        # create new S3 key, set mimetype and Expires header
+        k = S3bucket.new_key(filename)
+        if (extension.lower() == 'jpg' or extension.lower() == 'jpeg'):
+            mimeType = 'jpeg'
+        elif (extension.lower() == 'png'):
+            mimeType = 'png'
+        elif (extension.lower() == 'gif'):
+            mimeType = 'gif'
+        else:
+            mimeType = 'jpeg'
 
-    # write file from response string set public read permission
-    k.set_contents_from_string(response.content, headers=AWS_HEADERS, replace=False, policy=AWS_ACL)
-    k.set_acl('public-read')
+        k.content_type = 'image/' + mimeType
+
+        # write file from response string set public read permission
+        k.set_contents_from_string(response.content, headers=AWS_HEADERS, replace=False, policy=AWS_ACL)
+        k.set_acl('public-read')
+
+        # add file to ImageList
+        url = S3_URL + bucketString + '/' + filename
+        image = ListImages(filename=filename, url=url)
+        image.put()
 
     # s3 url
-    return S3_URL + S3bucket + '/' + filename
+    return S3_URL + bucketString + '/' + filename

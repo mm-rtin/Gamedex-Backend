@@ -71,3 +71,12 @@ class ItemTagUser(ndb.Model):
 
     item_date_added        = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
     item_date_last_modfied = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)
+
+
+# LIST IMAGES
+class ListImages(ndb.Model):
+    filename               = ndb.StringProperty()
+    url                    = ndb.StringProperty()
+
+    image_date_added       = ndb.DateTimeProperty(auto_now=False, auto_now_add=True)
+    image_date_last_modfied = ndb.DateTimeProperty(auto_now=True, auto_now_add=True)

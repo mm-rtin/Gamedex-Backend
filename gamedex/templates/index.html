@@ -15,11 +15,9 @@
     <title>Gamedex</title>
     <!-- styles -->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/bootstrap.min.css">
-    <link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/iconfont.css">
     <link rel="stylesheet" media="screen" href="http://static.gamedex.net/css/gamedex.css">
 
-    <meta name="description" content="Create your game collection and stay updated with the latest games with videos, review scores, price information and release date notifications">
+    <meta name="description" content="Create your game collection and stay updated on the latest games with videos, review scores, price information and release date notifications">
 
     <link rel="shortcut icon" href="http://static.gamedex.net/images/favicon.ico">
     <meta name="apple-mobile-web-app-title" content="Gamedex">
@@ -641,13 +639,13 @@
                                         <ul class="nav">
 
                                             <!-- list type menu -->
-                                            <li id="listType" class="dropdown" data-content="1">
+                                            <li id="listType" class="dropdown" data-content="0">
                                                 <a href="#" class="providerSelect_btn dropdown-toggle" data-toggle="dropdown"><i class="icon-lightning"></i> <span class="listTypeName">Popular</span><b class="caret"></b></a>
                                                 <ul class="dropdown-menu">
+                                                    <li><a href="#" data-content="0">Popular Upcoming</a></li>
                                                     <li><a href="#" data-content="1">Upcoming</a></li>
                                                     <li><a href="#" data-content="2">GT Release Calendar</a></li>
                                                     <li><a href="#" data-content="3">IGN Reviewed</a></li>
-                                                    <li><a href="#" data-content="0">Popular</a></li>
                                                 </ul>
                                             </li>
 
@@ -764,10 +762,10 @@
                                     <!-- SEARCH RESULTS -->
                                     <div id="listResultsContainer" class="nano">
                                         <div class="content">
-                                            <div class="loadingStatus"></div>
                                             <table id="listResults" class="table table-striped">
                                                 <tbody class="list"></tbody>
                                             </table>
+                                            <div class="loadingStatus"></div>
                                         </div>
                                     </div>
 
@@ -782,7 +780,6 @@
                 <div id="panel2">
                     <div class="header"></div>
                     <div class="panel">
-
 
                         <div id="itemDetailsContainer">
 
@@ -1380,15 +1377,12 @@
         </script>
 
         <!-- JAVASCRIPT LIBRARIES -->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-        <script src="http://static.gamedex.net/dist/lib.js"></script>
-        <script src="http://static.gamedex.net/dist/scripts.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="http://static.gamedex.net/dist/lib.min.js"></script>
+        <script src="http://static.gamedex.net/dist/scripts.min.js"></script>
 
         <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'gamedex'; // required: replace example with your forum shortname
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
+            var disqus_shortname = 'gamedex';
             (function() {
                 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
                 dsq.src = 'http://gamedex.disqus.com/embed.js';
