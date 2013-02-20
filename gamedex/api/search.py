@@ -3,10 +3,12 @@
 __author__ = "Michael Martin"
 __status__ = "Production"
 
+import StringIO
+import gzip
 import urllib
-import urllib2
 import json
 import logging
+
 
 from google.appengine.api import urlfetch
 from google.appengine.api import memcache
@@ -260,7 +262,10 @@ def searchGiantBomb(request):
 
     response = giantBombAPICall('search', queryParameters)
 
-    return HttpResponse(json.dumps(response), mimetype='application/json')
+    if response:
+        return HttpResponse(response, mimetype='application/json')
+    else:
+        return HttpResponse('error', mimetype='text/plain', status='500')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -277,9 +282,12 @@ def detailGiantBomb(request):
     if 'id' in request.GET:
         id = request.GET.get('id')
 
-        response = giantBombAPICall('game/' + id, queryParameters)
+        response = giantBombAPICall('game/3030-' + id, queryParameters)
 
-        return HttpResponse(json.dumps(response), mimetype='application/json')
+        if response:
+            return HttpResponse(response, mimetype='application/json')
+        else:
+            return HttpResponse('error', mimetype='text/plain', status='500')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -310,17 +318,26 @@ def giantBombAPICall(resource, queryParameters):
         logging.info('')
         logging.info('')
 
-        # http://api.giantbomb.com/search/?api_key=e89927b08203137d0252fbf1f611a38489edb208&format=xml&query=killzone
-        api_string = 'http://api.giantbomb.com/' + resource + '/?api_key=' + Keys.getKey(GIANTBOMB_API_KEY) + '&format=json&' + urllib.urlencode(queryParameters)
-        req = urllib2.Request(api_string, headers={'Accept-Encoding': 'gzip'})
+        # http://api.giantbomb.com/search/?api_key=xxxxxxxxxxxxxxxxxxx&format=xml&query=killzone
+        api_string = 'http://www.giantbomb.com/api/' + resource + '/?api_key=' + Keys.getKey(GIANTBOMB_API_KEY) + '&format=json&' + urllib.urlencode(queryParameters)
 
-        opener = urllib2.build_opener()
-        f = opener.open(req)
-        jsonResponse = json.load(f)
+        # fetch - accept gzip (url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+        headers = {'Accept-Encoding': 'gzip'}
+        response = urlfetch.fetch(api_string, None, 'GET', headers, False, False, 30)
 
-        # cache giantbomb detail for 1 day
-        if not memcache.add(memcacheKey, jsonResponse, 86400):
-            logging.error('detailGiantBomb: Memcache set failed')
-            logging.error(memcacheKey)
+        # decompress
+        f = StringIO.StringIO(response.content)
+        c = gzip.GzipFile(fileobj=f)
+        content = c.read()
 
-        return jsonResponse
+        if response.status_code == 200:
+
+            # cache giantbomb detail for 1 day
+            if not memcache.add(memcacheKey, content, 86400):
+                logging.error('detailGiantBomb: Memcache set failed')
+                logging.error(memcacheKey)
+
+            return content
+
+        else:
+            return False
