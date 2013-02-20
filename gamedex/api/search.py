@@ -5,9 +5,9 @@ __status__ = "Production"
 
 import StringIO
 import gzip
-import urllib
 import json
 import logging
+import urllib
 
 
 from google.appengine.api import urlfetch
@@ -283,6 +283,28 @@ def detailGiantBomb(request):
         id = request.GET.get('id')
 
         response = giantBombAPICall('game/3030-' + id, queryParameters)
+
+        if response:
+            return HttpResponse(response, mimetype='application/json')
+        else:
+            return HttpResponse('error', mimetype='text/plain', status='500')
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# videoGiantBomb
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def videoGiantBomb(request):
+
+    queryParameters = {}
+
+    # field list
+    if 'field_list' in request.GET:
+        queryParameters['field_list'] = request.GET.get('field_list')
+
+    if 'id' in request.GET:
+        id = request.GET.get('id')
+
+        response = giantBombAPICall('video/2300-' + id, queryParameters)
 
         if response:
             return HttpResponse(response, mimetype='application/json')

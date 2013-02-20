@@ -284,7 +284,7 @@
                         <div class="navigateRight"></div>
                     </div>
 
-                    <ul id="videoList" class="display-1 clearfix"></ul>
+                    <ul id="videoList" class="list display-2 clearfix"></ul>
                 </div>
             </div>
 
@@ -1161,18 +1161,12 @@
 
         <!-- video results -->
         <script type="text/template" id="video-results-template">
-            <% _.each(videoResults, function(item, index) { %>
-                <li class="videoItem smallImage" data-id="<%= index %>">
-                    <a href="#" rel="popover" data-content="Publish Date: <%= item.publishDate %> Length: <%= item.runningTime %>" data-original-title="<%= item.deck %>">
-                        <img src="<%= item.image.small_url %>" alt="">
-                    </a>
-                </li>
-                <li class="videoItem mediumImage" data-id="<%= index %>">
-                    <a href="#" rel="popover" data-content="Date: <strong><%= item.publishDate %></strong> <br/> Length: <strong><%= item.runningTime %></strong>" data-original-title="<%= item.deck %>">
-                        <img src="<%= item.image.thumb_url %>" alt="">
-                    </a>
-                </li>
-            <% }); %>
+            <li id="video_<%= video.id %>" class="videoItem smallImage" data-id="<%= video.index %>">
+                <div class="publishDate"><%= video.publishDate %></div>
+                <a href="#" rel="popover" data-content="Publish Date: <%= video.publishDate %> Length: <%= video.runningTime %>" data-original-title="<%= video.deck %>">
+                    <img src="<%= video.image.small_url %>" alt="">
+                </a>
+            </li>
         </script>
 
         <!-- list results -->
@@ -1379,7 +1373,7 @@
         <!-- JAVASCRIPT LIBRARIES -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="http://static.gamedex.net/dist/lib.min.js"></script>
-        <script src="http://static.gamedex.net/dist/scripts.min.js"></script>
+        <script src="http://static.gamedex.net/dist/scripts.js"></script>
 
         <script type="text/javascript">
             var disqus_shortname = 'gamedex';

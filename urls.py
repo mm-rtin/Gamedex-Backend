@@ -15,6 +15,7 @@ urlpatterns = patterns('',
 
     (r'^giantbomb/search/$',    'gamedex.api.search.searchGiantBomb'),
     (r'^giantbomb/detail/$',    'gamedex.api.search.detailGiantBomb'),
+    (r'^giantbomb/video/$',    'gamedex.api.search.videoGiantBomb'),
 
     (r'^metacritic/search/$',   'gamedex.api.search.searchMetacritic'),
     (r'^metacritic/cache/$',    'gamedex.api.search.cacheMetacritic'),

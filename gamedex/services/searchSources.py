@@ -6,6 +6,8 @@ __status__ = "Production"
 import urllib
 import bottlenose
 import logging
+import StringIO
+import gzip
 
 from google.appengine.api import urlfetch
 from google.appengine.api import memcache
@@ -55,9 +57,17 @@ class Steam():
             logging.info(memcacheKey)
 
             url = 'http://store.steampowered.com/search/suggest?f=games&term=' + urllib.quote_plus(keywords)
-            response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
-            searchList = Steam.parseSteamSearch(response.content)
+            # fetch - accept gzip (url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+            headers = {'Accept-Encoding': 'gzip'}
+            response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30)
+
+            # decompress
+            f = StringIO.StringIO(response.content)
+            c = gzip.GzipFile(fileobj=f)
+            content = c.read()
+
+            searchList = Steam.parseSteamSearch(content)
 
         return searchList
 
@@ -221,7 +231,15 @@ class Metacritic():
             logging.info('')
 
             url = 'http://www.metacritic.com/search/game/' + urllib.quote_plus(keywords) + '/results'
-            response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
+
+            # fetch - accept gzip (url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
+            headers = {'Accept-Encoding': 'gzip'}
+            response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30)
+
+            # decompress
+            f = StringIO.StringIO(response.content)
+            c = gzip.GzipFile(fileobj=f)
+            content = c.read()
 
         # return raw response html
-        return response.content
+        return content
