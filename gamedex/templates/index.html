@@ -1162,8 +1162,8 @@
         <!-- video results -->
         <script type="text/template" id="video-results-template">
             <li id="video_<%= video.id %>" class="videoItem smallImage" data-id="<%= video.index %>">
-                <div class="publishDate"><%= video.publishDate %></div>
-                <a href="#" rel="popover" data-content="Publish Date: <%= video.publishDate %> Length: <%= video.runningTime %>" data-original-title="<%= video.deck %>">
+                <div class="publishDate"><%= video.publish_date %></div>
+                <a href="#" rel="popover" data-content="Publish Date: <%= video.calendarDate %> Length: <%= video.runningTime %>" data-original-title="<%= video.deck %>">
                     <img src="<%= video.image.small_url %>" alt="">
                 </a>
             </li>
