@@ -220,7 +220,7 @@ class Metacritic():
             logging.info('')
 
             # return json
-            return metacriticSearch
+            return (metacriticSearch, True)
 
         else:
 
@@ -241,5 +241,5 @@ class Metacritic():
             c = gzip.GzipFile(fileobj=f)
             content = c.read()
 
-        # return raw response html
-        return content
+            # return raw response html
+            return (content, False)

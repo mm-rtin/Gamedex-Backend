@@ -92,10 +92,14 @@ def searchMetacritic(request):
         platform = request.GET.get('platform')
 
     # search metacritic
-    response = Metacritic.searchMetacritic(keywords, platform)
+    (response, isJSON) = Metacritic.searchMetacritic(keywords, platform)
 
-    # return raw response html
-    return HttpResponse(response, mimetype='text/html')
+    if (isJSON):
+        # return json
+        return HttpResponse(json.dumps(response), mimetype='application/json')
+    else:
+        # return raw response html
+        return HttpResponse(response, mimetype='text/html')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
