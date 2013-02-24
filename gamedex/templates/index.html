@@ -494,7 +494,7 @@
                     <div id="buttonContainer">
                         <div id="loginHitArea"></div>
                         <div id="signupHitArea"></div>
-                        <div id="guideHitArea"></div>
+                        <div id="guideHitArea" data-ot="View site tutorial"></div>
                         <div id="signupButton"></div>
                         <div id="loginButton"></div>
                         <div id="guideButton"></div>
@@ -603,7 +603,7 @@
             </div>
 
             <!-- CONTENT -->
-            <div id="content" class="step1">
+            <div id="content" class="step0">
 
                 <!-- SITE GUIDE -->
                 <div id="siteGuide">
@@ -625,7 +625,6 @@
 
                 <!-- SEARCH PANEL -->
                 <div id="panel1">
-                    <div class="header"></div>
                     <div class="panel">
 
                         <!-- SEARCH CONTAINER -->
@@ -633,7 +632,6 @@
 
                             <!-- search view navbar -->
                             <div id="searchViewMenu" class="navbar navbar-static clearfix">
-                                <span class="leftCap"></span>
                                 <div class="navigationBar">
                                     <div class="container" style="width: auto;">
                                         <ul class="nav">
@@ -701,13 +699,12 @@
 
                                     </div>
                                 </div>
-                                <span class="rightCap"></span>
                             </div>
 
                             <!-- SEARCH FIELD -->
                             <div id="searchFieldContainer" class="clearfix">
                                 <div id="searchField" class="input-append">
-                                    <input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-remove"></i></span>
+                                    <input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-close"></i></span>
                                 </div>
 
                                 <button type="button" id="search_btn"></button>
@@ -715,16 +712,16 @@
 
                             <!--- SEARCH DISPLAY OPTIONS -->
                             <div class="searchDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
-                                <button type="button" class="display1" data-content="0" rel="tooltip" data-original-title="List View"></button>
-                                <button type="button" class="display2 active" data-content="1" rel="tooltip" data-original-title="Icon View"></button>
-                                <button type="button" class="display3" data-content="2" rel="tooltip" data-original-title="Cover View"></button>
+                                <button type="button" class="display1" data-content="0" data-ot="List View"></button>
+                                <button type="button" class="display2 active" data-content="1" data-ot="Icon View"></button>
+                                <button type="button" class="display3" data-content="2" data-ot="Cover View"></button>
                             </div>
 
                             <!--- LIST DISPLAY OPTIONS -->
                             <div class="listDisplayOptions displayOptions btn-group" data-toggle="buttons-radio" >
-                                <button type="button" class="display1" data-content="0" rel="tooltip" data-original-title="List View"></button>
-                                <button type="button" class="display2 active" data-content="1" rel="tooltip" data-original-title="Icon View"></button>
-                                <button type="button" class="display3" data-content="2" rel="tooltip" data-original-title="Cover View"></button>
+                                <button type="button" class="display1" data-content="0" data-ot="List View"></button>
+                                <button type="button" class="display2 active" data-content="1" data-ot="Icon View"></button>
+                                <button type="button" class="display3" data-content="2" data-ot="Cover View"></button>
                             </div>
 
                             <!-- SEARCH / LIST TABS -->
@@ -778,7 +775,6 @@
 
                 <!-- ITEM DETAIL PANEL -->
                 <div id="panel2">
-                    <div class="header"></div>
                     <div class="panel">
 
                         <div id="itemDetailsContainer">
@@ -813,10 +809,10 @@
                                     <div id="amazonTab" class="tab-pane active">
                                         <div class="detailTitleBar clearfix">
                                             <div class="itemDetailTitle">
-                                                <span class="leftCap"></span><h3></h3><span class="rightCap"></span>
+                                                <h3></h3>
                                             </div>
                                             <div class="itemDetailMetascore">
-                                                <a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
+                                                <a href="" class="metascore" target="_blank" data-ot="" data-ot-tip-joint="bottom"></a>
                                             </div>
                                         </div>
 
@@ -930,10 +926,10 @@
                                     <div id="giantBombTab" class="tab-pane">
                                         <div class="detailTitleBar clearfix">
                                             <div class="itemDetailTitle">
-                                                <span class="leftCap"></span><h3></h3><span class="rightCap"></span>
+                                                <h3></h3>
                                             </div>
                                             <div class="itemDetailMetascore">
-                                                <a href="" class="metascore" target="_blank" rel="tooltip" data-original-title=""></a>
+                                                <a href="" class="metascore" target="_blank" data-ot=""></a>
                                             </div>
                                         </div>
 
@@ -955,14 +951,12 @@
 
                 <!-- ITEM VIEW PANEL -->
                 <div id="panel3">
-                    <div class="header"></div>
                     <div class="panel">
 
                         <div id="viewItemsContainer" class="collection">
 
                             <!-- item view navbar -->
                             <div id="itemViewMenu" class="navbar navbar-static clearfix">
-                                <span class="leftCap"></span>
                                 <div class="navigationBar">
                                     <div class="container" style="width: auto;">
                                         <ul class="nav">
@@ -1029,7 +1023,6 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <span class="rightCap"></span>
                             </div>
 
                             <!-- DISPLAY SELECT -->
@@ -1037,12 +1030,12 @@
 
                                 <!-- display options -->
                                 <div class="displayOptions btn-group" data-toggle="buttons-radio" >
-                                    <button type="button" class="display1" data-content="0" rel="tooltip" data-original-title="List View"></button>
-                                    <button type="button" class="display2 active" data-content="1" rel="tooltip" data-original-title="Icon View"></button>
-                                    <button type="button" class="display3" data-content="2" rel="tooltip" data-original-title="Cover View"></button>
+                                    <button type="button" class="display1" data-content="0" data-ot="List View"></button>
+                                    <button type="button" class="display2 active" data-content="1" data-ot="Icon View"></button>
+                                    <button type="button" class="display3" data-content="2" data-ot="Cover View"></button>
                                 </div>
 
-                                <button type="button" id="gridView_btn"></button>
+                                <button type="button" id="gridView_btn" data-ot="View your games in a full-page gallery"></button>
 
 
                                 <!-- edit menu -->
@@ -1055,7 +1048,7 @@
                                 </div>
 
                                 <!-- import menu -->
-                                <div id="importMenu" class="btn-group">
+                                <div id="importMenu" class="btn-group" data-ot="Import games from any PSN, XBL or Steam account" data-ot-tip-joint="left">
                                     <button type="button" class="import_btn" data-toggle="dropdown"></button>
                                     <ul class="dropdown-menu">
                                         <li data-importSource="0"><a href="#">Import Steam</a></li>
@@ -1091,7 +1084,6 @@
 
                 <!-- GRID VIEW PANEL -->
                 <div id="panel4">
-                    <div class="header"></div>
                     <div class="panel">
                         <div class="loadingStatus"></div>
                         <div id="gridViewContainer" class="clearfix">
@@ -1161,9 +1153,9 @@
 
         <!-- video results -->
         <script type="text/template" id="video-results-template">
-            <li id="video_<%= video.id %>" class="videoItem smallImage" data-id="<%= video.index %>">
+            <li id="video_<%= video.id %>" class="videoItem smallImage" data-id="<%= video.index %>" data-ot-title="Publish Date: <%= video.calendarDate %> Length: <%= video.runningTime %>" data-ot="<%= video.deck %>">
                 <div class="publishDate"><%= video.publish_date %></div>
-                <a href="#" rel="popover" data-content="Publish Date: <%= video.calendarDate %> Length: <%= video.runningTime %>" data-original-title="<%= video.deck %>">
+                <a href="#">
                     <img src="<%= video.image.small_url %>" alt="">
                 </a>
             </li>
@@ -1230,15 +1222,15 @@
                                 <div class="priceDetails"></div>
 
                                 <div class="quickAttributes" data-content="<%= item.id %>">
-                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying" href="#" rel="tooltip" data-content="0" data-original-title="Playing"></a></span>
-                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed" href="#" rel="tooltip" data-content="1" data-original-title="Played"></a></span>
-                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" rel="tooltip" data-content="2" data-original-title="Completed"></a></span>
-                                    <span class="rating-<%= item.userRating %>"><a class="attrFavorite" href="#" rel="tooltip" data-content="3" data-original-title="Favorite"></a></span>
-                                    <span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned" href="#" rel="tooltip" data-content="4" data-original-title="Owned"></a></span>
+                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrPlaying" href="#" data-content="0" data-ot="Playing"></a></span>
+                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrPlayed" href="#" data-content="1" data-ot="Played"></a></span>
+                                    <span class="playStatus-<%= item.playStatus %>"><a class="attrFinished" href="#" data-content="2" data-ot="Completed"></a></span>
+                                    <span class="rating-<%= item.userRating %>"><a class="attrFavorite" href="#" data-content="3" data-ot="Favorite"></a></span>
+                                    <span class="gameStatus-<%= item.gameStatus %>"><a class="attrOwned" href="#" data-content="4" data-ot="Owned"></a></span>
                                 </div>
                             </div>
                         </td>
-                        <td class="scoreDetails"><a href="#" class="metascore" target="_blank" rel="tooltip" data-score="" data-original-title=""></a></td>
+                        <td class="scoreDetails"><a href="#" class="metascore" target="_blank" data-score="" data-ot=""></a></td>
                         <% if (currentViewTagID !== '0') { %>
                             <td class="options"><a href="#" class="deleteItem_btn" data-content="<%= item.id %>"></a></td>
                         <% } %>
