@@ -441,8 +441,6 @@ def updatePassword(request):
         return HttpResponse('not_post', mimetype='text/plain', status='500')
 
 
-
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # TAGS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -463,6 +461,7 @@ def createTag(request):
             updateTimestamp = request.POST.get('ts')
 
             # get user by userid
+            tagKeyURLSafe = str(uuid.uuid4())
             userKey = ndb.Key(urlsafe=userID)
             user = userKey.get()
 
@@ -483,8 +482,9 @@ def createTag(request):
                     # prevent demo account from saving data
                     if (secretKey != '1'):
                         listItem.put()
+                        tagKeyURLSafe = listItem.key.urlsafe()
 
-                returnData = {'tagID': listItem.key.urlsafe(), 'tagName': tagName}
+                returnData = {'tagID': tagKeyURLSafe, 'tagName': tagName}
 
                 return HttpResponse(json.dumps(returnData), mimetype='application/json')
 
@@ -739,7 +739,6 @@ def createTagItem(request):
             elif initialProvider == '1':
                 existingItem = Items.query(Items.item_gbombID == gbombID, Items.item_initialProvider == '1', Items.item_platform == platform).get()
 
-
             if user and user.user_secret_key == secretKey:
 
                 # set new timestamp
@@ -791,14 +790,15 @@ def createTagItem(request):
 
                 for tagID in tagIDs:
 
-                    # get tag
-                    tagKey = ndb.Key(urlsafe=tagID)
-
-                    # generate fake itemTagUserKey for demo
+                    # generate fake keys for demo
                     itemTagUserKey = str(uuid.uuid4())
+                    tagKey = tagID
 
                     # prevent demo account from saving data
                     if (secretKey != '1'):
+
+                        # get tag
+                        tagKey = ndb.Key(urlsafe=tagID)
 
                         # get existing ItemTagUser
                         itemTagUser = ItemTagUser.query(ItemTagUser.item == itemKey, ItemTagUser.tag == tagKey, ItemTagUser.user == userKey).get()
@@ -820,9 +820,10 @@ def createTagItem(request):
 
                         # convert to url safe
                         itemTagUserKey = itemTagUserKey.urlsafe()
+                        tagKey = tagKey.urlsafe()
 
                     # record item ids and tag ids that have been added
-                    tagIDsAdded.append(tagKey.urlsafe())
+                    tagIDsAdded.append(tagKey)
                     idsAdded.append(itemTagUserKey)
 
                 returnData = {'idsAdded': idsAdded, 'itemID': itemKeyURLSafe, 'tagIDsAdded': tagIDsAdded}

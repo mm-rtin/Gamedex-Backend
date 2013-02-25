@@ -14,7 +14,7 @@ from lxml.cssselect import CSSSelector
 from lxml import etree
 
 from authentication import Authentication
-from management.keys import Keys
+from keys import Keys
 
 # base url
 S3_URL = 'https://s3.amazonaws.com/'
