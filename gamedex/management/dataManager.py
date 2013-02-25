@@ -138,7 +138,7 @@ def getSteamPrice(response):
     html = etree.HTML(response)
     priceSel = CSSSelector('.game_purchase_price:first-child')
 
-    # get score element
+    # get price element
     priceElement = priceSel(html)
 
     try:
