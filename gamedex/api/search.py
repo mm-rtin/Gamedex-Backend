@@ -92,7 +92,7 @@ def searchMetacritic(request):
         platform = request.GET.get('platform')
 
     # search metacritic
-    (response, isJSON) = Metacritic.searchMetacritic(keywords, platform)
+    (response, isJSON) = Metacritic.searchMetacritic(keywords, platform, True)
 
     if (isJSON):
         # return json
@@ -166,7 +166,7 @@ def searchGametrailers(request):
         logging.info('')
         logging.info('')
 
-        url = 'http://www.gametrailers.com/search?keywords=' + keywords
+        url = 'http://www.gametrailers.com/search?keywords=' + urllib.quote_plus(keywords)
         response = urlfetch.fetch(url, None, 'GET', {}, False, False, 30)
 
     # return raw response html

@@ -156,6 +156,15 @@ def getSteamPrice(response):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def updateMetascore(request):
 
+    deferred.defer(updateMetascoreDeferred)
+
+    return HttpResponse('success', mimetype='text/plain', status='200')
+
+
+# UPDATE METACRITIC SCORE
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def updateMetascoreDeferred(request):
+
     # get items
     items = Items.query().fetch()
 

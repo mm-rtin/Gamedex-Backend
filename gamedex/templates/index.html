@@ -1116,7 +1116,7 @@
                             <td class="title">
                                 <div class="itemName"><%= item.name %></div>
                                 <div class="calendarDate"><%= item.calendarDate %></div>
-                                <% if (item.platform !== 'n/a') { %>
+                                <% if (item.gbombID === 0) { %>
                                     <div class="platform"><%= item.platform %></div>
                                 <% } %>
                                 <div class="platformDropdown">

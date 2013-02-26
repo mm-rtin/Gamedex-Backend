@@ -204,13 +204,16 @@ class Metacritic():
     # Search Metacritic
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @staticmethod
-    def searchMetacritic(keywords, platform):
+    def searchMetacritic(keywords, platform, attemptCache):
 
         # memcache key (cache with platform - so each platform gets its own score)
         memcacheKey = 'searchMetacritic_' + keywords + '_' + platform
 
         # return memcached search if available
-        metacriticSearch = memcache.get(memcacheKey)
+        if attemptCache:
+            metacriticSearch = memcache.get(memcacheKey)
+        else:
+            metacriticSearch = None
 
         if metacriticSearch is not None:
             logging.info('')
