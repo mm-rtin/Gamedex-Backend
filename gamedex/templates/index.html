@@ -756,7 +756,7 @@
                                 <!-- list tab content -->
                                 <div id="listTab" class="tab-pane">
 
-                                    <!-- SEARCH RESULTS -->
+                                    <!-- LIST RESULTS -->
                                     <div id="listResultsContainer" class="nano">
                                         <div class="content">
                                             <table id="listResults" class="table table-striped">
@@ -1111,7 +1111,7 @@
                 <% } else { %>
                     <% _.each(sortedSearchResults, function(item) { %>
                         <tr id="<%= item.id %>" data-temp="<%= item.releaseDate %>">
-                            <td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
+                            <td class="smallImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
                             <td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
                             <td class="title">
                                 <div class="itemName"><%= item.name %></div>
@@ -1206,7 +1206,7 @@
             <% } else { %>
                 <% _.each(items, function(item, index) { %>
                     <tr id="<%= item.id %>" data-content="<%= item.itemID %>">
-                        <td class="smallImage"><img src="<%= item.smallImage %>" alt=""></td>
+                        <td class="smallImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
                         <td class="mediumImage"><img src="<%= item.thumbnailImage %>" alt=""></td>
                         <td>
                             <div class="itemName"><%= item.name %></div>
