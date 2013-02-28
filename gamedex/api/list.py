@@ -247,6 +247,7 @@ def parseIGNReviewedList(response):
     nameSel = CSSSelector('.item-title a')
     imageSel = CSSSelector('.grid_3.alpha img')
     dateSel = CSSSelector('.grid_3:nth-child(3) div')
+    platformSel = CSSSelector('.item-platform')
 
     for row in rowSel(html):
 
@@ -254,12 +255,14 @@ def parseIGNReviewedList(response):
             nameElement = nameSel(row)
             imageElement = imageSel(row)
             dateElement = dateSel(row)
+            platformElement = platformSel(row)
 
             name = nameElement[0].text.strip()
             url = nameElement[0].get('href').strip()
             imageURL = imageElement[0].get('src').strip()
             date = dateElement[0].text.strip()
             displayDate = dateElement[0].text.strip()
+            platform = platformElement[0].text.strip()
 
             # check if title name already added to list
             if (name not in titleIndex):
@@ -270,7 +273,7 @@ def parseIGNReviewedList(response):
                 extension = filename.split('.')[-1]
                 image = copyImageToS3(s3conn, s3bucket, REVIEWED_LIST_BUCKET, imageURL, filename, extension)
 
-                listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'releaseDate': date, 'mediumImage': image}
+                listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'platforms': platform, 'releaseDate': date, 'mediumImage': image}
                 list.append(listObj)
 
                 # add to title index
@@ -302,6 +305,7 @@ def parseIGNUpcomingList(response):
     nameSel = CSSSelector('.item-title a')
     imageSel = CSSSelector('.grid_3.alpha img')
     dateSel = CSSSelector('.releaseDate')
+    platformSel = CSSSelector('.item-platform')
 
     for row in rowSel(html):
 
@@ -309,12 +313,14 @@ def parseIGNUpcomingList(response):
             nameElement = nameSel(row)
             imageElement = imageSel(row)
             dateElement = dateSel(row)
+            platformElement = platformSel(row)
 
             name = nameElement[0].text.strip()
             url = nameElement[0].get('href').strip()
             imageURL = imageElement[0].get('src').strip()
             date = dateElement[0].text.strip()
             displayDate = dateElement[0].text.strip()
+            platform = platformElement[0].text.strip()
 
             # check if title name already added to list
             if (name not in titleIndex):
@@ -343,7 +349,7 @@ def parseIGNUpcomingList(response):
                 elif (dateParts[0] == 'Q4'):
                     date = 'Dec 31, ' + dateParts[1]
 
-                listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'releaseDate': date, 'mediumImage': image}
+                listObj = {'name': name, 'IGNPage': url, 'calendarDate': displayDate, 'platforms': platform, 'releaseDate': date, 'mediumImage': image}
                 list.append(listObj)
 
                 # add to title index
