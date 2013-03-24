@@ -425,8 +425,10 @@ def parseGTReleasedList(response):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def copyImageToS3(s3conn, S3bucket, bucketString, url, filename, extension):
 
+    image_url = S3_URL + bucketString + '/' + filename
+
     # get existing url from ListImages
-    image = ListImages.query(ListImages.filename == filename).get()
+    image = ListImages.query(ListImages.url == image_url).get()
 
     # image does not exist in database
     if not image:
@@ -452,9 +454,8 @@ def copyImageToS3(s3conn, S3bucket, bucketString, url, filename, extension):
         k.set_acl('public-read')
 
         # add file to ImageList
-        url = S3_URL + bucketString + '/' + filename
-        image = ListImages(filename=filename, url=url)
+        image = ListImages(filename=filename, url=image_url)
         image.put()
 
     # s3 url
-    return S3_URL + bucketString + '/' + filename
+    return image_url
