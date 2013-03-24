@@ -516,7 +516,7 @@
                         </form>
                     </div>
 
-                    <div id="hideInfoHeader_btn" class="toggleInfoHeader_btn"></div>
+                    <div id="hideInfoHeader_btn" class="toggleInfoHeader_btn" data-ot="Hide Header"></div>
                 </div>
             </div>
 
@@ -706,7 +706,7 @@
                             <!-- SEARCH FIELD -->
                             <div id="searchFieldContainer" class="clearfix">
                                 <div id="searchField" class="input-append">
-                                    <input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on"><i class="icon-close"></i></span>
+                                    <input type="text" value="" placeholder="search for games"><span id="clearSearch_btn" class="add-on" data-ot="Reset search"><i class="icon-close"></i></span>
                                 </div>
 
                                 <button type="button" id="search_btn"></button>
@@ -729,7 +729,7 @@
                             <!-- SEARCH / LIST TABS -->
                             <ul id="finderTabLinks" class="nav nav-tabs">
                                 <li class="active"><a id="searchTabLink" href="#searchTab" data-toggle="tab">Search</a></li>
-                                <li><a id="listTabLink" href="#listTab" data-toggle="tab">Discover</a></li>
+                                <li><a id="listTabLink" href="#listTab" data-toggle="tab" data-ot="View upcoming and released games">Discover</a></li>
                             </ul>
 
                             <div class="clear"></div>
@@ -789,8 +789,8 @@
                                     <input id="addList">
                                 </div>
                                 <div id="addListButtons">
-                                    <button type="button" id="saveItem_btn"></button>
-                                    <button type="button" id="addItem_btn"></button>
+                                    <button type="button" id="saveItem_btn" data-ot="Update tags for game"></button>
+                                    <button type="button" id="addItem_btn" data-ot="Add game to Tag"></button>
                                 </div>
 
                                 <div class="clear"></div>
@@ -820,8 +820,8 @@
 
                                         <div class="itemDetailThumbnail thumbnail">
                                             <div class="itemDetailInfo">
-                                                <button type="button" class="showVideo_btn"></button>
-                                                <button type="button" class="showDiscussion_btn"></button>
+                                                <button type="button" class="showVideo_btn" data-ot="View Giantbomb Videos"></button>
+                                                <button type="button" class="showDiscussion_btn" data-ot="Comment on the game"></button>
 
                                                 <!-- DETAIL CONTAINER -->
                                                 <div id="detailContainer">
@@ -1309,10 +1309,10 @@
             </optgroup>
         </script>
 
-        <!-- price menu -->
+        <!-- amazon price menu -->
         <script type="text/template" id="price-menu-template">
             <div class="priceMenu nav">
-                <a class="priceButton lowestNew" href="<%= productURL %>" data-price="<%= buyNowPrice %>" target="_blank"><span class="priceSource">Amazon:</span> <span class="priceValue"><%= buyNowPrice %></span></a>
+                <a class="priceButton lowestNew" href="<%= productURL %>" data-price="<%= buyNowPrice %>" target="_blank" data-ot="Purchase game on Amazon"><span class="priceSource">Amazon:</span> <span class="priceValue"><%= buyNowPrice %></span></a>
                 <a class="priceToggle" data-toggle="dropdown" href="#"></a>
                 <ul class="dropdown-menu">
                     <li><a href="<%= offersURLNew %>" data-content="0" target="_blank"><span class="priceDesc">Lowest New:</span> <%= lowestNewPrice %></a></li>
@@ -1327,7 +1327,7 @@
         <!-- steam price menu -->
         <script type="text/template" id="steam-price-menu-template">
             <div class="priceMenu nav">
-                <a class="priceButton lowestNew" href="<%= steamPage %>" data-price="<%= steamPrice %>" target="_blank"><span class="priceSource">Steam:</span> <span class="priceValue"><%= steamPrice %></span></a>
+                <a class="priceButton lowestNew" href="<%= steamPage %>" data-price="<%= steamPrice %>" target="_blank" data-ot="Purchase game on Steam"><span class="priceSource">Steam:</span> <span class="priceValue"><%= steamPrice %></span></a>
                 <a class="priceToggle" data-toggle="dropdown" href="#"></a>
                 <ul class="dropdown-menu">
                     <li>
@@ -1366,7 +1366,7 @@
         <!-- JAVASCRIPT LIBRARIES -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="http://static.gamedex.net/dist/lib.min.js"></script>
-        <script src="http://static.gamedex.net/dist/scripts.js"></script>
+        <script src="http://static.gamedex.net/dist/scripts.min.js"></script>
 
         <script type="text/javascript">
             var disqus_shortname = 'gamedex';

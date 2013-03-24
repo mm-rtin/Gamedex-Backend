@@ -6,6 +6,7 @@ __status__ = "Production"
 import StringIO
 import gzip
 import json
+import urllib
 import logging
 
 from google.appengine.api import urlfetch
@@ -55,37 +56,39 @@ def getSteamGames(id):
 
         return gameList
 
+    return None
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # getPSNGames
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getPSNGames(id):
 
-    # GET /playstation/psn/profile/[psn_id]/get_ordered_trophies_data HTTP/1.1
-    # Host    us.playstation.com
-    # X-Requested-With    XMLHttpRequest
-    # User-Agent  Mozilla
-    # Accept  text/html
-    # Accept-Encoding gzip,deflate,sdch
-    # Accept-Charset    ISO-8859-1,utf-8;q=0.7,*;q=0.3
-
-    # playstation user games/trophy url
-    url = 'http://us.playstation.com/playstation/psn/profile/%s/get_ordered_trophies_data' % (id)
+     # playstation user games/trophy url
+    url = 'http://us.playstation.com/playstation/psn/profile/get_title_progress_data'
 
     # headers required for response
     headers = {'Host': 'us.playstation.com', 'X-Requested-With': 'XMLHttpRequest', 'User-Agent': 'Mozilla', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3', 'Accept': 'text/html', 'Accept-Encoding': 'gzip'}
 
-    # fetch(url, payload=None, method=GET, headers={}, allow_truncated=False, follow_redirects=True, deadline=None, validate_certificate=None)
-    # allow 30 seconds for response
-    response = urlfetch.fetch(url, None, 'GET', headers, False, False, 30)
+    # construct form data
+    form_fields = {
+        'sortBy': '',
+        'ids': id
+    }
 
-    # decompress
-    f = StringIO.StringIO(response.content)
-    c = gzip.GzipFile(fileobj=f)
-    content = c.read()
+    # serialize form data
+    form_data = urllib.urlencode(form_fields)
+
+    # fetch url - send form data, allow 30 seconds for response
+    response = urlfetch.fetch(url=url, payload=form_data, method=urlfetch.POST, headers=headers, deadline=30)
 
     # valid response - begin parse
     if response.status_code == 200:
+
+        # decompress
+        f = StringIO.StringIO(response.content)
+        c = gzip.GzipFile(fileobj=f)
+        content = c.read()
 
         # game titles imported
         importedTitles = []
@@ -93,8 +96,8 @@ def getPSNGames(id):
         # iterate game list
         html = etree.HTML(content)
 
-        titleSectionSel = CSSSelector('.titlesection')
-        titleSel = CSSSelector('.gameTitleSortField')
+        titleSectionSel = CSSSelector('.contentbox_compare')
+        titleSel = CSSSelector('.gametitle span')
 
         # for each game > get title
         for row in titleSectionSel(html):
@@ -112,6 +115,8 @@ def getPSNGames(id):
                 logging.error('PSN Import: IndexError')
 
         return importedTitles
+
+    return None
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,3 +171,5 @@ def getXBLGames(id):
                 logging.error('XBL Import: IndexError')
 
         return importedTitles
+
+    return None
