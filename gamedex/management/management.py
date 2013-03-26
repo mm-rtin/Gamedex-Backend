@@ -5,6 +5,7 @@ __status__ = "Production"
 
 import logging
 import re
+import json
 
 from google.appengine.api import urlfetch
 from django.http import HttpResponse
@@ -15,6 +16,8 @@ from lxml import etree
 
 from authentication import Authentication
 from keys import Keys
+
+from models import Items
 
 # base url
 S3_URL = 'https://s3.amazonaws.com/'
@@ -142,6 +145,35 @@ def copyUrlToS3(url, s3conn):
 
     # s3 url
     return S3_URL + ASSET_BUCKET + '/' + fileName
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# UPDATE IMAGE SIZE
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@Authentication.authenticate_admin
+def updateImageSize(request):
+
+    items = Items.query(Items.item_initialProvider == '1').fetch()
+
+    itemDict = []
+
+    if items:
+
+        for item in items:
+
+            arr = item.item_largeImage.split('/')
+            arr[0] = 'small'
+            smallString = '/'.join(arr)
+
+            item.item_largeImage = smallString
+
+            item.put()
+
+            itemDict.append(item.item_largeImage)
+
+        return HttpResponse(json.dumps({'items': itemDict}), mimetype='application/json')
+
+    return HttpResponse(json.dumps({'status': 'empty'}), mimetype='application/json')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

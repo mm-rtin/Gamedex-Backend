@@ -85,6 +85,7 @@ urlpatterns = patterns('',
     (r'^key/create/$',              'gamedex.management.management.setAPIKey'),
     (r'^copy/assets/$',             'gamedex.management.management.copyAssetsToS3'),
     (r'^gamewallpapers/$',          'gamedex.management.management.gamewallpapers'),
+    (r'^updateimagesize/$',          'gamedex.management.management.updateImageSize'),
 
     (r'^createDisqusCategory/$',    'gamedex.gamedexAPI.createDisqusCategory'),
 

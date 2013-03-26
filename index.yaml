@@ -36,3 +36,8 @@ indexes:
   - name: item_gameStatus
   - name: item_playStatus
   - name: item_userRating
+
+- kind: Items
+  properties:
+  - name: item_initialProvider
+  - name: item_largeImage
